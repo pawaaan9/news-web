@@ -1,26 +1,27 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: "DM Sans";
+  src: url("/src/assets/fonts/DMSans-VariableFont_opsz\,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("/src/assets/fonts/NotoSansSinhala-VariableFont_wdth\,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@theme {
+  --font-dmSans: "DM Sans", sans-serif;
+  --font-notoSans: "Noto Sans Sinhala", sans-serif;
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-primary: #0d3b66;
+  --color-white: #ffffff;
+  --color-secondary-grey: #f5f5f5;
+  --color-acccent-orange: #f95738;
+  --color-accent-teal: #2a9d8f;
+  --color-charcoal: #212121;
 }
