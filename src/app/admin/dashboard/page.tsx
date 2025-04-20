@@ -1,5 +1,5 @@
 import { StatCard } from "@/modules/dashboard/stat-card";
-import AdminLayout from "./admin-layout";
+import AdminLayout from "../admin-layout";
 import { Button } from "@/components/ui/button";
 import {
   IconCategoryPlus,

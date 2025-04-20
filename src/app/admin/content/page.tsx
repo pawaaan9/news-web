@@ -18,11 +18,13 @@ import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
 import { ContentCard } from "@/modules/content/content-card";
 import { contentData } from "@/data/content";
+import { useRouter } from "next/navigation";
 
 const ContentPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleView = () => {
     console.log("View clicked");
@@ -40,16 +42,21 @@ const ContentPage = () => {
     <AdminLayout pageTitle="content">
       <div className="flex justify-between ">
         <PageTitle title="Manage content" />
-        <Button className="bg-primary text-white hover:bg-primary/80 ">
+        <Button
+          className="bg-primary text-white hover:bg-primary/80 "
+          onClick={() => {
+            router.push("/admin/content/create-content");
+          }}
+        >
           <IconTextWrap size={20} />
-          Create news
+          Add content
         </Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4 items-end">
         <div>
           <LabelText text="Headline" />
           <Input
-            type="headline"
+            type="text"
             id="headline"
             placeholder="Headline"
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
@@ -58,7 +65,7 @@ const ContentPage = () => {
         <div>
           <LabelText text="Author" />
           <Input
-            type="author"
+            type="text"
             id="author"
             placeholder="Author"
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"

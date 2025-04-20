@@ -17,7 +17,7 @@ import userImage from "@/assets/images/user-image.png";
 import Image from "next/image";
 
 const menuItems = [
-  { href: "/admin", label: "Dashboard", icon: IconLayout },
+  { href: "/admin/dashboard", label: "Dashboard", icon: IconLayout },
   { href: "/admin/content", label: "Content", icon: IconFile },
   { href: "/admin/accounts", label: "Accounts", icon: IconUsersGroup },
   { href: "/admin/advertisements", label: "Advertisements", icon: IconBadgeAd },
@@ -49,7 +49,7 @@ const AdminLayout: React.FC<{
                 <Link
                   href={item.href}
                   className={`p-2 rounded flex items-center pl-10 ${
-                    pathname === item.href
+                    pathname.startsWith(item.href)
                       ? "bg-primary text-white"
                       : "hover:bg-gray-200 hover:text-primary"
                   }`}
@@ -57,7 +57,9 @@ const AdminLayout: React.FC<{
                   <item.icon
                     size={20}
                     className={`inline-block mr-2 ${
-                      pathname === item.href ? "text-white" : "text-primary"
+                      pathname.startsWith(item.href)
+                        ? "text-white"
+                        : "text-primary"
                     }`}
                   />
                   {item.label}
@@ -92,7 +94,7 @@ const AdminLayout: React.FC<{
                   <Link
                     href={item.href}
                     className={`p-2 rounded flex items-center ${
-                      pathname === item.href
+                      pathname.startsWith(item.href)
                         ? "bg-primary text-white"
                         : "hover:bg-gray-200 hover:text-primary"
                     }`}
@@ -101,7 +103,9 @@ const AdminLayout: React.FC<{
                     <item.icon
                       size={20}
                       className={`inline-block mr-2 ${
-                        pathname === item.href ? "text-white" : "text-primary"
+                        pathname.startsWith(item.href)
+                          ? "text-white"
+                          : "text-primary"
                       }`}
                     />
                     {item.label}
