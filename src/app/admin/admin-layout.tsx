@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import {
   IconBadgeAd,
   IconFile,
+  IconKeyboard,
   IconLayout,
   IconLogout,
   IconMenu2,
-  IconSettings,
   IconUsersGroup,
   IconX,
 } from "@tabler/icons-react";
@@ -21,7 +21,7 @@ const menuItems = [
   { href: "/admin/content", label: "Content", icon: IconFile },
   { href: "/admin/accounts", label: "Accounts", icon: IconUsersGroup },
   { href: "/admin/advertisements", label: "Advertisements", icon: IconBadgeAd },
-  { href: "/admin/settings", label: "Settings", icon: IconSettings },
+  { href: "/admin/keywords", label: "Keywords", icon: IconKeyboard },
 ];
 
 const AdminLayout: React.FC<{
@@ -126,23 +126,27 @@ const AdminLayout: React.FC<{
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="bg-white shadow p-4 flex items-center justify-start border-b border-[#B1B1B1] gap-2 ">
-          <button
-            onClick={toggleMenu}
-            className="lg:hidden text-gray-700 focus:outline-none"
-          >
-            <IconMenu2 size={24} />
-          </button>
-          <h1 className="text-[20px] lg:text-[35px] font-bold uppercase font-dmSans">
-            {pageTitle}
-          </h1>
-          <Image
-            src={userImage}
-            alt="User"
-            width={24}
-            height={24}
-            className="w-6 h-6 lg:w-10 lg:h-10 rounded-full ml-auto"
-          />
+        <header className="bg-white shadow p-4 items-center  border-b border-[#B1B1B1] gap-2 flex justify-between">
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={toggleMenu}
+              className="lg:hidden text-gray-700 focus:outline-none"
+            >
+              <IconMenu2 size={24} />
+            </button>
+            <h1 className="text-[20px] lg:text-[35px] font-bold uppercase font-dmSans">
+              {pageTitle}
+            </h1>
+          </div>
+          <Link href="/admin/profile">
+            <Image
+              src={userImage}
+              alt="User"
+              width={24}
+              height={24}
+              className="w-6 h-6 lg:w-10 lg:h-10 rounded-full ml-auto"
+            />
+          </Link>
         </header>
 
         {/* Page Content */}
