@@ -10,7 +10,7 @@ import Sports from "../assets/images/sample-news.jpg";
 export default function Home() {
   const newsItems = [
     {
-      id: "trump-harvard",
+      id: "1",
       image: Trump,
       category: "විදෙස්",
       title: "ට්‍රම්ප් හාවර්ඩ් ඇතුළු ඇමෙරිකානු විශ්වවිද්‍යාල සඳහා අරමුදල් කපා දැමීමට සැරසෙන්නේ ඇයි?",
@@ -19,7 +19,7 @@ export default function Home() {
       date: "17 අප්‍රේල් 2025"
     },
     {
-      id: "local-politics",
+      id: "2",
       image: Politics,
       category: "දේශපාලන",
       title: "ජනාධිපතිවරණ කිට්ටු වන විට ප්‍රධාන පක්ෂ නව සන්ධාන ගොඩනැගීමට සූදානම් වෙයි",
@@ -28,7 +28,7 @@ export default function Home() {
       date: "16 අප්‍රේල් 2025"
     },
     {
-      id: "tech-innovation",
+      id: "3",
       image: Technology,
       category: "තාක්ෂණික",
       title: "ශ්‍රී ලංකාවේ නිපදවූ නව AI තාක්ෂණය ජාත්‍යන්තර සම්මාන දිනා ගනී",
@@ -37,7 +37,7 @@ export default function Home() {
       date: "15 අප්‍රේල් 2025"
     },
     {
-      id: "cricket-news",
+      id: "4",
       image: Sports,
       category: "ක්‍රීඩා",
       title: "ශ්‍රී ලංකා ක්‍රිකට් කණ්ඩායම නව පුහුණුකරුවෙකු යටතේ අභියෝගාත්මක සංචාරයකට සූදානම් වෙයි",
@@ -45,9 +45,8 @@ export default function Home() {
       author: "ලංකාදීප",
       date: "14 අප්‍රේල් 2025"
     },
-    // Add more news items as needed
     {
-      id: "economic-news",
+      id: "5",
       image: Trump,
       category: "ආර්ථික",
       title: "රුපියලේ වටිනාකම ගෙවීමේ ශේෂය වැඩි කිරීමට මහ බැංකුව තීරණය කරයි",
@@ -56,7 +55,7 @@ export default function Home() {
       date: "13 අප්‍රේල් 2025"
     },
     {
-      id: "health-news",
+      id: "6",
       image: Politics,
       category: "සෞඛ්‍ය",
       title: "නව කොරෝනා වෛරස් ප්‍රභේදයක් හඳුනාගෙන ඇති බව සෞඛ්‍ය අමාත්‍යාංශය තහවුරු කරයි",

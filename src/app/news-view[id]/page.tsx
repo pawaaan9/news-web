@@ -11,7 +11,7 @@ import Link from 'next/link';
 // Mock data for all news articles
 const allNewsArticles = [
   {
-    id: "trump-harvard",
+    id: "1",
     image: Trump,
     category: "විදෙස්",
     title: "ට්‍රම්ප් හාවර්ඩ් ඇතුළු ඇමෙරිකානු විශ්වවිද්‍යාල සඳහා අරමුදල් කපා දැමීමට සැරසෙන්නේ ඇයි?",
@@ -24,7 +24,7 @@ const allNewsArticles = [
     date: "17 අප්‍රේල් 2025"
   },
   {
-    id: "local-politics",
+    id: "2",
     image: Politics,
     category: "දේශපාලන",
     title: "ජනාධිපතිවරණ කිට්ටු වන විට ප්‍රධාන පක්ෂ නව සන්ධාන ගොඩනැගීමට සූදානම් වෙයි",
@@ -36,7 +36,6 @@ const allNewsArticles = [
     author: "ලක්බිම පුවත්",
     date: "16 අප්‍රේල් 2025"
   },
-  // Add all other news articles with fullContent
 ];
 
 export default function NewsView() {
