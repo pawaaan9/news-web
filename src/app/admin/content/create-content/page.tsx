@@ -21,6 +21,7 @@ import { LabelText } from "@/modules/shared/label-text";
 const CreateContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  console.log("Selected Keywords:", selectedKeywords);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
