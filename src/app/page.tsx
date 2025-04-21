@@ -6,6 +6,7 @@ import adImage from "../assets/images/ad-card.jpg";
 import Politics from "../assets/images/sample-news.jpg";
 import Technology from "../assets/images/sample-news.jpg";
 import Sports from "../assets/images/sample-news.jpg";
+import Footer from "@/components/footer";
 
 export default function Home() {
   const newsItems = [
@@ -14,7 +15,6 @@ export default function Home() {
       image: Trump,
       category: "විදෙස්",
       title: "ට්‍රම්ප් හාවර්ඩ් ඇතුළු ඇමෙරිකානු විශ්වවිද්‍යාල සඳහා අරමුදල් කපා දැමීමට සැරසෙන්නේ ඇයි?",
-      description: "හාවර්ඩ් විශ්වවිද්‍යාලය විසින් ධවල මන්දිරයෙන් ඉදිරිපත් කරන ලද ඉල්ලීම් ලැයිස්තුවක් ප්‍රතික්ෂේප කිරීමෙන් පැය කිහිපයකට පසු, එම කීර්තිමත් විශ්වවිද්‍යාලය සඳහා ෆෙඩ්රල් අරමුදල්වලින් ඇමෙරිකානු ඩොලර් බිලියන 2කට වඩා අත්හිටුවන බව ඩොනල්ඩ් ට්‍රම්ප් පරිපාලනය පැවසීය.",
       author: "බීබීසී ලෝක සේවය",
       date: "17 අප්‍රේල් 2025"
     },
@@ -23,7 +23,6 @@ export default function Home() {
       image: Politics,
       category: "දේශපාලන",
       title: "ජනාධිපතිවරණ කිට්ටු වන විට ප්‍රධාන පක්ෂ නව සන්ධාන ගොඩනැගීමට සූදානම් වෙයි",
-      description: "ලබන වසරේ පැවැත්වීමට නියමිත ජනාධිපතිවරණය සඳහා ප්‍රධාන දේශපාලන පක්ෂ නව සන්ධාන ගොඩනැගීමේ සාකච්ඡා ආරම්භ කර ඇත. පක්ෂ නායකයින් අතර රහස් සාකච්ඡා ආරම්භ වී ඇති බව වාර්තා වේ.",
       author: "ලක්බිම පුවත්",
       date: "16 අප්‍රේල් 2025"
     },
@@ -32,7 +31,6 @@ export default function Home() {
       image: Technology,
       category: "තාක්ෂණික",
       title: "ශ්‍රී ලංකාවේ නිපදවූ නව AI තාක්ෂණය ජාත්‍යන්තර සම්මාන දිනා ගනී",
-      description: "කොළඹ විශ්වවිද්‍යාලයේ පර්යේෂකයින් විසින් නිපදවන ලද කෘතිම බුද්ධි තාක්ෂණය සිංගප්පූරුවේ පැවති තාක්ෂණික උපකරණ ප්‍රදර්ශනයේදී ජාත්‍යන්තර සම්මානයක් දිනා ගත්තේය.",
       author: "දිනමිණ",
       date: "15 අප්‍රේල් 2025"
     },
@@ -41,7 +39,6 @@ export default function Home() {
       image: Sports,
       category: "ක්‍රීඩා",
       title: "ශ්‍රී ලංකා ක්‍රිකට් කණ්ඩායම නව පුහුණුකරුවෙකු යටතේ අභියෝගාත්මක සංචාරයකට සූදානම් වෙයි",
-      description: "ශ්‍රී ලංකා ක්‍රිකට් කණ්ඩායම නව පුහුණුකරු සමග ඕස්ට්‍රේලියාවේ සංචාරය සඳහා සූදානම් වෙයි. මෙම සංචාරය තීරණාත්මක එකක් වනු ඇති බව ක්‍රිකට් විචාරකයෝ පවසති.",
       author: "ලංකාදීප",
       date: "14 අප්‍රේල් 2025"
     },
@@ -50,7 +47,6 @@ export default function Home() {
       image: Trump,
       category: "ආර්ථික",
       title: "රුපියලේ වටිනාකම ගෙවීමේ ශේෂය වැඩි කිරීමට මහ බැංකුව තීරණය කරයි",
-      description: "රුපියලේ වටිනාකම ආරක්ෂා කිරීම සඳහා මහ බැංකුව විසින් නව මුදල් ප්‍රතිපත්ති පියවර ගැනීමට තීරණය කර ඇත. මෙම පියවර ආර්ථිකයට ධනාත්මක බලපෑමක් ඇති කරනු ඇතැයි අපේක්ෂා කෙරේ.",
       author: "ආර්ථික පුවත්",
       date: "13 අප්‍රේල් 2025"
     },
@@ -59,7 +55,6 @@ export default function Home() {
       image: Politics,
       category: "සෞඛ්‍ය",
       title: "නව කොරෝනා වෛරස් ප්‍රභේදයක් හඳුනාගෙන ඇති බව සෞඛ්‍ය අමාත්‍යාංශය තහවුරු කරයි",
-      description: "ශ්‍රී ලංකාවේ නව කොරෝනා වෛරස් ප්‍රභේදයක් හඳුනාගෙන ඇති බව සෞඛ්‍ය අමාත්‍යාංශය තහවුරු කර ඇත. නව ප්‍රභේදය තවමත් අධ්‍යයනය කරමින් පවතින අතර එය අන්තර්ජාතික වෛරස් ග්‍රහණයේ කොටසක් විය හැකිය.",
       author: "සෞඛ්‍ය පුවත්",
       date: "12 අප්‍රේල් 2025"
     }
@@ -121,7 +116,6 @@ export default function Home() {
               image={item.data.image}
               category={'category' in item.data ? item.data.category : ''}
               title={item.data.title}
-              description={'description' in item.data ? item.data.description : ''}
               author={'author' in item.data ? item.data.author : ''}
               date={'date' in item.data ? item.data.date : 'N/A'}
               />
@@ -136,6 +130,7 @@ export default function Home() {
           ))}
         </div>
       </div>
+      <Footer/>
     </main>
   );
 }

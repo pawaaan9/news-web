@@ -112,7 +112,7 @@ export default function NewsView() {
         {/* Breadcrumbs */}
         <div className="text-xs mb-4">
           <Link href="/" className="text-blue-500 hover:underline">
-            මුල් පිටුව
+            Home
           </Link>{" "}
           &gt;
           <Link
