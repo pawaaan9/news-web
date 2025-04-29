@@ -9,9 +9,14 @@ import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { userRoles, getRoleNumber } from "@/data/user-roles";
 import { categories } from "@/data/categories";
-import { createUser, updateUser, getUserById } from "../../../../../api/user.api";
+import {
+  createUser,
+  updateUser,
+  getUserById,
+} from "../../../../../api/user.api";
 import { toast } from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
+import { User } from "../../page";
 
 interface UserFormData {
   fullname: string;
@@ -43,7 +48,7 @@ const EditUser = () => {
       const fetchUserData = async () => {
         try {
           setLoading(true);
-          const user = await getUserById(id as string) as UserFormData;
+          const user = (await getUserById(id as string)) as UserFormData;
           setFormData({
             fullname: user.fullname,
             username: user.username,
@@ -69,15 +74,15 @@ const EditUser = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRoleChange = (role: string) => {
-    setFormData(prev => ({ ...prev, userRole: role }));
+    setFormData((prev) => ({ ...prev, userRole: role }));
   };
 
   const handleCategoryChange = (category: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (prev.category.includes(category)) {
         return {
           ...prev,
@@ -126,7 +131,7 @@ const EditUser = () => {
         await updateUser(id as string, userData);
         toast.success("User updated successfully!");
       } else {
-        await createUser(userData as any);
+        await createUser(userData as User);
         toast.success("User created successfully!");
       }
       router.push("/admin/accounts");
@@ -185,7 +190,7 @@ const EditUser = () => {
           {/* Password - Only show for new users or when editing and want to change */}
           {!isEditMode && (
             <div className="relative">
-              <InputText text="Password"/>
+              <InputText text="Password" />
               <Input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -199,7 +204,11 @@ const EditUser = () => {
                 onClick={togglePasswordVisibility}
                 className="absolute top-[75%] right-3 transform -translate-y-[50%] text-gray-500"
               >
-                {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+                {showPassword ? (
+                  <IconEyeOff size={20} />
+                ) : (
+                  <IconEye size={20} />
+                )}
               </button>
             </div>
           )}
@@ -209,7 +218,10 @@ const EditUser = () => {
             <InputText text="User role" />
             <div className="mt-2 grid grid-cols-2">
               {userRoles.map((role, index) => (
-                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
+                <label
+                  key={index}
+                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
+                >
                   <input
                     type="radio"
                     name="role"
@@ -229,7 +241,10 @@ const EditUser = () => {
             <InputText text="Assign category (Select at least 1)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
-                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
+                <label
+                  key={index}
+                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
+                >
                   <input
                     type="checkbox"
                     value={category}
@@ -244,18 +259,18 @@ const EditUser = () => {
           </div>
 
           {/* Submit button */}
-          <Button 
-            className="bg-primary text-white hover:bg-primary/80" 
-            onClick={handleSubmit} 
+          <Button
+            className="bg-primary text-white hover:bg-primary/80"
+            onClick={handleSubmit}
             disabled={loading}
           >
-            {loading 
-              ? isEditMode 
-                ? "Updating..." 
-                : "Saving..." 
-              : isEditMode 
-                ? "Update" 
-                : "Save"}
+            {loading
+              ? isEditMode
+                ? "Updating..."
+                : "Saving..."
+              : isEditMode
+              ? "Update"
+              : "Save"}
           </Button>
         </div>
       </div>

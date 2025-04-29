@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; // import router
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { login } from "@/api/auth.api"; 
+import { login } from "@/api/auth.api";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,9 +20,22 @@ const LoginPage = () => {
 
       // Redirect to dashboard after successful login
       router.push("/admin/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login failed:", err);
-      setError(err.response?.data?.message || "An error occurred during login.");
+
+      // Narrow down the error type
+      if (err instanceof Error) {
+        setError(err.message || "An error occurred during login.");
+      } else if (typeof err === "object" && err !== null && "response" in err) {
+        const errorResponse = (
+          err as { response?: { data?: { message?: string } } }
+        ).response;
+        setError(
+          errorResponse?.data?.message || "An error occurred during login."
+        );
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 
@@ -37,7 +50,10 @@ const LoginPage = () => {
         </p>
         <div className="flex flex-col gap-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <Input
@@ -50,7 +66,10 @@ const LoginPage = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <Input

@@ -17,8 +17,21 @@ import { userRoles } from "@/data/user-roles";
 import { getUsers, deleteUser } from "../../../api/user.api";
 import { toast } from "react-hot-toast";
 
+export interface User {
+  _id: string;
+  fullname: string;
+  username: string;
+  email: string;
+  password: string;
+  userRole: string;
+  userRoleNo: number;
+  category: string[];
+  createdTime: Date;
+  modifiedTime: Date;
+}
+
 const AccountPage = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
