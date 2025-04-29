@@ -55,16 +55,46 @@ const CreateContent = () => {
         <PageTitle title="Create content" />
         <div className="flex flex-col gap-4 mt-4">
           <div>
-            <InputText text="Headline" />
+            <InputText text="Headline 1 (max 40 characters)" />
             <Textarea
               rows={2}
-              id="headline"
+              id="headline1"
               placeholder="Enter headline"
               className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <Input
               type="text"
-              id="headline"
+              id="headline1"
+              placeholder="Enter headline"
+              className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+          </div>
+          <div>
+            <InputText text="Headline 2 (max 60 characters)" />
+            <Textarea
+              rows={2}
+              id="headline2"
+              placeholder="Enter headline"
+              className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+            <Input
+              type="text"
+              id="headline2"
+              placeholder="Enter headline"
+              className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+          </div>
+          <div>
+            <InputText text="Headline 3 (Optional)" />
+            <Textarea
+              rows={2}
+              id="headline3"
+              placeholder="Enter headline"
+              className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+            <Input
+              type="text"
+              id="headline3"
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
