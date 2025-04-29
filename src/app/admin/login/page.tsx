@@ -1,17 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // import router
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { login } from "@/api/auth.api"; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter(); // initialize router
 
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    // Add login logic here
+  const handleLogin = async () => {
+    try {
+      setError(null); // Clear previous errors
+      const response = await login({ email, password }); // Call the login API
+      console.log("Login successful:", response);
+
+      // Redirect to dashboard after successful login
+      router.push("/admin/dashboard");
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      setError(err.response?.data?.message || "An error occurred during login.");
+    }
   };
 
   return (
@@ -25,10 +37,7 @@ const LoginPage = () => {
         </p>
         <div className="flex flex-col gap-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <Input
@@ -41,10 +50,7 @@ const LoginPage = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <Input
@@ -56,6 +62,9 @@ const LoginPage = () => {
               className="mt-2 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full rounded-md"
             />
           </div>
+          {error && (
+            <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+          )}
           <Button
             onClick={handleLogin}
             className="bg-blue-500 text-white hover:bg-blue-600 w-full py-2 rounded-md mt-4"
@@ -63,12 +72,6 @@ const LoginPage = () => {
             Login
           </Button>
         </div>
-        {/* <p className="text-sm text-gray-600 text-center mt-4">
-          Don't have an account?{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
-            Sign up
-          </a>
-        </p> */}
       </div>
     </div>
   );
