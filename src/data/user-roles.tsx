@@ -9,3 +9,7 @@ export const userRoles = [
   "Site Admin",
   "Super Admin",
 ];
+
+export const getRoleNumber = (roleName: string): number => {
+  return userRoles.indexOf(roleName);
+};

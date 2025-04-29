@@ -7,13 +7,23 @@ import { InputText } from "@/modules/shared/input-text";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { userRoles } from "@/data/user-roles";
+import { userRoles, getRoleNumber } from "@/data/user-roles";
 import { categories } from "@/data/categories";
+import { createUser } from "../../../../api/user.api";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AddUser = () => {
+  const router = useRouter();
+
+  const [fullname, setFullname] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -25,71 +35,107 @@ const AddUser = () => {
 
   const handleCategoryChange = (category: string) => {
     if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter((item) => item !== category)
-      );
+      setSelectedCategories(selectedCategories.filter((item) => item !== category));
     } else {
       setSelectedCategories([...selectedCategories, category]);
     }
   };
 
+  const handleSubmit = async () => {
+    if (!fullname || !username || !email || !password || !selectedRole || selectedCategories.length === 0) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
+    const userData = {
+      fullname,
+      username,
+      email,
+      password,
+      userRole: selectedRole,
+      userRoleNo: getRoleNumber(selectedRole),
+      category: selectedCategories,
+    };
+
+    try {
+      setLoading(true);
+      await createUser(userData);
+      toast.success("User created successfully!");
+      router.push("/admin/accounts"); // <<< Redirect after create
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create user.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AdminLayout pageTitle="account">
-      <div className="bg-white p-4 rounded-lg ">
+      <div className="bg-white p-4 rounded-lg">
         <PageTitle title="Add user" />
         <div className="flex flex-col gap-4 mt-4">
+          {/* Fullname */}
           <div>
             <InputText text="Full name" />
             <Input
               type="text"
-              id="fullname"
               placeholder="Enter full name"
-              className=" border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 mt-2"
             />
           </div>
+
+          {/* Username */}
           <div>
             <InputText text="Username" />
             <Input
               type="text"
-              id="username"
               placeholder="Enter username"
-              className=" border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 mt-2"
             />
           </div>
+
+          {/* Email */}
           <div>
             <InputText text="Email" />
             <Input
               type="email"
-              id="email"
               placeholder="Enter email"
-              className=" border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 mt-2"
             />
           </div>
+
+          {/* Password */}
           <div className="relative">
             <InputText text="Temporary password" />
             <Input
               type={showPassword ? "text" : "password"}
-              id="tempPassword"
               placeholder="Enter password"
-              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 pr-10"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 mt-2 pr-10"
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute top-[75%] right-3 transform -translate-y-[50%] text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="absolute top-[75%] right-3 transform -translate-y-[50%] text-gray-500"
             >
               {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
             </button>
           </div>
 
+          {/* User Role */}
           <div>
             <InputText text="User role" />
             <div className="mt-2 grid grid-cols-2">
               {userRoles.map((role, index) => (
-                <label
-                  key={index}
-                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
-                >
+                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
                   <input
                     type="radio"
                     name="role"
@@ -104,17 +150,14 @@ const AddUser = () => {
             </div>
           </div>
 
+          {/* Categories */}
           <div>
             <InputText text="Assign category (Select at least 1)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
-                <label
-                  key={index}
-                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
-                >
+                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
                   <input
                     type="checkbox"
-                    name="category"
                     value={category}
                     checked={selectedCategories.includes(category)}
                     onChange={() => handleCategoryChange(category)}
@@ -126,8 +169,9 @@ const AddUser = () => {
             </div>
           </div>
 
-          <Button className="bg-primary text-white hover:bg-primary/80">
-            Save
+          {/* Submit button */}
+          <Button className="bg-primary text-white hover:bg-primary/80" onClick={handleSubmit} disabled={loading}>
+            {loading ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
