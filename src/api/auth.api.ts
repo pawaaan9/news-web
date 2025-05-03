@@ -22,3 +22,9 @@ export const resetPassword = async (data: ResetPasswordData) => {
   const response = await axiosInstance.post("/auth/reset-password", data);
   return response.data;
 };
+
+// Logout API call
+export const logout = async () => {
+  const response = await axiosInstance.post("/auth/logout");
+  return response.data;
+};

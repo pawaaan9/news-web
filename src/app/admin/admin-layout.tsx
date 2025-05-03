@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   IconBadgeAd,
   IconFile,
@@ -15,6 +15,7 @@ import {
 } from "@tabler/icons-react";
 import userImage from "@/assets/images/user-image.png";
 import Image from "next/image";
+import { logout } from "../../api/auth.api"; // Make sure path is correct
 
 const menuItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: IconLayout },
@@ -29,10 +30,21 @@ const AdminLayout: React.FC<{
   pageTitle: string;
 }> = ({ children, pageTitle }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname(); // Get the current route
+  const pathname = usePathname();
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem("token"); // Adjust if you're using cookies instead
+      router.push("/admin/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -69,7 +81,10 @@ const AdminLayout: React.FC<{
           </ul>
         </nav>
         <div className="p-4">
-          <div className="p-2 hover:bg-gray-700 rounded flex items-center text-red-700 cursor-pointer">
+          <div
+            className="p-2 hover:bg-gray-700 rounded flex items-center text-red-700 cursor-pointer"
+            onClick={handleLogout}
+          >
             <IconLogout size={20} className="inline-block mr-2" />
             Logout
           </div>
@@ -115,7 +130,10 @@ const AdminLayout: React.FC<{
             </ul>
           </nav>
           <div className="p-4">
-            <div className="p-2 hover:bg-gray-700 rounded flex items-center text-red-700 cursor-pointer">
+            <div
+              className="p-2 hover:bg-gray-700 rounded flex items-center text-red-700 cursor-pointer"
+              onClick={handleLogout}
+            >
               <IconLogout size={20} className="inline-block mr-2" />
               Logout
             </div>
@@ -126,7 +144,7 @@ const AdminLayout: React.FC<{
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="bg-white shadow p-4 items-center  border-b border-[#B1B1B1] gap-2 flex justify-between">
+        <header className="bg-white shadow p-4 items-center border-b border-[#B1B1B1] gap-2 flex justify-between">
           <div className="flex gap-2 items-center">
             <button
               onClick={toggleMenu}
