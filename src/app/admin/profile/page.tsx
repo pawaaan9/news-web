@@ -7,7 +7,7 @@ import { InputText } from "@/modules/shared/input-text";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { getProfile } from "@/api/auth.api";
+import { getProfile, resetPassword } from "@/api/auth.api";
 
 interface User {
   id: string;
@@ -18,8 +18,15 @@ interface User {
   // Add other fields returned by your API (excluding password)
 }
 
+interface ResetPasswordData {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+}
+
 const ProfilePage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -27,12 +34,26 @@ const ProfilePage = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleSavePassword = () => {
+  const handleSavePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (newPassword === confirmPassword) {
       console.log("New Password:", newPassword);
-      alert("Password updated successfully!");
-      setNewPassword("");
-      setConfirmPassword("");
+      const email = user?.email;
+      if (!email) {
+        console.error("Email not found");
+      }
+      try {
+        const data: ResetPasswordData = {
+          email: email!,
+          currentPassword,
+          newPassword,
+        };
+
+        const result = await resetPassword(data);
+        console.log(result);
+      } catch (error) {
+        console.error("❌ Reset failed:", error);
+      }
     } else {
       alert("Passwords do not match!");
     }
@@ -54,7 +75,6 @@ const ProfilePage = () => {
   }, []);
 
   if (!user) return <div>Loading...</div>;
-
 
   return (
     <AdminLayout pageTitle="Profile">
@@ -98,6 +118,31 @@ const ProfilePage = () => {
           </div>
 
           {/* Update Password */}
+          <div>
+            <InputText text="Current Password" />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                id="newPassword"
+                placeholder="Enter Current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 pr-10"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute top-[60%] right-3 transform -translate-y-[50%] text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <IconEyeOff size={20} />
+                ) : (
+                  <IconEye size={20} />
+                )}
+              </button>
+            </div>
+          </div>
+
           <div>
             <InputText text="New Password" />
             <div className="relative">
