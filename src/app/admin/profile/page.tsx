@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { getProfile, resetPassword } from "@/api/auth.api";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 interface User {
   id: string;
@@ -48,11 +49,35 @@ const ProfilePage = () => {
           currentPassword,
           newPassword,
         };
-
         const result = await resetPassword(data);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        toast.success('Password Reset Successfully', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+          });
         console.log(result);
       } catch (error) {
         console.error("❌ Reset failed:", error);
+        toast.error('Failed to Reset Password', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+          });
       }
     } else {
       alert("Passwords do not match!");
@@ -199,6 +224,19 @@ const ProfilePage = () => {
           >
             Save Password
           </Button>
+          <ToastContainer
+position="top-center"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+transition={Bounce}
+/>
         </div>
       </div>
     </AdminLayout>
