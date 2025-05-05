@@ -4,9 +4,19 @@ import { PageTitle } from "@/modules/shared/page-title";
 import AdminLayout from "../admin-layout";
 import { Input } from "@/components/ui/input";
 import { InputText } from "@/modules/shared/input-text";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { getProfile } from "@/api/auth.api";
+
+interface User {
+  id: string;
+  fullname: string;
+  username: string;
+  email: string;
+  userRole: string;
+  // Add other fields returned by your API (excluding password)
+}
 
 const ProfilePage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +38,24 @@ const ProfilePage = () => {
     }
   };
 
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getProfile(); // ✅ now correctly typed
+        setUser(result.data.user);
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!user) return <div>Loading...</div>;
+
+
   return (
     <AdminLayout pageTitle="Profile">
       <div className="bg-white p-4 rounded-lg">
@@ -39,7 +67,7 @@ const ProfilePage = () => {
             <Input
               type="text"
               id="fullname"
-              value="John Doe"
+              value={user.fullname}
               readOnly
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 bg-gray-100"
             />
@@ -51,7 +79,7 @@ const ProfilePage = () => {
             <Input
               type="text"
               id="username"
-              value="johndoe"
+              value={user.username}
               readOnly
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 bg-gray-100"
             />
@@ -63,7 +91,7 @@ const ProfilePage = () => {
             <Input
               type="email"
               id="email"
-              value="johndoe@example.com"
+              value={user.email}
               readOnly
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 bg-gray-100"
             />
