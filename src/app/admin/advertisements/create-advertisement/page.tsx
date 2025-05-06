@@ -28,6 +28,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { createAdvertisement } from "@/api/advertisement.api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Sample data for advertisement positions
 const advertisementPositions = [
@@ -106,7 +108,7 @@ const CreateAdvertisement = () => {
       !startDate ||
       !endDate
     ) {
-      alert("Please fill in all required fields.");
+      toast.error("Please fill in all required fields.");
       return;
     }
 
@@ -129,7 +131,7 @@ const CreateAdvertisement = () => {
       };
 
       await createAdvertisement(advertisementData);
-      alert(
+      toast.success(
         status === "draft"
           ? "Advertisement saved as draft!"
           : "Advertisement published successfully!"
@@ -137,7 +139,7 @@ const CreateAdvertisement = () => {
       router.push("/admin/advertisements");
     } catch (error) {
       console.error("Error creating advertisement:", error);
-      alert("Failed to create advertisement.");
+      toast.error("Failed to create advertisement.");
     }
   };
 
@@ -462,6 +464,7 @@ const CreateAdvertisement = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </AdminLayout>
   );
 };
