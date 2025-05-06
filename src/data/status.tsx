@@ -1,1 +1,1 @@
-export const contentstatus = ["Published", "Draft"];
+export const contentstatus = ["Published", "Draft", "Canceled"];

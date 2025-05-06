@@ -6,25 +6,20 @@ import { Button } from "@/components/ui/button";
 import { IconTextWrap } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
 import { ContentCard } from "@/modules/content/content-card";
 import { useRouter } from "next/navigation";
-import { ContentData, getContent } from "@/api/content.api";
+import { ContentData, deleteContent, getContent } from "@/api/content.api";
 
 const ContentPage = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-
+  const [headline, setHeadline] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
+  const [filteredContent, setFilteredContent] = useState<ContentData[]>([]);
   const [contentData, setContentData] = useState<ContentData[]>([]);
   const router = useRouter();
 
@@ -40,9 +35,11 @@ const ContentPage = () => {
           "data" in response &&
           Array.isArray((response as { data: ContentData[] }).data)
         ) {
-          setContentData((response as { data: ContentData[] }).data); // Set only the `data` field
+          setContentData((response as { data: ContentData[] }).data);
+          setFilteredContent((response as { data: ContentData[] }).data); // Set only the `data` field
         } else {
           setContentData([]); // Fallback to an empty array if data is not valid
+          setFilteredContent([]); // Fallback to an empty array if data is not valid
         }
       } catch (error) {
         console.error("Error fetching content:", error);
@@ -51,6 +48,44 @@ const ContentPage = () => {
 
     fetchContent();
   }, []);
+
+  useEffect(() => {
+    const filtered = contentData.filter((content) => {
+      const matchesHeadline =
+        !headline ||
+        content.headline1.toLowerCase().includes(headline.toLowerCase());
+      const matchesAuthor =
+        !author || content.author?.toLowerCase().includes(author.toLowerCase());
+      const matchesCategory =
+        !selectedCategory || content.category === selectedCategory;
+      const matchesStatus =
+        !selectedStatus || content.status === selectedStatus;
+
+      return (
+        matchesHeadline && matchesAuthor && matchesCategory && matchesStatus
+      );
+    });
+
+    setFilteredContent(filtered);
+  }, [headline, author, selectedCategory, selectedStatus, contentData]);
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this content?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteContent(id); // Assuming you have a deleteContent function in your API
+      setContentData((prev) => prev.filter((content) => content._id !== id));
+      setFilteredContent((prev) =>
+        prev.filter((content) => content._id !== id)
+      );
+    } catch (error) {
+      console.error("Error deleting content:", error);
+      alert("Failed to delete content.");
+    }
+  };
 
   return (
     <AdminLayout pageTitle="content">
@@ -66,13 +101,15 @@ const ContentPage = () => {
           Add content
         </Button>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4 items-end">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4 items-end">
         <div>
           <LabelText text="Headline" />
           <Input
             type="text"
             id="headline"
             placeholder="Headline"
+            value={headline}
+            onChange={(e) => setHeadline(e.target.value)}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
           />
         </div>
@@ -82,102 +119,57 @@ const ContentPage = () => {
             type="text"
             id="author"
             placeholder="Author"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
           />
         </div>
-        <div>
-          <LabelText text="Created Date" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="createdDate"
-                placeholder="Select a date"
-                value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={selectedDate || undefined}
-                onSelect={(date) => setSelectedDate(date || null)}
-                className=" rounded-md bg-white "
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+
         <div>
           <LabelText text="Category" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="category"
-                placeholder="Select a category"
-                value={selectedCategory || ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 rounded-md bg-white shadow-md">
-              <ul className="space-y-2">
-                {categories.map((category, index) => (
-                  <li
-                    key={index}
-                    onClick={() => setSelectedCategory(category)}
-                    className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                  >
-                    {category}
-                  </li>
-                ))}
-              </ul>
-            </PopoverContent>
-          </Popover>
+          <select
+            id="category"
+            value={selectedCategory || ""}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <LabelText text="Status" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="status"
-                placeholder="Select a status"
-                value={selectedStatus || ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 rounded-md bg-white shadow-md">
-              <ul className="space-y-2">
-                {contentstatus.map((status, index) => (
-                  <li
-                    key={index}
-                    onClick={() => setSelectedStatus(status)}
-                    className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                  >
-                    {status}
-                  </li>
-                ))}
-              </ul>
-            </PopoverContent>
-          </Popover>
+          <select
+            id="status"
+            value={selectedStatus || ""}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+          >
+            <option value="" disabled>
+              Select a status
+            </option>
+            {contentstatus.map((status, index) => (
+              <option key={index} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
         </div>
-        <Button
-          className="bg-primary text-white hover:bg-primary/80 "
-          size="lg"
-        >
-          Search
-        </Button>
       </div>
 
       {/* Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-        {Array.isArray(contentData) && contentData.length > 0 ? (
-          contentData.map((content, index) => (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
+        {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
+          filteredContent.map((content, index) => (
             <ContentCard
               key={index}
+              headlineImage={content.headlineImage}
               title={content.headline1}
               author={content.author || "-"}
               date={
@@ -188,8 +180,10 @@ const ContentPage = () => {
               category={content.category}
               status={content.status}
               onView={() => console.log("View clicked")}
-              onEdit={() => console.log("Edit clicked")}
-              onDelete={() => console.log("Delete clicked")}
+              onEdit={() =>
+                router.push(`/admin/content/edit-content/${content._id}`)
+              }
+              onDelete={() => handleDelete(content._id)}
             />
           ))
         ) : (

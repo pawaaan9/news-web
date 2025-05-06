@@ -2,17 +2,29 @@ import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
 export interface ContentData {
+  _id: string;
   headline1: string;
+  headline2: string;
+  headline3?: string;
+  url: string;
+  headlineImage: string;
   author: string;
   createdTime: string;
   category: string;
   status: string;
+  contentBlocks: ContentBlock[];
+}
+
+export interface ContentBlock {
+  type: "paragraph" | "image" | "video";
+  id: number;
+  content?: string;
+  file?: File;
 }
 
 // Get all content
 export const getContent = async () => {
   const response = await axiosInstance.get("/content");
-  console.log("response", response.data);
   return response.data;
 };
 
@@ -27,7 +39,7 @@ export const submitContent = async (content: {
   status: "Draft" | "Published";
   headlineImage: File | null;
   contentBlocks: {
-    type: "paragraph" | "image";
+    type: "paragraph" | "image" | "video";
     id: number;
     content?: string;
     file?: File;
@@ -59,8 +71,8 @@ export const submitContent = async (content: {
   content.contentBlocks.forEach((block, index) => {
     formData.append(`contentBlocks[${index}][type]`, block.type);
     formData.append(`contentBlocks[${index}][order]`, (index + 1).toString());
-    if (block.type === "paragraph" && block.content) {
-      formData.append(`contentBlocks[${index}][data]`, block.content);
+    if (block.type === "paragraph" || block.type === "video") {
+      formData.append(`contentBlocks[${index}][data]`, block.content || "");
     } else if (block.type === "image" && block.file) {
       formData.append(`contentBlocks[${index}][data]`, block.file);
     }
@@ -86,4 +98,33 @@ export const submitContent = async (content: {
     );
     throw error;
   }
+};
+
+export const getContentById = async (id: string) => {
+  const response = await axiosInstance.get(`/content/${id}`);
+  return response.data;
+};
+
+export const updateContent = async (
+  id: string,
+  updateData: Partial<ContentData>
+) => {
+  const response = await axiosInstance.put(`/content/${id}`, updateData);
+  return response.data;
+};
+
+export const deleteContent = async (id: string) => {
+  const response = await axiosInstance.delete(`/content/${id}`);
+  console.log("Content deleted successfully:", response.data);
+  return response.data;
+};
+
+export const changeContentStatus = async (
+  id: string,
+  status: "Draft" | "Published" | "Canceled"
+) => {
+  const response = await axiosInstance.patch(`/content/${id}/status`, {
+    status,
+  });
+  return response.data;
 };
