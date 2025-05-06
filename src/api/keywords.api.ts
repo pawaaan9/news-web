@@ -3,6 +3,7 @@ import axiosInstance from "./axiosInstance";
 // Define types for keyword operations
 export interface KeywordData {
   keyword: string;
+  category: string; 
 }
 
 // Create a new keyword
