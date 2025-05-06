@@ -8,8 +8,10 @@ import {
   IconPencilMinus,
   IconTrash,
 } from "@tabler/icons-react";
+import Image from "next/image";
 
 interface ContentCardProps {
+  headlineImage?: string;
   title: string;
   author: string;
   date: string;
@@ -21,6 +23,7 @@ interface ContentCardProps {
 }
 
 export const ContentCard: React.FC<ContentCardProps> = ({
+  headlineImage,
   title,
   author,
   date,
@@ -32,6 +35,15 @@ export const ContentCard: React.FC<ContentCardProps> = ({
 }) => {
   return (
     <div className="bg-white p-4 rounded-[8px]">
+      {headlineImage && (
+        <Image
+          src={headlineImage}
+          alt={title}
+          className="w-full  object-cover rounded-[8px] mb-4"
+          width={400}
+          height={200}
+        />
+      )}
       <h3 className="text-[16px] font-semibold text-charcoal mb-4">{title}</h3>
       <div className="grid grid-cols-2 gap-2">
         <div className="flex gap-1 items-center">
