@@ -17,11 +17,19 @@ import {
   IconTextWrap,
 } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
+import { submitContent } from "@/api/content.api";
 
 const CreateContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
-  console.log("Selected Keywords:", selectedKeywords);
+  const [headline1, setHeadline1] = useState("");
+  const [headline2, setHeadline2] = useState("");
+  const [headline3, setHeadline3] = useState("");
+  const [url, setUrl] = useState("");
+  const [headlineImage, setHeadlineImage] = useState<File | null>(null);
+  const [contentBlocks, setContentBlocks] = useState<
+    { type: "paragraph" | "image"; id: number }[]
+  >([{ type: "paragraph", id: 1 }]); // Initial block is a paragraph
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -30,10 +38,6 @@ const CreateContent = () => {
   const handleKeywordsChange = (keywords: string[]) => {
     setSelectedKeywords(keywords);
   };
-
-  const [contentBlocks, setContentBlocks] = useState<
-    { type: "paragraph" | "image"; id: number }[]
-  >([{ type: "paragraph", id: 1 }]); // Initial block is a paragraph
 
   const addParagraph = () => {
     setContentBlocks([
@@ -49,6 +53,37 @@ const CreateContent = () => {
     ]);
   };
 
+  const handleContentChange = (id: number, value: string | File) => {
+    setContentBlocks((prevBlocks) =>
+      prevBlocks.map((block) =>
+        block.id === id
+          ? block.type === "paragraph"
+            ? { ...block, content: value as string }
+            : { ...block, file: value as File }
+          : block
+      )
+    );
+  };
+
+  const handleSubmit = async (status: "Draft" | "Published") => {
+    try {
+      await submitContent({
+        headline1,
+        headline2,
+        headline3,
+        url,
+        category: selectedCategory,
+        keywords: selectedKeywords,
+        status,
+        headlineImage,
+        contentBlocks,
+      });
+      console.log("Content submitted successfully");
+    } catch (error) {
+      console.error("Error submitting content:", error);
+    }
+  };
+
   return (
     <AdminLayout pageTitle="CONTENT">
       <div className="bg-white p-4 rounded-lg ">
@@ -58,13 +93,15 @@ const CreateContent = () => {
             <InputText text="Headline 1 (max 40 characters)" />
             <Textarea
               rows={2}
-              id="headline1"
+              value={headline1}
+              onChange={(e) => setHeadline1(e.target.value)}
               placeholder="Enter headline"
               className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <Input
               type="text"
-              id="headline1"
+              value={headline1}
+              onChange={(e) => setHeadline1(e.target.value)}
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
@@ -73,13 +110,15 @@ const CreateContent = () => {
             <InputText text="Headline 2 (max 60 characters)" />
             <Textarea
               rows={2}
-              id="headline2"
+              value={headline2}
+              onChange={(e) => setHeadline2(e.target.value)}
               placeholder="Enter headline"
               className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <Input
               type="text"
-              id="headline2"
+              value={headline2}
+              onChange={(e) => setHeadline2(e.target.value)}
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
@@ -88,13 +127,15 @@ const CreateContent = () => {
             <InputText text="Headline 3 (Optional)" />
             <Textarea
               rows={2}
-              id="headline3"
+              value={headline3}
+              onChange={(e) => setHeadline3(e.target.value)}
               placeholder="Enter headline"
               className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <Input
               type="text"
-              id="headline3"
+              value={headline3}
+              onChange={(e) => setHeadline3(e.target.value)}
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
@@ -103,7 +144,8 @@ const CreateContent = () => {
             <InputText text="URL (Auto generated from title)" />
             <Textarea
               rows={2}
-              id="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
               className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <Input
@@ -116,7 +158,7 @@ const CreateContent = () => {
           <div>
             <InputText text="Headline image" />
             <Input
-              id="url"
+              onChange={(e) => setHeadlineImage(e.target.files?.[0] || null)}
               type="file"
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
@@ -161,6 +203,10 @@ const CreateContent = () => {
                       <Textarea
                         rows={4}
                         placeholder={`Enter content for Paragraph ${index + 1}`}
+                        value={block.content || ""}
+                        onChange={(e) =>
+                          handleContentChange(block.id, e.target.value)
+                        }
                         className="border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
                       />
                     </div>
@@ -169,6 +215,12 @@ const CreateContent = () => {
                       <InputText text="Image" />
                       <Input
                         type="file"
+                        onChange={(e) =>
+                          handleContentChange(
+                            block.id,
+                            e.target.files?.[0] || null
+                          )
+                        }
                         className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
                       />
                     </div>
@@ -208,11 +260,15 @@ const CreateContent = () => {
             <Button
               className="bg-white text-primary border-primary border hover:bg-primary/10"
               variant="outline"
+              onClick={() => handleSubmit("Draft")}
             >
               <IconNote size={20} />
               Save as Draft
             </Button>
-            <Button className="bg-primary text-white hover:bg-primary/80">
+            <Button
+              className="bg-primary text-white hover:bg-primary/80"
+              onClick={() => handleSubmit("Published")}
+            >
               <IconBrowserShare size={20} /> Publish
             </Button>
           </div>

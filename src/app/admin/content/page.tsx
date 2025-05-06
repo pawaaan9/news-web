@@ -12,31 +12,45 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
 import { ContentCard } from "@/modules/content/content-card";
-import { contentData } from "@/data/content";
 import { useRouter } from "next/navigation";
+import { ContentData, getContent } from "@/api/content.api";
 
 const ContentPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
+  const [contentData, setContentData] = useState<ContentData[]>([]);
   const router = useRouter();
 
-  const handleView = () => {
-    console.log("View clicked");
-  };
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await getContent();
+        if (
+          typeof response === "object" &&
+          response !== null &&
+          "status" in response &&
+          response.status === "success" &&
+          "data" in response &&
+          Array.isArray((response as { data: ContentData[] }).data)
+        ) {
+          setContentData((response as { data: ContentData[] }).data); // Set only the `data` field
+        } else {
+          setContentData([]); // Fallback to an empty array if data is not valid
+        }
+      } catch (error) {
+        console.error("Error fetching content:", error);
+      }
+    };
 
-  const handleEdit = () => {
-    console.log("Edit clicked");
-  };
-
-  const handleDelete = () => {
-    console.log("Delete clicked");
-  };
+    fetchContent();
+  }, []);
 
   return (
     <AdminLayout pageTitle="content">
@@ -158,21 +172,29 @@ const ContentPage = () => {
         </Button>
       </div>
 
-      {/* Content  */}
+      {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-        {contentData.map((content, index) => (
-          <ContentCard
-            key={index}
-            title={content.title}
-            author={content.author}
-            date={content.date}
-            category={content.category}
-            status={content.status}
-            onView={handleView}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
+        {Array.isArray(contentData) && contentData.length > 0 ? (
+          contentData.map((content, index) => (
+            <ContentCard
+              key={index}
+              title={content.headline1}
+              author={content.author || "-"}
+              date={
+                content.createdTime
+                  ? format(new Date(content.createdTime), "yyyy-MM-dd HH:mm") // Format date and time
+                  : "N/A"
+              }
+              category={content.category}
+              status={content.status}
+              onView={() => console.log("View clicked")}
+              onEdit={() => console.log("Edit clicked")}
+              onDelete={() => console.log("Delete clicked")}
+            />
+          ))
+        ) : (
+          <p>No content available</p>
+        )}
       </div>
     </AdminLayout>
   );
