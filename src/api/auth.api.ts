@@ -20,9 +20,9 @@ interface LoginResponse {
 interface User {
   id: string;
   fullname: string;
-  username:string;
+  username: string;
   email: string;
-  userRole:string;
+  userRole: string;
   // Add other fields returned by your API (excluding password)
 }
 
@@ -49,7 +49,6 @@ export const login = async (data: LoginData) => {
 // Get profile API call
 export const getProfile = async (): Promise<GetProfileResponse> => {
   const response = await axiosInstance.get<GetProfileResponse>("/auth/profile");
-  console.log(response.data?.data?.user);
   return response.data;
 };
 

@@ -13,9 +13,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState, useEffect } from "react";
-import { format, isAfter, isBefore, addDays } from "date-fns";
+import { format, isAfter, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { AdvertisementCard } from "@/modules/content/manage-ad-card";
+import withAuth from "@/hoc/with-auth";
 
 // Sample data for countries
 const countries = [
@@ -124,34 +125,38 @@ const AdvertisementPage = () => {
 
     // Filter by title
     if (searchTitle) {
-      results = results.filter(ad =>
+      results = results.filter((ad) =>
         ad.title.toLowerCase().includes(searchTitle.toLowerCase())
       );
     }
 
     // Filter by country
     if (selectedCountry) {
-      results = results.filter(ad => ad.country === selectedCountry);
+      results = results.filter((ad) => ad.country === selectedCountry);
     }
 
     // Filter by duration
     if (selectedDuration) {
-      results = results.filter(ad => ad.duration === selectedDuration);
+      results = results.filter((ad) => ad.duration === selectedDuration);
     }
 
     // Filter by start date
     if (startDate) {
-      results = results.filter(ad =>
-        isAfter(new Date(ad.startDate), startDate) || 
-        format(new Date(ad.startDate), 'yyyy-MM-dd') === format(startDate, 'yyyy-MM-dd')
+      results = results.filter(
+        (ad) =>
+          isAfter(new Date(ad.startDate), startDate) ||
+          format(new Date(ad.startDate), "yyyy-MM-dd") ===
+            format(startDate, "yyyy-MM-dd")
       );
     }
 
     // Filter by end date
     if (endDate) {
-      results = results.filter(ad =>
-        isBefore(new Date(ad.endDate), endDate) || 
-        format(new Date(ad.endDate), 'yyyy-MM-dd') === format(endDate, 'yyyy-MM-dd')
+      results = results.filter(
+        (ad) =>
+          isBefore(new Date(ad.endDate), endDate) ||
+          format(new Date(ad.endDate), "yyyy-MM-dd") ===
+            format(endDate, "yyyy-MM-dd")
       );
     }
 
@@ -178,7 +183,7 @@ const AdvertisementPage = () => {
   const handleDelete = (id: number) => {
     console.log("Delete advertisement ID:", id);
     // In a real app, you would call an API here and then update the state
-    setFilteredAds(filteredAds.filter(ad => ad.id !== id));
+    setFilteredAds(filteredAds.filter((ad) => ad.id !== id));
   };
 
   return (
@@ -361,7 +366,9 @@ const AdvertisementPage = () => {
           ))
         ) : (
           <div className="col-span-2 text-center py-10">
-            <p className="text-lg text-charcoal">No advertisements found matching your criteria</p>
+            <p className="text-lg text-charcoal">
+              No advertisements found matching your criteria
+            </p>
             <Button
               variant="link"
               className="text-primary mt-2"
@@ -376,4 +383,4 @@ const AdvertisementPage = () => {
   );
 };
 
-export default AdvertisementPage;
+export default withAuth(AdvertisementPage);

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { userRoles } from "@/data/user-roles";
 import { getUsers, deleteUser } from "../../../api/user.api";
 import { toast } from "react-hot-toast";
+import withAuth from "@/hoc/with-auth";
 
 export interface User {
   _id: string;
@@ -186,4 +187,4 @@ const AccountPage = () => {
   );
 };
 
-export default AccountPage;
+export default withAuth(AccountPage);

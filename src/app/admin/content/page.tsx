@@ -13,6 +13,7 @@ import { contentstatus } from "@/data/status";
 import { ContentCard } from "@/modules/content/content-card";
 import { useRouter } from "next/navigation";
 import { ContentData, deleteContent, getContent } from "@/api/content.api";
+import withAuth from "@/hoc/with-auth";
 
 const ContentPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -171,7 +172,7 @@ const ContentPage = () => {
               key={index}
               headlineImage={content.headlineImage}
               title={content.headline1}
-              author={content.author || "-"}
+              author={content.author}
               date={
                 content.createdTime
                   ? format(new Date(content.createdTime), "yyyy-MM-dd HH:mm") // Format date and time
@@ -194,4 +195,4 @@ const ContentPage = () => {
   );
 };
 
-export default ContentPage;
+export default withAuth(ContentPage);

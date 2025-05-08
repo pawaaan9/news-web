@@ -6,15 +6,16 @@ import AdminLayout from "../admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IconCirclePlus, IconEdit, IconTrash } from "@tabler/icons-react";
-import { 
-  getKeywords, 
-  createKeyword, 
-  updateKeyword, 
-  deleteKeyword, 
-  KeywordData 
+import {
+  getKeywords,
+  createKeyword,
+  updateKeyword,
+  deleteKeyword,
+  KeywordData,
 } from "../../../api/keywords.api";
 import { categories } from "@/data/categories";
 import { toast } from "react-hot-toast";
+import withAuth from "@/hoc/with-auth";
 
 interface Keyword {
   _id: string;
@@ -41,8 +42,16 @@ const KeywordsPage = () => {
     try {
       setIsLoading(true);
       const response = await getKeywords();
-      if (typeof response === 'object' && response !== null && 'status' in response && response.status === 'success') {
-        setKeywords((response as unknown as { data: { keywords: Keyword[] } }).data.keywords);
+      if (
+        typeof response === "object" &&
+        response !== null &&
+        "status" in response &&
+        response.status === "success"
+      ) {
+        setKeywords(
+          (response as unknown as { data: { keywords: Keyword[] } }).data
+            .keywords
+        );
       }
     } catch (error) {
       toast.error("Failed to load keywords");
@@ -65,9 +74,9 @@ const KeywordsPage = () => {
 
     try {
       setIsSaving(true);
-      const keywordData: KeywordData = { 
+      const keywordData: KeywordData = {
         keyword: newKeyword.trim(),
-        category: selectedCategory
+        category: selectedCategory,
       };
 
       if (currentKeywordId) {
@@ -81,7 +90,9 @@ const KeywordsPage = () => {
       fetchKeywords();
       resetForm();
     } catch (error) {
-      toast.error(currentKeywordId ? "Failed to update keyword" : "Failed to add keyword");
+      toast.error(
+        currentKeywordId ? "Failed to update keyword" : "Failed to add keyword"
+      );
       console.error("Error saving keyword:", error);
     } finally {
       setIsSaving(false);
@@ -120,9 +131,13 @@ const KeywordsPage = () => {
     setIsModalOpen(false);
   };
 
-  const filteredKeywords = keywords.filter(keyword => {
-    const matchesSearch = keyword.keyword.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory ? keyword.category === filterCategory : true;
+  const filteredKeywords = keywords.filter((keyword) => {
+    const matchesSearch = keyword.keyword
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory
+      ? keyword.category === filterCategory
+      : true;
     return matchesSearch && matchesCategory;
   });
 
@@ -170,9 +185,9 @@ const KeywordsPage = () => {
           <div className="overflow-x-auto">
             {filteredKeywords.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                {keywords.length === 0 ? 
-                  "No keywords found. Add your first keyword!" : 
-                  "No keywords match your filters"}
+                {keywords.length === 0
+                  ? "No keywords found. Add your first keyword!"
+                  : "No keywords match your filters"}
               </div>
             ) : (
               <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -236,17 +251,21 @@ const KeywordsPage = () => {
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Enter keyword"
                 className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 w-full"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword()}
+                onKeyDown={(e) => e.key === "Enter" && handleAddKeyword()}
               />
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Category
+              </label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary sm:text-sm"
               >
-                <option value="" disabled>Select a category</option>
+                <option value="" disabled>
+                  Select a category
+                </option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
                     {category}
@@ -268,7 +287,11 @@ const KeywordsPage = () => {
                 className="bg-primary text-white hover:bg-primary/80"
                 disabled={isSaving || !newKeyword.trim() || !selectedCategory}
               >
-                {isSaving ? (currentKeywordId ? "Updating..." : "Saving...") : "Save"}
+                {isSaving
+                  ? currentKeywordId
+                    ? "Updating..."
+                    : "Saving..."
+                  : "Save"}
               </Button>
             </div>
           </div>
@@ -278,4 +301,4 @@ const KeywordsPage = () => {
   );
 };
 
-export default KeywordsPage;
+export default withAuth(KeywordsPage);

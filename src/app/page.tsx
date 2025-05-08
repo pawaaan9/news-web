@@ -1,69 +1,18 @@
 import NavBar from "../components/navbar";
 import NewsCard from "../components/news-card";
-import Trump from "../assets/images/sample-news.jpg";
 import AdCard from "@/components/ad-card";
 import adImage from "../assets/images/ad-card.jpg";
-import Politics from "../assets/images/sample-news.jpg";
-import Technology from "../assets/images/sample-news.jpg";
-import Sports from "../assets/images/sample-news.jpg";
 import Footer from "@/components/footer";
+import { getContent } from "@/api/content.api";
+import { formatDistanceToNow } from "date-fns";
 
-export default function Home() {
-  const newsItems = [
-    {
-      id: "1",
-      image: Trump,
-      category: "විදෙස්",
-      title:
-        "ට්‍රම්ප් හාවර්ඩ් ඇතුළු ඇමෙරිකානු විශ්වවිද්‍යාල සඳහා අරමුදල් කපා දැමීමට සැරසෙන්නේ ඇයි?",
-      author: "බීබීසී ලෝක සේවය",
-      date: "17 අප්‍රේල් 2025",
-    },
-    {
-      id: "2",
-      image: Politics,
-      category: "දේශපාලන",
-      title:
-        "ජනාධිපතිවරණ කිට්ටු වන විට ප්‍රධාන පක්ෂ නව සන්ධාන ගොඩනැගීමට සූදානම් වෙයි",
-      author: "ලක්බිම පුවත්",
-      date: "16 අප්‍රේල් 2025",
-    },
-    {
-      id: "3",
-      image: Technology,
-      category: "තාක්ෂණික",
-      title: "ශ්‍රී ලංකාවේ නිපදවූ නව AI තාක්ෂණය ජාත්‍යන්තර සම්මාන දිනා ගනී",
-      author: "දිනමිණ",
-      date: "15 අප්‍රේල් 2025",
-    },
-    {
-      id: "4",
-      image: Sports,
-      category: "ක්‍රීඩා",
-      title:
-        "ශ්‍රී ලංකා ක්‍රිකට් කණ්ඩායම නව පුහුණුකරුවෙකු යටතේ අභියෝගාත්මක සංචාරයකට සූදානම් වෙයි",
-      author: "ලංකාදීප",
-      date: "14 අප්‍රේල් 2025",
-    },
-    {
-      id: "5",
-      image: Trump,
-      category: "ආර්ථික",
-      title: "රුපියලේ වටිනාකම ගෙවීමේ ශේෂය වැඩි කිරීමට මහ බැංකුව තීරණය කරයි",
-      author: "ආර්ථික පුවත්",
-      date: "13 අප්‍රේල් 2025",
-    },
-    {
-      id: "6",
-      image: Politics,
-      category: "සෞඛ්‍ය",
-      title:
-        "නව කොරෝනා වෛරස් ප්‍රභේදයක් හඳුනාගෙන ඇති බව සෞඛ්‍ය අමාත්‍යාංශය තහවුරු කරයි",
-      author: "සෞඛ්‍ය පුවත්",
-      date: "12 අප්‍රේල් 2025",
-    },
-  ];
+export default async function Home() {
+  // Fetch news items from the API
+  const response = await getContent();
+  const newsItems = response.data;
+  console.log("News Items:", newsItems); // Log the fetched news items
 
+  // Use static adItems for now
   const adItems = [
     {
       id: "ad1",
@@ -86,6 +35,7 @@ export default function Home() {
     },
   ];
 
+  // Combine news and ads in the "3 news and 1 ad" structure
   const combinedItems = [];
   let newsIndex = 0;
   let adIndex = 0;
@@ -116,20 +66,22 @@ export default function Home() {
           {combinedItems.map((item) =>
             item.type === "news" ? (
               <NewsCard
-                key={item.data.id}
-                id={item.data.id}
-                image={item.data.image}
-                category={"category" in item.data ? item.data.category : ""}
-                title={item.data.title}
-                author={"author" in item.data ? item.data.author : ""}
-                date={"date" in item.data ? item.data.date : "N/A"}
+                key={item.data._id}
+                id={item.data._id}
+                image={item.data.headlineImage}
+                category={item.data.category || ""}
+                title={item.data.headline1 || ""}
+                author={item.data.author}
+                date={formatDistanceToNow(new Date(item.data.createdTime), {
+                  addSuffix: true, // Adds "ago" at the end
+                })}
               />
             ) : (
               <AdCard
                 key={item.data.id}
                 image={item.data.image}
                 title={item.data.title}
-                brand={"brand" in item.data ? item.data.brand : ""}
+                brand={item.data.brand || ""}
               />
             )
           )}

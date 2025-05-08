@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { getProfile, resetPassword } from "@/api/auth.api";
-import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import withAuth from "@/hoc/with-auth";
 
 interface User {
   id: string;
@@ -53,7 +54,7 @@ const ProfilePage = () => {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        toast.success('Password Reset Successfully', {
+        toast.success("Password Reset Successfully", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -63,11 +64,11 @@ const ProfilePage = () => {
           progress: undefined,
           theme: "light",
           transition: Bounce,
-          });
+        });
         console.log(result);
       } catch (error) {
         console.error("❌ Reset failed:", error);
-        toast.error('Failed to Reset Password', {
+        toast.error("Failed to Reset Password", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -77,7 +78,7 @@ const ProfilePage = () => {
           progress: undefined,
           theme: "light",
           transition: Bounce,
-          });
+        });
       }
     } else {
       alert("Passwords do not match!");
@@ -225,22 +226,22 @@ const ProfilePage = () => {
             Save Password
           </Button>
           <ToastContainer
-position="top-center"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick={false}
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-transition={Bounce}
-/>
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+          />
         </div>
       </div>
     </AdminLayout>
   );
 };
 
-export default ProfilePage;
+export default withAuth(ProfilePage);
