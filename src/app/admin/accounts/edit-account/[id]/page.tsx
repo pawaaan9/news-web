@@ -17,6 +17,7 @@ import {
 import { toast } from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
 import { User } from "../../page";
+import withAuth from "@/hoc/with-auth";
 
 interface UserFormData {
   fullname: string;
@@ -278,4 +279,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
+export default withAuth(EditUser);

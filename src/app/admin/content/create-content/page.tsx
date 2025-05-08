@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { InputText } from "@/modules/shared/input-text";
 import { categories } from "@/data/categories";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import KeywordsInput from "@/modules/content/keyword-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,8 @@ import {
 import { LabelText } from "@/modules/shared/label-text";
 import { ContentBlock, submitContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
+import { getProfile } from "@/api/auth.api";
+import withAuth from "@/hoc/with-auth";
 
 const CreateContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -32,6 +34,7 @@ const CreateContent = () => {
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
     { type: "paragraph", id: 1 },
   ]);
+  const [author, setAuthor] = useState<string>("");
   const router = useRouter();
 
   const handleCategoryChange = (category: string) => {
@@ -84,11 +87,27 @@ const CreateContent = () => {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getProfile(); // ✅ now correctly typed
+        setAuthor(result.data.user.username);
+        console.log("Author fetched:", result.data.user.username);
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleSubmit = async (status: "Draft" | "Published") => {
     if (!selectedCategory) {
       alert("Category is required.");
       return;
     }
+    console.log("Author before submission:", author);
+
     try {
       await submitContent({
         headline1,
@@ -100,6 +119,7 @@ const CreateContent = () => {
         status,
         headlineImage,
         contentBlocks,
+        author,
       });
 
       router.push("/admin/content"); // Redirect to the content page after submission
@@ -151,6 +171,9 @@ const CreateContent = () => {
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
+            <p className="text-sm text-charcoal/60 mt-1">
+              {headline1.length}/40 characters
+            </p>
           </div>
           <div>
             <InputText text="Headline 2 (max 60 characters)" />
@@ -178,6 +201,9 @@ const CreateContent = () => {
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
+            <p className="text-sm text-charcoal/60 mt-1">
+              {headline2.length}/60 characters
+            </p>
           </div>
           <div>
             <InputText text="Headline 3 (Optional)" />
@@ -208,6 +234,7 @@ const CreateContent = () => {
               type="text"
               id="url"
               value={url}
+              readOnly
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
           </div>
@@ -217,6 +244,7 @@ const CreateContent = () => {
             <Input
               onChange={(e) => setHeadlineImage(e.target.files?.[0] || null)}
               type="file"
+              accept="image/*"
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
           </div>
@@ -330,12 +358,12 @@ const CreateContent = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4 mt-4">
-            <Button className="bg-accent-teal text-white hover:bg-accent-teal/80">
+            <Button className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer">
               <IconEye size={20} />
               Preview
             </Button>
             <Button
-              className="bg-white text-primary border-primary border hover:bg-primary/10"
+              className="bg-white text-primary border-primary border hover:bg-primary/10 cursor-pointer"
               variant="outline"
               onClick={() => handleSubmit("Draft")}
             >
@@ -343,7 +371,7 @@ const CreateContent = () => {
               Save as Draft
             </Button>
             <Button
-              className="bg-primary text-white hover:bg-primary/80"
+              className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
               onClick={() => handleSubmit("Published")}
             >
               <IconBrowserShare size={20} /> Publish
@@ -355,4 +383,4 @@ const CreateContent = () => {
   );
 };
 
-export default CreateContent;
+export default withAuth(CreateContent);

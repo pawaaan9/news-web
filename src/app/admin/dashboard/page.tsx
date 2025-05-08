@@ -1,3 +1,5 @@
+"use client";
+
 import { StatCard } from "@/modules/dashboard/stat-card";
 import AdminLayout from "../admin-layout";
 import { Button } from "@/components/ui/button";
@@ -7,6 +9,7 @@ import {
   IconNews,
   IconTablePlus,
 } from "@tabler/icons-react";
+import withAuth from "@/hoc/with-auth";
 
 const DashboardPage = () => {
   return (
@@ -52,4 +55,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default withAuth(DashboardPage);

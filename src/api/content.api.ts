@@ -34,6 +34,7 @@ export const submitContent = async (content: {
   headline2: string;
   headline3: string;
   url: string;
+  author: string;
   category: string | null;
   keywords: string[];
   status: "Draft" | "Published";
@@ -61,6 +62,7 @@ export const submitContent = async (content: {
   formData.append("category", content.category || "");
   formData.append("keywords", JSON.stringify(content.keywords));
   formData.append("status", content.status);
+  formData.append("author", content.author || "");
 
   // Add headline image
   if (content.headlineImage) {

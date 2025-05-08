@@ -12,6 +12,7 @@ import { categories } from "@/data/categories";
 import { createUser } from "../../../../api/user.api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import withAuth from "@/hoc/with-auth";
 
 const AddUser = () => {
   const router = useRouter();
@@ -35,14 +36,23 @@ const AddUser = () => {
 
   const handleCategoryChange = (category: string) => {
     if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter((item) => item !== category));
+      setSelectedCategories(
+        selectedCategories.filter((item) => item !== category)
+      );
     } else {
       setSelectedCategories([...selectedCategories, category]);
     }
   };
 
   const handleSubmit = async () => {
-    if (!fullname || !username || !email || !password || !selectedRole || selectedCategories.length === 0) {
+    if (
+      !fullname ||
+      !username ||
+      !email ||
+      !password ||
+      !selectedRole ||
+      selectedCategories.length === 0
+    ) {
       toast.error("Please fill all required fields.");
       return;
     }
@@ -135,7 +145,10 @@ const AddUser = () => {
             <InputText text="User role" />
             <div className="mt-2 grid grid-cols-2">
               {userRoles.map((role, index) => (
-                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
+                <label
+                  key={index}
+                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
+                >
                   <input
                     type="radio"
                     name="role"
@@ -155,7 +168,10 @@ const AddUser = () => {
             <InputText text="Assign category (Select at least 1)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
-                <label key={index} className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]">
+                <label
+                  key={index}
+                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
+                >
                   <input
                     type="checkbox"
                     value={category}
@@ -170,7 +186,11 @@ const AddUser = () => {
           </div>
 
           {/* Submit button */}
-          <Button className="bg-primary text-white hover:bg-primary/80" onClick={handleSubmit} disabled={loading}>
+          <Button
+            className="bg-primary text-white hover:bg-primary/80"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
             {loading ? "Saving..." : "Save"}
           </Button>
         </div>
@@ -179,4 +199,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default withAuth(AddUser);
