@@ -13,12 +13,30 @@ import { formatDistanceToNow } from "date-fns";
 export default function Home() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
-  
+
   const [isLoading, setIsLoading] = useState(true);
-  const [newsItems, setNewsItems] = useState<{ _id: string; headlineImage: string; category?: string; headline1?: string; author: string; createdTime: string }[]>([]);
-  const [filteredItems, setFilteredItems] = useState<{ _id: string; headlineImage: string; category?: string; headline1?: string; author: string; createdTime: string }[]>([]);
+  const [newsItems, setNewsItems] = useState<
+    {
+      _id: string;
+      headlineImage: string;
+      category?: string;
+      headline1?: string;
+      author: string;
+      createdTime: string;
+    }[]
+  >([]);
+  const [filteredItems, setFilteredItems] = useState<
+    {
+      _id: string;
+      headlineImage: string;
+      category?: string;
+      headline1?: string;
+      author: string;
+      createdTime: string;
+    }[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Static ad items (would ideally come from an API)
   const adItems = [
     {
@@ -48,6 +66,7 @@ export default function Home() {
       try {
         setIsLoading(true);
         const response = await getContent();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setNewsItems((response as { data: any[] }).data);
         setError(null);
       } catch (err) {
@@ -57,20 +76,22 @@ export default function Home() {
         setIsLoading(false);
       }
     }
-    
+
     fetchData();
   }, []);
 
   // Filter news based on selected category
   useEffect(() => {
     if (newsItems.length === 0) return;
-    
+
     if (!categoryParam || categoryParam === "Home") {
       // Show all news if no category is selected or Home is selected
       setFilteredItems(newsItems);
     } else {
       // Filter news by category
-      const filtered = newsItems.filter(item => item.category === categoryParam);
+      const filtered = newsItems.filter(
+        (item) => item.category === categoryParam
+      );
       setFilteredItems(filtered);
     }
   }, [categoryParam, newsItems]);
@@ -118,7 +139,9 @@ export default function Home() {
           <div className="text-center py-10">
             <h2 className="text-xl font-semibold mb-2">No news available</h2>
             <p className="text-gray-600">
-              {categoryParam ? `No news found in the "${categoryParam}" category.` : "No news articles available at this time."}
+              {categoryParam
+                ? `No news found in the "${categoryParam}" category.`
+                : "No news articles available at this time."}
             </p>
           </div>
         ) : (
@@ -130,11 +153,21 @@ export default function Home() {
               {combinedItems.map((item, index) =>
                 item.type === "news" ? (
                   <NewsCard
-                    key={`${"id" in item.data ? item.data.id : item.data._id}-${index}`}
+                    key={`${
+                      "id" in item.data ? item.data.id : item.data._id
+                    }-${index}`}
                     id={"_id" in item.data ? item.data._id : ""}
-                    image={"headlineImage" in item.data ? item.data.headlineImage : ""}
-                    category={"category" in item.data ? item.data.category || "" : ""}
-                    title={"headline1" in item.data ? item.data.headline1 || "" : ""}
+                    image={
+                      "headlineImage" in item.data
+                        ? item.data.headlineImage
+                        : ""
+                    }
+                    category={
+                      "category" in item.data ? item.data.category || "" : ""
+                    }
+                    title={
+                      "headline1" in item.data ? item.data.headline1 || "" : ""
+                    }
                     author={"author" in item.data ? item.data.author : ""}
                     date={
                       "createdTime" in item.data
@@ -146,8 +179,15 @@ export default function Home() {
                   />
                 ) : (
                   <AdCard
-                    key={`${"id" in item.data ? item.data.id : item.data._id}-${index}`}
-                    image={"image" in item.data && typeof item.data.image !== "string" ? item.data.image : adImage}
+                    key={`${
+                      "id" in item.data ? item.data.id : item.data._id
+                    }-${index}`}
+                    image={
+                      "image" in item.data &&
+                      typeof item.data.image !== "string"
+                        ? item.data.image
+                        : adImage
+                    }
                     title={"title" in item.data ? item.data.title : ""}
                     brand={"brand" in item.data ? item.data.brand : ""}
                   />

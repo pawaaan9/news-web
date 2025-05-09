@@ -22,9 +22,13 @@ export interface ContentBlock {
   file?: File;
 }
 
+interface ContentResponse {
+  data: ContentData[];
+}
+
 // Get all content
-export const getContent = async () => {
-  const response = await axiosInstance.get("/content");
+export const getContent = async (): Promise<ContentResponse> => {
+  const response = await axiosInstance.get<ContentResponse>("/content");
   return response.data;
 };
 

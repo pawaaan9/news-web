@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { format, isAfter, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { AdvertisementCard } from "@/modules/content/manage-ad-card";
@@ -116,11 +116,7 @@ const AdvertisementPage = () => {
   const [filteredAds, setFilteredAds] = useState(advertisementData);
   const router = useRouter();
 
-  useEffect(() => {
-    filterAdvertisements();
-  }, [searchTitle, selectedCountry, selectedDuration, startDate, endDate]);
-
-  const filterAdvertisements = () => {
+  const filterAdvertisements = useCallback(() => {
     let results = advertisementData;
 
     // Filter by title
@@ -161,7 +157,11 @@ const AdvertisementPage = () => {
     }
 
     setFilteredAds(results);
-  };
+  }, [searchTitle, selectedCountry, selectedDuration, startDate, endDate]);
+
+  useEffect(() => {
+    filterAdvertisements();
+  }, [filterAdvertisements]);
 
   const clearFilters = () => {
     setSearchTitle("");
@@ -182,7 +182,6 @@ const AdvertisementPage = () => {
 
   const handleDelete = (id: number) => {
     console.log("Delete advertisement ID:", id);
-    // In a real app, you would call an API here and then update the state
     setFilteredAds(filteredAds.filter((ad) => ad.id !== id));
   };
 
