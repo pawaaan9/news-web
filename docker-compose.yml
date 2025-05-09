@@ -1,0 +1,7 @@
+services:
+  travel-yonka-guest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3045:3000"

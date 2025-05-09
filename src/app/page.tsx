@@ -3,14 +3,26 @@ import NewsCard from "../components/news-card";
 import AdCard from "@/components/ad-card";
 import adImage from "../assets/images/ad-card.jpg";
 import Footer from "@/components/footer";
-import { getContent } from "@/api/content.api";
+import { ContentData, getContent } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
+import { StaticImageData } from "next/image";
+
+type CombinedItem =
+  | { type: "news"; data: ContentData }
+  | {
+      type: "ad";
+      data: {
+        id: string;
+        image: StaticImageData;
+        title: string;
+        brand: string;
+      };
+    };
 
 export default async function Home() {
   // Fetch news items from the API
   const response = await getContent();
   const newsItems = response.data;
-  console.log("News Items:", newsItems); // Log the fetched news items
 
   // Use static adItems for now
   const adItems = [
@@ -36,7 +48,7 @@ export default async function Home() {
   ];
 
   // Combine news and ads in the "3 news and 1 ad" structure
-  const combinedItems = [];
+  const combinedItems: CombinedItem[] = [];
   let newsIndex = 0;
   let adIndex = 0;
 
