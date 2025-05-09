@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import { Menu, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
 import logo from "../assets/images/logo.png";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const mainNavItems = [
   "Home",
@@ -27,10 +28,34 @@ const additionalNavItems = [
 ];
 
 export default function NavBar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [active, setActive] = useState("Home");
+  const [active, setActive] = useState(categoryParam || "Home");
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [showMobileMore, setShowMobileMore] = useState(false);
+
+  // Update active state when URL parameter changes
+  useEffect(() => {
+    if (categoryParam) {
+      setActive(categoryParam);
+    } else {
+      setActive("Home");
+    }
+  }, [categoryParam]);
+
+  const handleCategoryClick = (category: string) => {
+    setActive(category);
+    if (category === "Home") {
+      router.push("/");
+    } else {
+      router.push(`/?category=${encodeURIComponent(category)}`);
+    }
+    setMobileMenuOpen(false);
+    setShowMoreDropdown(false);
+  };
 
   return (
     <div className="w-full bg-primary text-white">
@@ -38,7 +63,7 @@ export default function NavBar() {
 
       {/* Top Section with Logo and Ad (Desktop) */}
       <div className="flex items-center justify-between px-4 py-3 lg:px-[10%]">
-        <div className="text-lg font-bold">
+        <div className="text-lg font-bold" onClick={() => handleCategoryClick("Home")} style={{ cursor: 'pointer' }}>
           <Image
             src={logo}
             alt="Website Logo"
@@ -52,14 +77,6 @@ export default function NavBar() {
         <div className="hidden lg:block w-[970px] h-[90px] bg-gray-300 relative">
           <div className="w-full h-full flex items-center justify-center">
             <p className="text-gray-500">970×90 Desktop Ad</p>
-            {/* Replace with your actual ad component */}
-            {/* <Image 
-              src="/desktop-ad.jpg" 
-              alt="Desktop Advertisement"
-              width={970}
-              height={90}
-              className="object-contain"
-            /> */}
           </div>
           {/* Ad label */}
           <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
@@ -82,7 +99,7 @@ export default function NavBar() {
           {mainNavItems.map((item) => (
             <button
               key={item}
-              onClick={() => setActive(item)}
+              onClick={() => handleCategoryClick(item)}
               className={`px-3 py-1 text-sm ${
                 active === item
                   ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
@@ -98,7 +115,7 @@ export default function NavBar() {
             <button
               onClick={() => setShowMoreDropdown(!showMoreDropdown)}
               className={`px-3 py-1 text-sm flex items-center ${
-                showMoreDropdown
+                additionalNavItems.includes(active)
                   ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
                   : ""
               }`}
@@ -111,10 +128,7 @@ export default function NavBar() {
                 {additionalNavItems.map((item) => (
                   <button
                     key={item}
-                    onClick={() => {
-                      setActive(item);
-                      setShowMoreDropdown(false);
-                    }}
+                    onClick={() => handleCategoryClick(item)}
                     className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal ${
                       active === item ? "bg-charcoal font-semibold" : ""
                     }`}
@@ -160,14 +174,6 @@ export default function NavBar() {
           <div className="w-[92%] h-20 bg-gray-300 mx-4 mb-2 relative">
             <div className="w-full h-full flex items-center justify-center">
               <p className="text-gray-500">Mobile Ad</p>
-              {/* Replace with your actual ad component */}
-              {/* <Image 
-                src="/mobile-ad.jpg" 
-                alt="Mobile Advertisement"
-                width={320}
-                height={80}
-                className="object-contain"
-              /> */}
             </div>
             {/* Ad label */}
             <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
@@ -183,10 +189,7 @@ export default function NavBar() {
                 className={`px-4 py-3 text-sm font-medium ${
                   active === item ? "bg-primary text-white" : ""
                 }`}
-                onClick={() => {
-                  setActive(item);
-                  setMobileMenuOpen(false);
-                }}
+                onClick={() => handleCategoryClick(item)}
               >
                 {item}
               </div>
@@ -214,10 +217,7 @@ export default function NavBar() {
                       className={`px-4 py-3 text-sm font-medium ${
                         active === item ? "bg-[#0A3552] text-white" : ""
                       }`}
-                      onClick={() => {
-                        setActive(item);
-                        setMobileMenuOpen(false);
-                      }}
+                      onClick={() => handleCategoryClick(item)}
                     >
                       {item}
                     </div>
