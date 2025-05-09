@@ -1,5 +1,5 @@
 services:
-  travel-yonka-guest:
+  news-web-frontend:
     build:
       context: .
       dockerfile: Dockerfile
