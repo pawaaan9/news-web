@@ -4,61 +4,63 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import NavBar from "../../../components/navbar";
 import AdCard from "../../../components/ad-card";
+import NewsCard from "../../../components/news-card";
 import adImage from "@/assets/images/ad-card.jpg";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getContentById, getContent } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 
+interface NewsItem {
+  _id: string;
+  category: string;
+  headline1: string;
+  headline2?: string;
+  headline3?: string;
+  contentBlocks?: {
+    data: boolean | string;
+    type: string;
+    content?: string;
+  }[];
+  headlineImage?: string;
+  author: string;
+  createdTime: string;
+}
+
 export default function NewsView() {
   const params = useParams();
-  const id = params.id as string; // Get the "id" from the dynamic route
+  const id = params.id as string;
 
   const [article, setArticle] = useState<NewsItem | null>(null);
-  interface NewsItem {
-    _id: string;
-    category: string;
-    headline1: string;
-    headline2?: string;
-    contentBlocks?: {
-      data: boolean;
-      type: string;
-      content?: string;
-    }[];
-    headlineImage?: string;
-    author: string;
-    createdTime: string;
-  }
-
-  const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
+  const [, setRelatedNews] = useState<NewsItem[]>([]);
+  const [additionalNews, setAdditionalNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch the article and related news
   useEffect(() => {
     async function fetchData() {
       try {
         setIsLoading(true);
-        // Fetch the current article
         const articleData = (await getContentById(id)) as { data: NewsItem };
         setArticle(articleData.data);
 
-        // Fetch all news to find related ones (same category)
         const allNewsResponse = await getContent();
-        const allNews = (allNewsResponse as unknown as { data: NewsItem[] })
-          .data;
+        const allNews = (allNewsResponse as unknown as { data: NewsItem[] }).data;
 
-        // Filter related news (same category, excluding current article)
-        if (articleData.data && articleData.data.category) {
+        if (articleData.data?.category) {
           const related = allNews
             .filter(
               (item) =>
                 item.category === articleData.data.category && item._id !== id
             )
-            .slice(0, 2); // Get only 2 related articles
-
+            .slice(0, 2);
           setRelatedNews(related);
         }
+
+        const additional = allNews
+          .filter((item) => item._id !== id)
+          .slice(0, 9);
+        setAdditionalNews(additional);
 
         setError(null);
       } catch (err) {
@@ -69,45 +71,33 @@ export default function NewsView() {
       }
     }
 
-    if (id) {
-      fetchData();
-    }
+    if (id) fetchData();
   }, [id]);
 
-  // Loading state
   if (isLoading) {
     return (
       <main>
         <NavBar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="text-center py-10">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p>පුවත් ලිපිය ලබා ගැනීමට...</p>
-          </div>
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>පුවත් ලිපිය ලබා ගැනීමට...</p>
         </div>
       </main>
     );
   }
 
-  // Error state
   if (error || !article) {
     return (
       <main>
         <NavBar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="text-center py-10 text-red-500">
-            {error || "පුවත් ලිපිය සොයා ගත නොහැක"}
-          </div>
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-red-500">
+          {error || "පුවත් ලිපිය සොයා ගත නොහැක"}
         </div>
       </main>
     );
   }
 
-  // Get the content blocks (paragraphs) from the article
   const contentBlocks = article.contentBlocks || [];
-  const paragraphs = contentBlocks
-    .filter((block) => block.type === "paragraph")
-    .map((block) => block.content || "");
 
   return (
     <main>
@@ -118,17 +108,15 @@ export default function NewsView() {
           <Link href="/" className="text-blue-500 hover:underline">
             Home
           </Link>{" "}
-          &gt;
+          &gt;{" "}
           <Link
             href={`/?category=${article.category}`}
-            className="text-blue-500 hover:underline ml-1"
+            className="text-blue-500 hover:underline"
           >
             {article.category}
           </Link>{" "}
-          &gt;
-          <span className="text-gray-700 ml-1">
-            {article.headline1?.substring(0, 20)}...
-          </span>
+          &gt;{" "}
+          <span className="text-gray-700">{article.headline1?.slice(0, 30)}...</span>
         </div>
 
         {/* Article Header */}
@@ -138,7 +126,7 @@ export default function NewsView() {
           </span>
           <h1 className="text-2xl font-bold mb-2">{article.headline1}</h1>
           <div className="flex items-center text-sm text-gray-600 mb-4">
-            <span className="font-medium">{article.author}</span> විසින් •{" "}
+            <span className="font-medium">{article.author}</span> •{" "}
             {formatDistanceToNow(new Date(article.createdTime), {
               addSuffix: true,
             })}
@@ -146,8 +134,8 @@ export default function NewsView() {
         </div>
 
         {/* Featured Image */}
-        <div className="relative w-full h-80 mb-6 rounded-lg overflow-hidden">
-          {article.headlineImage && (
+        {article.headlineImage && (
+          <div className="relative w-full h-80 mb-6 rounded-lg overflow-hidden">
             <Image
               src={article.headlineImage}
               alt={article.headline1}
@@ -155,51 +143,44 @@ export default function NewsView() {
               className="object-cover"
               priority
             />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Article Content */}
         <div className="prose max-w-none mb-8">
-          {/* Display headline2 as a subheading if available */}
           {article.headline2 && (
             <h2 className="text-xl font-semibold mb-4">{article.headline2}</h2>
           )}
-
-          {/* Display headline3 as a secondary subheading if available */}
-          {article.headline1 && (
-            <h3 className="text-lg font-medium mb-3">{article.headline1}</h3>
+          {article.headline3 && (
+            <h3 className="text-lg font-medium mb-3">{article.headline3}</h3>
           )}
 
-          {/* Display content blocks */}
           {contentBlocks.length > 0
             ? contentBlocks.map((block, index) => {
                 if (block.type === "paragraph") {
                   return (
-                    <p
-                      key={index}
-                      className="mb-4 text-gray-800 leading-relaxed"
-                    >
+                    <p key={index} className="mb-4 text-gray-800 leading-relaxed">
                       {block.content}
                     </p>
                   );
-                } else if (block.type === "image" && block.data) {
+                } else if (block.type === "image" && typeof block.data === "string") {
                   return (
                     <div key={index} className="relative w-full h-64 my-6">
                       <Image
-                        src={typeof block.data === "string" ? block.data : ""}
+                        src={block.data}
                         alt={`Image ${index + 1}`}
                         fill
                         className="object-contain"
                       />
                     </div>
                   );
-                } else if (block.type === "video" && block.data) {
+                } else if (block.type === "video" && typeof block.data === "string") {
                   return (
                     <div key={index} className="my-6">
                       <iframe
                         width="100%"
                         height="315"
-                        src={typeof block.data === "string" ? block.data : ""}
+                        src={block.data}
                         title={`Video ${index + 1}`}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -210,12 +191,7 @@ export default function NewsView() {
                 }
                 return null;
               })
-            : // If no content blocks, display the paragraphs
-              paragraphs.map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-800 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
+            : null}
         </div>
 
         {/* Advertisement */}
@@ -227,53 +203,25 @@ export default function NewsView() {
           />
         </div>
 
-        {/* Related News */}
-        {relatedNews.length > 0 && (
-          <div className="mt-10">
-            <h2 className="text-xl font-bold mb-4">තවත් පුවත්</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {relatedNews.map((news) => (
-                <Link href={`/news/${news._id}`} key={news._id} passHref>
-                  <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow duration-300">
-                    <div className="relative w-full h-40">
-                      {news.headlineImage && (
-                        <Image
-                          src={news.headlineImage}
-                          alt={news.headline1}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
-                      <div className="absolute top-2 right-2 bg-white/80 text-xs px-2 py-0.5 rounded">
-                        {news.category}
-                      </div>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="text-sm font-semibold mb-1 leading-snug">
-                        {news.headline1}
-                      </h3>
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-3">
-                        {news.headline2 ||
-                          (news.contentBlocks &&
-                          news.contentBlocks[0]?.type === "paragraph"
-                            ? news.contentBlocks[0].content?.substring(0, 100) +
-                              "..."
-                            : "")}
-                      </p>
-                      <div className="text-[10px] text-gray-500">
-                        <span className="font-medium">{news.author}</span>{" "}
-                        විසින් •{" "}
-                        {formatDistanceToNow(new Date(news.createdTime), {
-                          addSuffix: true,
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* Additional News */}
+        <div className="my-8">
+          <h2 className="text-xl font-bold mb-4">More News</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {additionalNews.map((news) => (
+              <NewsCard
+                key={news._id}
+                id={news._id}
+                image={news.headlineImage || "/fallback-image.jpg"}
+                category={news.category}
+                title={news.headline1}
+                author={news.author}
+                date={formatDistanceToNow(new Date(news.createdTime), {
+                  addSuffix: true,
+                })}
+              />
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </main>
   );
