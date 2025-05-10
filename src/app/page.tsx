@@ -1,44 +1,36 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import NavBar from "../components/navbar";
-import NewsCard from "../components/news-card";
-import AdCard from "@/components/ad-card";
-import adImage from "../assets/images/ad-card.jpg";
-import Footer from "@/components/footer";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getContent } from "@/api/content.api";
+import NavBar from "@/components/navbar";
+import NewsCard from "@/components/news-card";
+import AdCard from "@/components/ad-card";
+import Footer from "@/components/footer";
+import adImage from "@/assets/images/ad-card.jpg";
 import { formatDistanceToNow } from "date-fns";
 import { Suspense } from "react";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { category?: string };
+}) {
+  const categoryParam = searchParams?.category;
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [newsItems, setNewsItems] = useState<
-    {
-      _id: string;
-      headlineImage: string;
-      category?: string;
-      headline1?: string;
-      author: string;
-      createdTime: string;
-    }[]
-  >([]);
-  const [filteredItems, setFilteredItems] = useState<
-    {
-      _id: string;
-      headlineImage: string;
-      category?: string;
-      headline1?: string;
-      author: string;
-      createdTime: string;
-    }[]
-  >([]);
-  const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let newsItems: any[] = [];
+  let error = null;
 
-  // Static ad items (would ideally come from an API)
+  try {
+    const response = await getContent();
+    newsItems = response.data || [];
+  } catch (err) {
+    error = "Failed to load news. Please try again later.";
+  }
+
+  const filteredItems =
+    categoryParam && categoryParam !== "Home"
+      ? newsItems.filter((item) => item.category === categoryParam)
+      : newsItems;
+
   const adItems = [
     {
       id: "ad1",
@@ -61,63 +53,18 @@ export default function Home() {
     },
   ];
 
-  // Fetch news on component mount
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const response = await getContent();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setNewsItems((response as { data: any[] }).data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching news:", err);
-        setError("Failed to load news. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  // Filter news based on selected category
-  useEffect(() => {
-    if (newsItems.length === 0) return;
-
-    if (!categoryParam || categoryParam === "Home") {
-      // Show all news if no category is selected or Home is selected
-      setFilteredItems(newsItems);
-    } else {
-      // Filter news by category
-      const filtered = newsItems.filter(
-        (item) => item.category === categoryParam
-      );
-      setFilteredItems(filtered);
-    }
-  }, [categoryParam, newsItems]);
-
-  // Combine news and ads in the "3 news and 1 ad" structure
   const createCombinedItems = () => {
     const combinedItems = [];
     let newsIndex = 0;
     let adIndex = 0;
 
     while (newsIndex < filteredItems.length) {
-      // Add up to 3 news items
       for (let i = 0; i < 3 && newsIndex < filteredItems.length; i++) {
-        combinedItems.push({
-          type: "news",
-          data: filteredItems[newsIndex++],
-        });
+        combinedItems.push({ type: "news", data: filteredItems[newsIndex++] });
       }
 
-      // Add 1 ad if available
       if (adIndex < adItems.length) {
-        combinedItems.push({
-          type: "ad",
-          data: adItems[adIndex++],
-        });
+        combinedItems.push({ type: "ad", data: adItems[adIndex++] });
       }
     }
 
@@ -131,12 +78,9 @@ export default function Home() {
       <Suspense fallback={null}>
         <NavBar />
       </Suspense>
+
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="text-red-500 text-center py-10">{error}</div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-10">
@@ -156,43 +100,22 @@ export default function Home() {
               {combinedItems.map((item, index) =>
                 item.type === "news" ? (
                   <NewsCard
-                    key={`${
-                      "id" in item.data ? item.data.id : item.data._id
-                    }-${index}`}
-                    id={"_id" in item.data ? item.data._id : ""}
-                    image={
-                      "headlineImage" in item.data
-                        ? item.data.headlineImage
-                        : ""
-                    }
-                    category={
-                      "category" in item.data ? item.data.category || "" : ""
-                    }
-                    title={
-                      "headline1" in item.data ? item.data.headline1 || "" : ""
-                    }
-                    author={"author" in item.data ? item.data.author : ""}
-                    date={
-                      "createdTime" in item.data
-                        ? formatDistanceToNow(new Date(item.data.createdTime), {
-                            addSuffix: true,
-                          })
-                        : ""
-                    }
+                    key={`${item.data._id}-${index}`}
+                    id={item.data._id}
+                    image={item.data.headlineImage}
+                    category={item.data.category || ""}
+                    title={item.data.headline1 || ""}
+                    author={item.data.author}
+                    date={formatDistanceToNow(new Date(item.data.createdTime), {
+                      addSuffix: true,
+                    })}
                   />
                 ) : (
                   <AdCard
-                    key={`${
-                      "id" in item.data ? item.data.id : item.data._id
-                    }-${index}`}
-                    image={
-                      "image" in item.data &&
-                      typeof item.data.image !== "string"
-                        ? item.data.image
-                        : adImage
-                    }
-                    title={"title" in item.data ? item.data.title : ""}
-                    brand={"brand" in item.data ? item.data.brand : ""}
+                    key={`${item.data.id}-${index}`}
+                    image={item.data.image}
+                    title={item.data.title}
+                    brand={item.data.brand}
                   />
                 )
               )}
@@ -200,6 +123,7 @@ export default function Home() {
           </>
         )}
       </div>
+
       <Footer />
     </main>
   );
