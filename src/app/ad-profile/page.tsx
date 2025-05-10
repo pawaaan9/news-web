@@ -1,4 +1,5 @@
-import NavBar from "../../components/navbar";
+"use client";
+
 import AdProfileLinks from "../../components/ad-profile-links";
 
 export default function AdProfile() {
@@ -11,15 +12,13 @@ export default function AdProfile() {
     facebook: "https://www.facebook.com/Dr.pk.samy",
     twitter: "https://twitter.com/drpksamy",
     instagram: "https://instagram.com/drpksamy",
-    linkedin: "https://linkedin.com/in/drpksamy"
+    linkedin: "https://linkedin.com/in/drpksamy",
   };
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <NavBar />
-      
       <div className="w-full px-4 py-6 md:px-[10%]">
-        <AdProfileLinks 
+        <AdProfileLinks
           title={profileData.title}
           email={profileData.email}
           phone={profileData.phone}

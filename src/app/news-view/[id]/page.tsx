@@ -21,8 +21,10 @@ export default function NewsView() {
     headline1: string;
     headline2?: string;
     contentBlocks?: {
-      data: boolean; type: string; content?: string 
-}[];
+      data: boolean;
+      type: string;
+      content?: string;
+    }[];
     headlineImage?: string;
     author: string;
     createdTime: string;
@@ -38,26 +40,26 @@ export default function NewsView() {
       try {
         setIsLoading(true);
         // Fetch the current article
-        const articleData = await getContentById(id) as { data: NewsItem };
+        const articleData = (await getContentById(id)) as { data: NewsItem };
         setArticle(articleData.data);
 
         // Fetch all news to find related ones (same category)
         const allNewsResponse = await getContent();
-        const allNews = (allNewsResponse as { data: NewsItem[] }).data;
+        const allNews = (allNewsResponse as unknown as { data: NewsItem[] })
+          .data;
 
         // Filter related news (same category, excluding current article)
         if (articleData.data && articleData.data.category) {
           const related = allNews
             .filter(
-              (item) => 
-                item.category === articleData.data.category && 
-                item._id !== id
+              (item) =>
+                item.category === articleData.data.category && item._id !== id
             )
             .slice(0, 2); // Get only 2 related articles
-          
+
           setRelatedNews(related);
         }
-        
+
         setError(null);
       } catch (err) {
         console.error("Error fetching article:", err);
@@ -66,7 +68,7 @@ export default function NewsView() {
         setIsLoading(false);
       }
     }
-    
+
     if (id) {
       fetchData();
     }
@@ -104,8 +106,8 @@ export default function NewsView() {
   // Get the content blocks (paragraphs) from the article
   const contentBlocks = article.contentBlocks || [];
   const paragraphs = contentBlocks
-    .filter(block => block.type === "paragraph")
-    .map(block => block.content || "");
+    .filter((block) => block.type === "paragraph")
+    .map((block) => block.content || "");
 
   return (
     <main>
@@ -162,57 +164,58 @@ export default function NewsView() {
           {article.headline2 && (
             <h2 className="text-xl font-semibold mb-4">{article.headline2}</h2>
           )}
-          
+
           {/* Display headline3 as a secondary subheading if available */}
           {article.headline1 && (
             <h3 className="text-lg font-medium mb-3">{article.headline1}</h3>
           )}
-          
+
           {/* Display content blocks */}
-          {contentBlocks.length > 0 ? (
-            contentBlocks.map((block, index) => {
-              if (block.type === "paragraph") {
-                return (
-                  <p key={index} className="mb-4 text-gray-800 leading-relaxed">
-                    {block.content}
-                  </p>
-                );
-              } else if (block.type === "image" && block.data) {
-                return (
-                  <div key={index} className="relative w-full h-64 my-6">
-                    <Image
-                      src={typeof block.data === "string" ? block.data : ""}
-                      alt={`Image ${index + 1}`}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                );
-              } else if (block.type === "video" && block.data) {
-                return (
-                  <div key={index} className="my-6">
-                    <iframe
-                      width="100%"
-                      height="315"
-                      src={typeof block.data === "string" ? block.data : ""}
-                      title={`Video ${index + 1}`}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                );
-              }
-              return null;
-            })
-          ) : (
-            // If no content blocks, display the paragraphs
-            paragraphs.map((paragraph, index) => (
-              <p key={index} className="mb-4 text-gray-800 leading-relaxed">
-                {paragraph}
-              </p>
-            ))
-          )}
+          {contentBlocks.length > 0
+            ? contentBlocks.map((block, index) => {
+                if (block.type === "paragraph") {
+                  return (
+                    <p
+                      key={index}
+                      className="mb-4 text-gray-800 leading-relaxed"
+                    >
+                      {block.content}
+                    </p>
+                  );
+                } else if (block.type === "image" && block.data) {
+                  return (
+                    <div key={index} className="relative w-full h-64 my-6">
+                      <Image
+                        src={typeof block.data === "string" ? block.data : ""}
+                        alt={`Image ${index + 1}`}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  );
+                } else if (block.type === "video" && block.data) {
+                  return (
+                    <div key={index} className="my-6">
+                      <iframe
+                        width="100%"
+                        height="315"
+                        src={typeof block.data === "string" ? block.data : ""}
+                        title={`Video ${index + 1}`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  );
+                }
+                return null;
+              })
+            : // If no content blocks, display the paragraphs
+              paragraphs.map((paragraph, index) => (
+                <p key={index} className="mb-4 text-gray-800 leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
         </div>
 
         {/* Advertisement */}
@@ -250,14 +253,17 @@ export default function NewsView() {
                         {news.headline1}
                       </h3>
                       <p className="text-xs text-gray-600 mb-2 line-clamp-3">
-                        {news.headline2 || 
-                         (news.contentBlocks && news.contentBlocks[0]?.type === "paragraph" 
-                           ? news.contentBlocks[0].content?.substring(0, 100) + "..." 
-                           : "")}
+                        {news.headline2 ||
+                          (news.contentBlocks &&
+                          news.contentBlocks[0]?.type === "paragraph"
+                            ? news.contentBlocks[0].content?.substring(0, 100) +
+                              "..."
+                            : "")}
                       </p>
                       <div className="text-[10px] text-gray-500">
                         <span className="font-medium">{news.author}</span>{" "}
-                        විසින් • {formatDistanceToNow(new Date(news.createdTime), {
+                        විසින් •{" "}
+                        {formatDistanceToNow(new Date(news.createdTime), {
                           addSuffix: true,
                         })}
                       </div>

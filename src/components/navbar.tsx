@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
 import logo from "../assets/images/logo.png";
@@ -31,7 +31,7 @@ export default function NavBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
-  
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [active, setActive] = useState(categoryParam || "Home");
   const [showMoreDropdown, setShowMoreDropdown] = useState(false);
@@ -63,7 +63,11 @@ export default function NavBar() {
 
       {/* Top Section with Logo and Ad (Desktop) */}
       <div className="flex items-center justify-between px-4 py-3 lg:px-[10%]">
-        <div className="text-lg font-bold" onClick={() => handleCategoryClick("Home")} style={{ cursor: 'pointer' }}>
+        <div
+          className="text-lg font-bold"
+          onClick={() => handleCategoryClick("Home")}
+          style={{ cursor: "pointer" }}
+        >
           <Image
             src={logo}
             alt="Website Logo"

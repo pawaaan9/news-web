@@ -9,6 +9,7 @@ import adImage from "../assets/images/ad-card.jpg";
 import Footer from "@/components/footer";
 import { getContent } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
+import { Suspense } from "react";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -127,7 +128,9 @@ export default function Home() {
 
   return (
     <main>
-      <NavBar />
+      <Suspense fallback={null}>
+        <NavBar />
+      </Suspense>
       <div className="max-w-6xl mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
