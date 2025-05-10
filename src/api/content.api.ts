@@ -1,6 +1,8 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export interface ContentData {
   _id: string;
   headline1: string;
@@ -85,15 +87,11 @@ export const submitContent = async (content: {
   });
 
   try {
-    const response = await axios.post(
-      "http://localhost:8000/api/v1/content",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.post(`${API_URL}/content`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log("Content submitted successfully:", response.data);
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

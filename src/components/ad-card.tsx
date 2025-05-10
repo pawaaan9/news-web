@@ -8,24 +8,22 @@ interface AdCardProps {
 
 export default function AdCard({ image, title, brand }: AdCardProps) {
   return (
-    <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs border-secondary-grey border-1 mx-auto md:mx-0">
-      <div className="relative w-full h-40">
+    <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs w-full border border-gray-200 mx-auto md:mx-0 font-notoSans flex flex-col h-[280px]">
+      <div className="relative w-full aspect-video">
         <Image
           src={image}
           alt={title}
-          layout="fill"
-          objectFit="cover"
+          fill
           className="object-cover"
         />
-      </div>
-      <div className="p-3">
-        <p className="text-xs text-gray-400 mb-1">{brand}</p>
-        <h2 className="text-sm font-semibold leading-snug mb-2">
-          {title}
-        </h2>
-        <span className="text-[10px] border border-gray-500 px-1.5 py-0.5 rounded text-charcoal">
+        <div className="absolute top-2 right-2 bg-white/80 text-[10px] px-2 py-0.5 rounded">
           Ad
-        </span>
+        </div>
+      </div>
+      <div className="p-3 flex flex-col flex-grow">
+        <p className="text-xs text-gray-400 mb-1">{brand}</p>
+        <h2 className="text-sm font-semibold leading-snug mb-auto line-clamp-3">{title}</h2>
+        <div className="text-[10px] text-gray-500 mt-3">Sponsored Content</div>
       </div>
     </div>
   );

@@ -30,6 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { createAdvertisement } from "@/api/advertisement.api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
 
 // Sample data for advertisement positions
 const advertisementPositions = [
@@ -200,7 +201,7 @@ const CreateAdvertisement = () => {
               </div>
               {previewImage && (
                 <div className="w-32 h-32 border border-charcoal/20 rounded-md overflow-hidden">
-                  <img
+                  <Image
                     src={previewImage}
                     alt="Preview"
                     className="w-full h-full object-cover"
