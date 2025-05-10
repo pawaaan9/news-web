@@ -22,7 +22,7 @@ export default function NewsCard({
 
   return (
     <Link href={`/news-view/${id}`} passHref>
-      <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs w-full border border-gray-200 mx-auto md:mx-0 font-notoSans flex flex-col h-[280px] cursor-pointer hover:shadow-lg transition-shadow duration-300">
+      <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md  w-full border border-gray-200 mx-auto md:mx-0 font-notoSans flex flex-col h-[280px] cursor-pointer hover:shadow-lg transition-shadow duration-300 pb-4">
         <div className="relative w-full aspect-video">
           <Image
             src={image || fallbackImage}
@@ -37,7 +37,9 @@ export default function NewsCard({
 
         <div className="p-3 flex flex-col flex-grow">
           <p className="text-xs text-gray-400 mb-1">{category}</p>
-          <h2 className="text-sm font-semibold leading-snug mb-auto line-clamp-3">{title}</h2>
+          <h2 className="text-sm font-semibold leading-snug mb-auto line-clamp-3">
+            {title}
+          </h2>
           <div className="text-[10px] text-gray-500 mt-3 flex items-center justify-between">
             <span className="font-medium">{author} විසින්</span>
             <span className="font-medium">{date}</span>
