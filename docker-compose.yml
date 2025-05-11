@@ -7,5 +7,3 @@ services:
       - "3045:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://206.189.137.248:8000/api/v1
-    depends_on:
-      - api
