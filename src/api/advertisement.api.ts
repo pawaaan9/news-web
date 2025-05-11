@@ -1,6 +1,8 @@
 import axiosInstance from "./axiosInstance";
 import axios from "axios";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export interface AdvertisementData {
   _id?: string;
   title: string;
@@ -43,15 +45,11 @@ export const createAdvertisement = async (advertisement: AdvertisementData) => {
     formData.append("adImage", advertisement.adImage);
   }
 
-  const response = await axios.post(
-    "http://localhost:8000/api/v1/advertisement",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  const response = await axios.post(`${API_URL}/advertisement`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
@@ -94,15 +92,11 @@ export const updateAdvertisement = async (
     formData.append("adImage", advertisement.adImage);
   }
 
-  const response = await axios.put(
-    `http://localhost:8000/api/v1/advertisement/${id}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  const response = await axios.put(`${API_URL}/advertisement/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
