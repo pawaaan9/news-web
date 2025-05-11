@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
 export interface ContentData {
   _id: string;
