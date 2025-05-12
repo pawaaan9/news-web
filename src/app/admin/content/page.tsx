@@ -3,14 +3,18 @@
 import { PageTitle } from "@/modules/shared/page-title";
 import AdminLayout from "../admin-layout";
 import { Button } from "@/components/ui/button";
-import { IconTextWrap } from "@tabler/icons-react";
+import {
+  IconEye,
+  IconPencilMinus,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
-import { ContentCard } from "@/modules/content/content-card";
 import { useRouter } from "next/navigation";
 import { ContentData, deleteContent, getContent } from "@/api/content.api";
 import withAuth from "@/hoc/with-auth";
@@ -90,106 +94,176 @@ const ContentPage = () => {
 
   return (
     <AdminLayout pageTitle="content">
-      <div className="flex justify-between ">
-        <PageTitle title="Manage content" />
+      <div className="container mx-auto px-2 overflow-x-hidden">
         <Button
-          className="bg-primary text-white hover:bg-primary/80 "
+          className="bg-primary text-white hover:bg-primary/80 mb-6"
           onClick={() => {
             router.push("/admin/content/create-content");
           }}
         >
-          <IconTextWrap size={20} />
+          <IconPlus size={20} />
           Add content
         </Button>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4 items-end">
-        <div>
-          <LabelText text="Headline" />
-          <Input
-            type="text"
-            id="headline"
-            placeholder="Headline"
-            value={headline}
-            onChange={(e) => setHeadline(e.target.value)}
-            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
-          />
-        </div>
-        <div>
-          <LabelText text="Author" />
-          <Input
-            type="text"
-            id="author"
-            placeholder="Author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
-          />
-        </div>
 
-        <div>
-          <LabelText text="Category" />
-          <select
-            id="category"
-            value={selectedCategory || ""}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
-          >
-            <option value="" disabled>
-              Select a category
-            </option>
-            {categories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <LabelText text="Status" />
-          <select
-            id="status"
-            value={selectedStatus || ""}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
-          >
-            <option value="" disabled>
-              Select a status
-            </option>
-            {contentstatus.map((status, index) => (
-              <option key={index} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+        <PageTitle title="Manage content" />
 
-      {/* Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-        {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
-          filteredContent.map((content, index) => (
-            <ContentCard
-              key={index}
-              headlineImage={content.headlineImage}
-              title={content.headline1}
-              author={content.author}
-              date={
-                content.createdTime
-                  ? format(new Date(content.createdTime), "yyyy-MM-dd HH:mm") // Format date and time
-                  : "N/A"
-              }
-              category={content.category}
-              status={content.status}
-              onView={() => console.log("View clicked")}
-              onEdit={() =>
-                router.push(`/admin/content/edit-content/${content._id}`)
-              }
-              onDelete={() => handleDelete(content._id)}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4 items-end">
+          <div>
+            <LabelText text="Headline" />
+            <Input
+              type="text"
+              id="headline"
+              placeholder="Headline"
+              value={headline}
+              onChange={(e) => setHeadline(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
-          ))
-        ) : (
-          <p>No content available</p>
-        )}
+          </div>
+          <div>
+            <LabelText text="Author" />
+            <Input
+              type="text"
+              id="author"
+              placeholder="Author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+          </div>
+          <div>
+            <LabelText text="Category" />
+            <select
+              id="category"
+              value={selectedCategory || ""}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <LabelText text="Status" />
+            <select
+              id="status"
+              value={selectedStatus || ""}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+            >
+              <option value="" disabled>
+                Select a status
+              </option>
+              {contentstatus.map((status, index) => (
+                <option key={index} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="overflow-x-auto mt-10">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead>
+              <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-600">
+                <th className="p-4">Headline</th>
+                <th className="p-4">Author</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Created Date</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
+                filteredContent.map((content) => (
+                  <tr
+                    key={content._id}
+                    className={`border-t border-gray-200 text-sm text-gray-700 ${
+                      content.isSpecial
+                        ? "bg-yellow-100" // Highlight for special news
+                        : content.isFeatured
+                        ? "bg-blue-100" // Highlight for featured news
+                        : ""
+                    }`}
+                  >
+                    <td className="p-4 font-semibold">
+                      {content.headline1}
+                      {content.isSpecial && (
+                        <span className="ml-2 text-yellow-600 font-bold">
+                          (Special)
+                        </span>
+                      )}
+                      {content.isFeatured && (
+                        <span className="ml-2 text-blue-600 font-bold">
+                          (Featured)
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">{content.author}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          content.status === "Published"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        {content.status}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {content.createdTime
+                        ? format(
+                            new Date(content.createdTime),
+                            "yyyy-MM-dd HH:mm"
+                          )
+                        : "N/A"}
+                    </td>
+                    <td className="p-4 text-right flex justify-end gap-2">
+                      <IconEye
+                        size={22}
+                        className="text-accent-teal cursor-pointer"
+                        onClick={() =>
+                          console.log("View clicked for:", content._id)
+                        }
+                      />
+                      <IconPencilMinus
+                        size={22}
+                        className="text-primary cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/admin/content/edit-content/${content._id}`
+                          )
+                        }
+                      />
+                      <IconTrash
+                        size={22}
+                        className="text-red-700 cursor-pointer"
+                        onClick={() => handleDelete(content._id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="p-4 text-center text-gray-500 font-medium"
+                  >
+                    No content available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </AdminLayout>
   );

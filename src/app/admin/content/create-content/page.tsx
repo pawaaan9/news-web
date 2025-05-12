@@ -22,31 +22,33 @@ import { ContentBlock, submitContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
 import { getProfile } from "@/api/auth.api";
 import withAuth from "@/hoc/with-auth";
+import { format } from "date-fns";
 
 const CreateContent = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [headline1, setHeadline1] = useState("");
   const [headline2, setHeadline2] = useState("");
   const [headline3, setHeadline3] = useState("");
   const [url, setUrl] = useState("");
   const [headlineImage, setHeadlineImage] = useState<File | null>(null);
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [isSpecial, setIsSpecial] = useState(false);
+  const [seoTitle, setSeoTitle] = useState("");
+
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
     { type: "paragraph", id: 1 },
   ]);
   const [author, setAuthor] = useState<string>("");
   const router = useRouter();
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-  };
-
   const handleKeywordsChange = (keywords: string[]) => {
     setSelectedKeywords(keywords);
   };
 
   const addParagraph = () => {
-    if (!contentBlocks[contentBlocks.length - 1].content) {
+    const lastBlock = contentBlocks[contentBlocks.length - 1];
+    if (lastBlock.type === "paragraph" && !lastBlock.content) {
       alert("Please fill the current paragraph before adding a new one.");
       return;
     }
@@ -57,21 +59,26 @@ const CreateContent = () => {
   };
 
   const addImage = () => {
-    if (!contentBlocks[contentBlocks.length - 1].content) {
+    const lastBlock = contentBlocks[contentBlocks.length - 1];
+    if (lastBlock.type === "paragraph" && !lastBlock.content) {
       alert("Please fill the current paragraph before adding an image.");
       return;
     }
     setContentBlocks([
       ...contentBlocks,
-      { type: "image", id: contentBlocks.length + 1, file: undefined }, // Use `undefined` instead of `null`
+      { type: "image", id: contentBlocks.length + 1, file: undefined },
     ]);
   };
 
   const addVideoLink = () => {
-    const videoId = contentBlocks.length + 1;
+    const lastBlock = contentBlocks[contentBlocks.length - 1];
+    if (lastBlock.type === "paragraph" && !lastBlock.content) {
+      alert("Please fill the current paragraph before adding a video link.");
+      return;
+    }
     setContentBlocks([
       ...contentBlocks,
-      { type: "video", id: videoId, content: "" }, // Add a video block
+      { type: "video", id: contentBlocks.length + 1, content: "" },
     ]);
   };
 
@@ -85,6 +92,14 @@ const CreateContent = () => {
           : block
       )
     );
+  };
+
+  const generateUrl = (title: string) => {
+    const today = format(new Date(), "yyyy-MM-dd"); // Format today's date as YYYY-MM-DD
+    return `${title
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")}-${today}`;
   };
 
   useEffect(() => {
@@ -106,13 +121,13 @@ const CreateContent = () => {
       alert("Category is required.");
       return;
     }
-    console.log("Author before submission:", author);
 
     try {
       await submitContent({
         headline1,
         headline2,
         headline3,
+        seoTitle,
         url,
         category: selectedCategory,
         keywords: selectedKeywords,
@@ -120,6 +135,8 @@ const CreateContent = () => {
         headlineImage,
         contentBlocks,
         author,
+        isFeatured,
+        isSpecial,
       });
 
       router.push("/admin/content"); // Redirect to the content page after submission
@@ -134,20 +151,14 @@ const CreateContent = () => {
         <PageTitle title="Create content" />
         <div className="flex flex-col gap-4 mt-4">
           <div>
-            <InputText text="Headline 1 (max 40 characters)" />
+            <InputText text="Headline 1 (max 55 characters)" />
             <Textarea
               rows={2}
               value={headline1}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.length <= 40) {
+                if (value.length <= 55) {
                   setHeadline1(value);
-                  setUrl(
-                    value
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")
-                      .replace(/[^a-z0-9-]/g, "")
-                  );
                 }
               }}
               placeholder="Enter headline"
@@ -158,31 +169,25 @@ const CreateContent = () => {
               value={headline1}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.length <= 40) {
+                if (value.length <= 55) {
                   setHeadline1(value);
-                  setUrl(
-                    value
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")
-                      .replace(/[^a-z0-9-]/g, "")
-                  );
                 }
               }}
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <p className="text-sm text-charcoal/60 mt-1">
-              {headline1.length}/40 characters
+              {headline1.length}/55 characters
             </p>
           </div>
           <div>
-            <InputText text="Headline 2 (max 60 characters)" />
+            <InputText text="Headline 2 (max 75 characters)" />
             <Textarea
               rows={2}
               value={headline2}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.length <= 60) {
+                if (value.length <= 75) {
                   setHeadline2(value);
                 }
               }}
@@ -194,7 +199,7 @@ const CreateContent = () => {
               value={headline2}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.length <= 60) {
+                if (value.length <= 75) {
                   setHeadline2(value);
                 }
               }}
@@ -202,7 +207,7 @@ const CreateContent = () => {
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
             <p className="text-sm text-charcoal/60 mt-1">
-              {headline2.length}/60 characters
+              {headline2.length}/75 characters
             </p>
           </div>
           <div>
@@ -221,6 +226,38 @@ const CreateContent = () => {
               placeholder="Enter headline"
               className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             />
+          </div>
+          <div>
+            <InputText text="SEO Title (max 100 characters)" />
+            <Textarea
+              rows={2}
+              value={seoTitle}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 100) {
+                  setSeoTitle(value);
+                  setUrl(generateUrl(value));
+                }
+              }}
+              placeholder="Enter SEO title"
+              className="lg:hidden border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+            <Input
+              type="text"
+              value={seoTitle}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 100) {
+                  setSeoTitle(value);
+                  setUrl(generateUrl(value));
+                }
+              }}
+              placeholder="Enter SEO title"
+              className="hidden lg:block border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            />
+            <p className="text-sm text-charcoal/60 mt-1">
+              {seoTitle.length}/100 characters
+            </p>
           </div>
           <div>
             <InputText text="URL (Auto generated from title)" />
@@ -250,7 +287,7 @@ const CreateContent = () => {
           </div>
 
           <div>
-            <InputText text="Category" />
+            <InputText text="Categories (Select one or more)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
                 <label
@@ -258,12 +295,21 @@ const CreateContent = () => {
                   className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
                 >
                   <input
-                    type="radio"
+                    type="checkbox"
                     name="category"
                     value={category}
-                    checked={selectedCategory === category}
-                    onChange={() => handleCategoryChange(category)}
-                    className="form-radio text-primary focus:ring-primary/80"
+                    checked={selectedCategory.includes(category)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (e.target.checked) {
+                        setSelectedCategory([...selectedCategory, value]); // Add category
+                      } else {
+                        setSelectedCategory(
+                          selectedCategory.filter((cat) => cat !== value) // Remove category
+                        );
+                      }
+                    }}
+                    className="form-checkbox text-primary focus:ring-primary/80"
                   />
                   <span className="text-charcoal">{category}</span>
                 </label>
@@ -273,6 +319,46 @@ const CreateContent = () => {
 
           <div>
             <KeywordsInput onKeywordsChange={handleKeywordsChange} />
+          </div>
+
+          <div>
+            <InputText text="Special Options" />
+            <div className="flex items-center gap-4 mt-2">
+              {/* Featured Radio Button */}
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="specialOption"
+                  value="featured"
+                  checked={isFeatured}
+                  onChange={() => {
+                    setIsFeatured(true);
+                    setIsSpecial(false); // Ensure only one is selected
+                  }}
+                  className="form-radio text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">Featured</span>
+              </label>
+
+              {/* Special Radio Button */}
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="specialOption"
+                  value="special"
+                  checked={isSpecial}
+                  onChange={() => {
+                    setIsSpecial(true);
+                    setIsFeatured(false); // Ensure only one is selected
+                  }}
+                  className="form-radio text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">Special</span>
+              </label>
+            </div>
+            <p className="text-sm text-charcoal/60 mt-1">
+              Only one option can be selected at a time.
+            </p>
           </div>
 
           <div>
@@ -326,6 +412,19 @@ const CreateContent = () => {
                 </div>
               ))}
               <div className="flex gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  className="bg-red-400 text-white border border-red-400 hover:bg-red-600"
+                  onClick={() => {
+                    if (contentBlocks.length > 1) {
+                      setContentBlocks(contentBlocks.slice(0, -1)); // Remove the last block
+                    } else {
+                      alert("You must have at least one content block.");
+                    }
+                  }}
+                >
+                  Cancel Last
+                </Button>
                 <Button
                   className="bg-primary text-white"
                   onClick={addParagraph}

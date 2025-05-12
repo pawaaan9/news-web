@@ -14,6 +14,8 @@ export interface ContentData {
   createdTime: string;
   category: string;
   status: string;
+  isFeatured: boolean;
+  isSpecial: boolean;
   contentBlocks: ContentBlock[];
 }
 
@@ -30,9 +32,7 @@ interface ContentResponse {
 
 // Get all content
 export const getContent = async (): Promise<ContentResponse> => {
-  const url = "/content";
-  console.log("Fetching data from:", `${axiosInstance.defaults.baseURL}${url}`);
-  const response = await axiosInstance.get<ContentResponse>(url);
+  const response = await axiosInstance.get<ContentResponse>("/content");
   return response.data;
 };
 
@@ -41,11 +41,14 @@ export const submitContent = async (content: {
   headline1: string;
   headline2: string;
   headline3: string;
+  seoTitle: string;
   url: string;
   author: string;
-  category: string | null;
+  category: string[];
   keywords: string[];
   status: "Draft" | "Published";
+  isFeatured: boolean;
+  isSpecial: boolean;
   headlineImage: File | null;
   contentBlocks: {
     type: "paragraph" | "image" | "video";
@@ -66,13 +69,14 @@ export const submitContent = async (content: {
   formData.append("headline1", content.headline1);
   formData.append("headline2", content.headline2);
   formData.append("headline3", content.headline3);
+  formData.append("seoTitle", content.seoTitle);
   formData.append("url", content.url || generatedUrl);
-  formData.append("category", content.category || "");
+  formData.append("category", JSON.stringify(content.category));
   formData.append("keywords", JSON.stringify(content.keywords));
   formData.append("status", content.status);
   formData.append("author", content.author || "");
-
-  // Add headline image
+  formData.append("isFeatured", content.isFeatured ? "true" : "false");
+  formData.append("isSpecial", content.isSpecial ? "true" : "false");
   if (content.headlineImage) {
     formData.append("image", content.headlineImage);
   }
@@ -94,7 +98,6 @@ export const submitContent = async (content: {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("Content submitted successfully:", response.data);
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

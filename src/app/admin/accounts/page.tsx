@@ -3,7 +3,7 @@
 import { PageTitle } from "@/modules/shared/page-title";
 import AdminLayout from "../admin-layout";
 import { Button } from "@/components/ui/button";
-import { IconPencilMinus, IconTextWrap, IconTrash } from "@tabler/icons-react";
+import { IconPencilMinus, IconPlus, IconTrash } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
 import {
@@ -83,16 +83,15 @@ const AccountPage = () => {
 
   return (
     <AdminLayout pageTitle="accounts">
-      <div className="flex justify-between">
-        <PageTitle title="Manage accounts" />
-        <Button
-          className="bg-primary text-white hover:bg-primary/80"
-          onClick={() => router.push("/admin/accounts/create-account")}
-        >
-          <IconTextWrap size={20} />
-          Add user
-        </Button>
-      </div>
+      <Button
+        className="bg-primary text-white hover:bg-primary/80 mb-6"
+        onClick={() => router.push("/admin/accounts/create-account")}
+      >
+        <IconPlus size={20} />
+        Add user
+      </Button>
+
+      <PageTitle title="Manage accounts" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4 items-end">
         <div>
