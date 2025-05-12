@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from 'next/image';
+import Image, { StaticImageData } from "next/image";
 
 interface AdCardProps {
   image: StaticImageData;
@@ -20,9 +20,7 @@ export default function AdCard({ image, title, brand }: AdCardProps) {
       </div>
       <div className="p-3">
         <p className="text-xs text-gray-400 mb-1">{brand}</p>
-        <h2 className="text-sm font-semibold leading-snug mb-2">
-          {title}
-        </h2>
+        <h2 className="text-sm font-semibold leading-snug mb-2">{title}</h2>
         <span className="text-[10px] border border-gray-500 px-1.5 py-0.5 rounded text-charcoal">
           Ad
         </span>

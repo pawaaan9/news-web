@@ -29,8 +29,7 @@ export default async function Home() {
     {
       id: "ad1",
       image: adImage,
-      title:
-        "This Brilliant Japanese Invention Instantly Translates Foreign Languages",
+      title: "This Brilliant Japanese ",
       brand: "Enence",
     },
     {
@@ -79,7 +78,7 @@ export default async function Home() {
             item.type === "news" ? (
               <NewsCard
                 key={item.data._id}
-                id={item.data._id}
+                url={item.data.url}
                 image={item.data.headlineImage}
                 category={item.data.category || ""}
                 title={item.data.headline1 || ""}

@@ -137,3 +137,19 @@ export const changeContentStatus = async (
   });
   return response.data;
 };
+
+// Get content by URL
+export const getContentByUrl = async (url: string): Promise<ContentData> => {
+  const response = await axiosInstance.get<ContentData>(`/content/url/${url}`);
+  return response.data;
+};
+
+// Get all contents by URL
+export const getAllContentsByUrl = async (
+  url: string
+): Promise<ContentData[]> => {
+  const response = await axiosInstance.get<ContentData[]>(
+    `/content/all-by-url/${url}`
+  );
+  return response.data;
+};

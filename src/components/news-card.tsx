@@ -2,7 +2,7 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
 interface NewsCardProps {
-  id: string;
+  url: string;
   image: string | StaticImageData; // Allow both URL strings and static imports
   category: string;
   title: string;
@@ -11,7 +11,7 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({
-  id,
+  url,
   image,
   category,
   title,
@@ -21,9 +21,17 @@ export default function NewsCard({
   // Fallback image in case the `image` prop is missing
   const fallbackImage = "/fallback-image.jpg"; // Replace with your fallback image path
 
+  let parsedCategories: string[] = [];
+  try {
+    parsedCategories = JSON.parse(category);
+  } catch (error) {
+    console.error("Failed to parse category:", error);
+    parsedCategories = ["Unknown"]; // Fallback category
+  }
+
   return (
-    <Link href={`/news-view/${id}`} passHref>
-      <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col">
+    <Link href={`/news-view/${url}`} passHref>
+      <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
         {/* Image container with aspect ratio */}
         <div className="relative w-full aspect-video flex-shrink-0">
           <Image
@@ -31,10 +39,15 @@ export default function NewsCard({
             alt=""
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw "
           />
-          <div className="absolute top-2 right-2 bg-white/80 text-xs px-2 py-0.5 rounded">
-            {category}
+          <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
+            {/* Render all categories */}
+            {parsedCategories.map((cat, index) => (
+              <span key={index} className="mr-1">
+                {cat}
+              </span>
+            ))}
           </div>
         </div>
 
