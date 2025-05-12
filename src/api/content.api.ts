@@ -30,7 +30,9 @@ interface ContentResponse {
 
 // Get all content
 export const getContent = async (): Promise<ContentResponse> => {
-  const response = await axiosInstance.get<ContentResponse>("/content");
+  const url = "/content";
+  console.log("Fetching data from:", `${axiosInstance.defaults.baseURL}${url}`);
+  const response = await axiosInstance.get<ContentResponse>(url);
   return response.data;
 };
 
