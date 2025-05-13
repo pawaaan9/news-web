@@ -17,6 +17,7 @@ import { format, isAfter, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { AdvertisementCard } from "@/modules/content/manage-ad-card";
 import withAuth from "@/hoc/with-auth";
+import { AdvertisementData, getAllAdvertisements } from "@/api/advertisement.api";
 
 // Sample data for countries
 const countries = [
@@ -43,81 +44,32 @@ const durations = [
   "365 days",
 ];
 
-// Sample advertisement data
-const advertisementData = [
-  {
-    id: 1,
-    title: "Summer Sale Promotion",
-    photo: "/placeholder-ad-1.jpg",
-    startDate: "2025-05-01",
-    endDate: "2025-05-30",
-    duration: "30 days",
-    country: "United States",
-    status: "Active",
-  },
-  {
-    id: 2,
-    title: "New Product Launch",
-    photo: "/placeholder-ad-2.jpg",
-    startDate: "2025-05-10",
-    endDate: "2025-06-09",
-    duration: "30 days",
-    country: "Canada",
-    status: "Active",
-  },
-  {
-    id: 3,
-    title: "Holiday Special Discount",
-    photo: "/placeholder-ad-3.jpg",
-    startDate: "2025-04-15",
-    endDate: "2025-04-29",
-    duration: "14 days",
-    country: "United Kingdom",
-    status: "Expired",
-  },
-  {
-    id: 4,
-    title: "Flash Sale Weekend",
-    photo: "/placeholder-ad-4.jpg",
-    startDate: "2025-05-15",
-    endDate: "2025-05-21",
-    duration: "7 days",
-    country: "Australia",
-    status: "Scheduled",
-  },
-  {
-    id: 5,
-    title: "Premium Membership Offer",
-    photo: "/placeholder-ad-5.jpg",
-    startDate: "2025-05-05",
-    endDate: "2025-08-03",
-    duration: "90 days",
-    country: "Germany",
-    status: "Active",
-  },
-  {
-    id: 6,
-    title: "End of Season Clearance",
-    photo: "/placeholder-ad-6.jpg",
-    startDate: "2025-04-01",
-    endDate: "2025-04-30",
-    duration: "30 days",
-    country: "France",
-    status: "Expired",
-  },
-];
-
 const AdvertisementPage = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [searchTitle, setSearchTitle] = useState("");
-  const [filteredAds, setFilteredAds] = useState(advertisementData);
+  const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
+  const [filteredAds, setFilteredAds] = useState<AdvertisementData[]>([]);
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchAdvertisements = async () => {
+      try {
+        const response = await getAllAdvertisements();
+        setAdvertisements(response.data);
+        setFilteredAds(response.data);
+      } catch (error) {
+        console.error("Error fetching advertisements:", error);
+      }
+    };
+
+    fetchAdvertisements();
+  }, []);
+
   const filterAdvertisements = useCallback(() => {
-    let results = advertisementData;
+    let results = advertisements;
 
     // Filter by title
     if (searchTitle) {
@@ -131,17 +83,12 @@ const AdvertisementPage = () => {
       results = results.filter((ad) => ad.country === selectedCountry);
     }
 
-    // Filter by duration
-    if (selectedDuration) {
-      results = results.filter((ad) => ad.duration === selectedDuration);
-    }
-
     // Filter by start date
     if (startDate) {
       results = results.filter(
         (ad) =>
-          isAfter(new Date(ad.startDate), startDate) ||
-          format(new Date(ad.startDate), "yyyy-MM-dd") ===
+          isAfter(new Date(ad.startDatetime), startDate) ||
+          format(new Date(ad.startDatetime), "yyyy-MM-dd") ===
             format(startDate, "yyyy-MM-dd")
       );
     }
@@ -150,14 +97,14 @@ const AdvertisementPage = () => {
     if (endDate) {
       results = results.filter(
         (ad) =>
-          isBefore(new Date(ad.endDate), endDate) ||
-          format(new Date(ad.endDate), "yyyy-MM-dd") ===
+          isBefore(new Date(ad.endDatetime), endDate) ||
+          format(new Date(ad.endDatetime), "yyyy-MM-dd") ===
             format(endDate, "yyyy-MM-dd")
       );
     }
 
     setFilteredAds(results);
-  }, [searchTitle, selectedCountry, selectedDuration, startDate, endDate]);
+  }, [searchTitle, selectedCountry, startDate, endDate, advertisements]);
 
   useEffect(() => {
     filterAdvertisements();
@@ -171,18 +118,18 @@ const AdvertisementPage = () => {
     setEndDate(null);
   };
 
-  const handlePreview = (id: number) => {
+  const handlePreview = (id: string) => {
     console.log("Preview advertisement ID:", id);
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     console.log("Edit advertisement ID:", id);
     router.push(`/admin/advertisements/edit/${id}`);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     console.log("Delete advertisement ID:", id);
-    setFilteredAds(filteredAds.filter((ad) => ad.id !== id));
+    setFilteredAds(filteredAds.filter((ad) => ad._id !== id));
   };
 
   return (
@@ -239,40 +186,6 @@ const AdvertisementPage = () => {
                     className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
                   >
                     {country}
-                  </li>
-                ))}
-              </ul>
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div>
-          <LabelText text="Duration" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="duration"
-                placeholder="Select ad duration"
-                value={selectedDuration || ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 rounded-md bg-white shadow-md">
-              <ul className="space-y-2">
-                <li
-                  onClick={() => setSelectedDuration(null)}
-                  className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                >
-                  All Durations
-                </li>
-                {durations.map((duration, index) => (
-                  <li
-                    key={index}
-                    onClick={() => setSelectedDuration(duration)}
-                    className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                  >
-                    {duration}
                   </li>
                 ))}
               </ul>
@@ -349,18 +262,18 @@ const AdvertisementPage = () => {
         {filteredAds.length > 0 ? (
           filteredAds.map((ad) => (
             <AdvertisementCard
-              key={ad.id}
-              id={ad.id}
+              key={ad._id}
+              id={ad._id || ''}
               title={ad.title}
-              photo={ad.photo}
-              startDate={ad.startDate}
-              endDate={ad.endDate}
-              duration={ad.duration}
+              photo={ad.adImage as string}
+              startDate={format(new Date(ad.startDatetime), 'yyyy-MM-dd HH:mm')}
+              endDate={format(new Date(ad.endDatetime), 'yyyy-MM-dd HH:mm')}
+              duration={`${Math.ceil((new Date(ad.endDatetime).getTime() - new Date(ad.startDatetime).getTime()) / (1000 * 60 * 60 * 24))} days`}
               country={ad.country}
               status={ad.status}
-              onPreview={() => handlePreview(ad.id)}
-              onEdit={() => handleEdit(ad.id)}
-              onDelete={() => handleDelete(ad.id)}
+              onPreview={() => handlePreview(ad._id || '')}
+              onEdit={() => handleEdit(ad._id || '')}
+              onDelete={() => handleDelete(ad._id || '')}
             />
           ))
         ) : (

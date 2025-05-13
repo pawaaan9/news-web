@@ -41,10 +41,10 @@ const ContentPage = () => {
           Array.isArray((response as { data: ContentData[] }).data)
         ) {
           setContentData((response as { data: ContentData[] }).data);
-          setFilteredContent((response as { data: ContentData[] }).data); // Set only the `data` field
+          setFilteredContent((response as { data: ContentData[] }).data);
         } else {
-          setContentData([]); // Fallback to an empty array if data is not valid
-          setFilteredContent([]); // Fallback to an empty array if data is not valid
+          setContentData([]);
+          setFilteredContent([]);
         }
       } catch (error) {
         console.error("Error fetching content:", error);
@@ -62,7 +62,7 @@ const ContentPage = () => {
       const matchesAuthor =
         !author || content.author?.toLowerCase().includes(author.toLowerCase());
       const matchesCategory =
-        !selectedCategory || content.category === selectedCategory;
+        !selectedCategory || content.category.includes(selectedCategory);
       const matchesStatus =
         !selectedStatus || content.status === selectedStatus;
 
@@ -230,9 +230,22 @@ const ContentPage = () => {
                       <IconEye
                         size={22}
                         className="text-accent-teal cursor-pointer"
-                        onClick={() =>
-                          console.log("View clicked for:", content._id)
-                        }
+                        onClick={() => {
+                          console.log('Content data:', content);
+                          const params = new URLSearchParams({
+                            headline1: content.headline1,
+                            headline2: content.headline2,
+                            headline3: content.headline3 || '',
+                            content: content.content || '',
+                            headlineImage: content.headlineImage,
+                            author: content.author,
+                            category: JSON.stringify([content.category]),
+                            keywords: JSON.stringify([]),
+                            isFeatured: String(content.isFeatured),
+                            isSpecial: String(content.isSpecial)
+                          });
+                          router.push(`/admin/content/preview?${params.toString()}`);
+                        }}
                       />
                       <IconPencilMinus
                         size={22}

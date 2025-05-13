@@ -110,15 +110,20 @@ const CreateContent = () => {
       return;
     }
 
+    if (!headlineImage) {
+      alert("Headline image is required.");
+      return;
+    }
+
     try {
       const formData = new FormData();
-      formData.append('headlineImage', headlineImage as File);
+      formData.append('image', headlineImage as File);
       formData.append('headline1', headline1);
       formData.append('headline2', headline2);
       formData.append('headline3', headline3);
       formData.append('seoTitle', seoTitle);
       formData.append('url', url);
-      formData.append('category', JSON.stringify([selectedCategory]));
+      formData.append('category', JSON.stringify(selectedCategory));
       formData.append('keywords', JSON.stringify(selectedKeywords));
       formData.append('status', status);
       formData.append('content', content);
@@ -126,10 +131,22 @@ const CreateContent = () => {
       formData.append('isFeatured', String(isFeatured));
       formData.append('isSpecial', String(isSpecial));
 
+      // Log the form data
+      console.log('Form Data being sent:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
       await submitContent(formData);
       router.push("/admin/content");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting content:", error);
+      // Log more details about the error
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+      }
     }
   };
 

@@ -7,12 +7,13 @@ import { keywordsList } from "@/data/keyword-list";
 
 interface KeywordsInputProps {
   onKeywordsChange: (keywords: string[]) => void; // Callback to send selected keywords to parent
+  initialKeywords?: string[];
 }
 
-const KeywordsInput: React.FC<KeywordsInputProps> = ({ onKeywordsChange }) => {
-  const [keywords, setKeywords] = useState<string[]>([]); // Selected keywords
-  const [searchTerm, setSearchTerm] = useState(""); // User input
-  const [filteredKeywords, setFilteredKeywords] = useState<string[]>([]); // Filtered suggestions
+const KeywordsInput: React.FC<KeywordsInputProps> = ({ onKeywordsChange, initialKeywords = [] }) => {
+  const [keywords, setKeywords] = useState<string[]>(initialKeywords);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredKeywords, setFilteredKeywords] = useState<string[]>([]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
