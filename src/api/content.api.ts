@@ -16,15 +16,10 @@ export interface ContentData {
   status: string;
   isFeatured: boolean;
   isSpecial: boolean;
-  contentBlocks: ContentBlock[];
+  content: string;
+  
 }
 
-export interface ContentBlock {
-  type: "paragraph" | "image" | "video";
-  id: number;
-  content?: string;
-  file?: File;
-}
 
 interface ContentResponse {
   data: ContentData[];

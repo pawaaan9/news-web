@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react";
 
 interface AdvertisementCardProps {
-  id: number;
+  id: string;
   title: string;
   photo: string;
   startDate: string;
