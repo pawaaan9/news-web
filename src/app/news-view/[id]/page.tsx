@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getContentById } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
+import  Footer  from "../../../components/footer";
 
 export default function NewsView() {
   const params = useParams();
@@ -39,7 +40,9 @@ export default function NewsView() {
   if (loading) {
     return (
       <main>
-        <NavBar />
+        <NavBar onCategorySelect={function (category: string | null): void {
+          throw new Error("Function not implemented.");
+        } } selectedCategory={null} />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center py-10">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -53,7 +56,9 @@ export default function NewsView() {
   if (error || !article) {
     return (
       <main>
-        <NavBar />
+        <NavBar onCategorySelect={function (category: string | null): void {
+          throw new Error("Function not implemented.");
+        } } selectedCategory={null} />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center py-10">
             <p className="text-red-500">{error || "Article not found"}</p>
@@ -65,7 +70,9 @@ export default function NewsView() {
 
   return (
     <main className="font-dmSans">
-      <NavBar />
+      <NavBar onCategorySelect={function (category: string | null): void {
+        throw new Error("Function not implemented.");
+      } } selectedCategory={null} />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumbs */}
         <div className="text-xs mb-4">
@@ -171,6 +178,9 @@ export default function NewsView() {
           <AdCard position="Article Bottom" />
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }
