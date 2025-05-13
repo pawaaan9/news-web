@@ -19,11 +19,6 @@ interface RichTextEditorProps {
   onImageUpload: (file: File) => Promise<string>
 }
 
-interface ImageUploadResponse {
-  status: string;
-  urls: string[];
-}
-
 export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProps) => {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)

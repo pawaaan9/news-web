@@ -15,7 +15,7 @@ import {
   IconNote,
 } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
-import { getContentById, submitContent, updateContent } from "@/api/content.api";
+import { getContentById, updateContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
 import withAuth from "@/hoc/with-auth";
 import { format } from "date-fns";
