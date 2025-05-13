@@ -1,71 +1,61 @@
 import NavBar from "../components/navbar";
 import NewsCard from "../components/news-card";
 import AdCard from "@/components/ad-card";
-import adImage from "../assets/images/ad-card.jpg";
 import Footer from "@/components/footer";
-import { ContentData, getContent } from "@/api/content.api";
+import SpecialNews from "@/components/special-news";
+import { getContent } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
-import { StaticImageData } from "next/image";
-
-type CombinedItem =
-  | { type: "news"; data: ContentData }
-  | {
-      type: "ad";
-      data: {
-        id: string;
-        image: StaticImageData;
-        title: string;
-        brand: string;
-      };
-    };
+import FeatureNews from "@/components/feature-news";
 
 export default async function Home() {
-  // Fetch news items from the API
   const response = await getContent();
   const newsItems = response.data;
+  
+  // Get featured and special news first
+  const featuredNews = newsItems.find(item => item.isFeatured);
+  const specialNews = newsItems.filter(item => item.isSpecial).slice(0, 2);
+  
+  // Filter regular news - exclude featured and special news
+  const regularNews = newsItems.filter((item) => {
+    const isFeatured = item._id === featuredNews?._id;
+    const isSpecial = specialNews.some(specialItem => specialItem._id === item._id);
+    return !item.isSpecial && !item.isFeatured && !isFeatured && !isSpecial;
+  });
 
-  // Use static adItems for now
-  const adItems = [
-    {
-      id: "ad1",
-      image: adImage,
-      title: "This Brilliant Japanese ",
-      brand: "Enence",
-    },
-    {
-      id: "ad2",
-      image: adImage,
-      title: "Premium Quality Ceylon Tea - Now Available Worldwide",
-      brand: "CeylonTea Co.",
-    },
-    {
-      id: "ad3",
-      image: adImage,
-      title: "New Smartphone with Revolutionary Camera Technology",
-      brand: "TechVision",
-    },
-  ];
-
-  // Combine news and ads in the "3 news and 1 ad" structure
-  const combinedItems: CombinedItem[] = [];
-  let newsIndex = 0;
-  let adIndex = 0;
-
-  while (newsIndex < newsItems.length) {
-    // Add up to 3 news items
-    for (let i = 0; i < 3 && newsIndex < newsItems.length; i++) {
-      combinedItems.push({
-        type: "news",
-        data: newsItems[newsIndex++],
-      });
+  // Insert ad after every 3 news items
+  const newsWithAds = [];
+  for (let i = 0; i < regularNews.length; i++) {
+    // Add "Article Top" ad before first news item
+    if (i === 0) {
+      newsWithAds.push(
+        <div key={`ad-top`} className="col-span-full">
+          <AdCard position="Article Top" />
+        </div>
+      );
     }
+    
+    // Add news card
+    newsWithAds.push(
+      <NewsCard
+        key={regularNews[i]._id}
+        url={regularNews[i].url}
+        image={regularNews[i].headlineImage}
+        category={regularNews[i].category || ""}
+        title={regularNews[i].headline1 || ""}
+        author={regularNews[i].author}
+        date={formatDistanceToNow(new Date(regularNews[i].createdTime), {
+          addSuffix: true,
+        })}
+      />
+    );
 
-    // Add 1 ad if available
-    if (adIndex < adItems.length) {
-      combinedItems.push({
-        type: "ad",
-        data: adItems[adIndex++],
-      });
+    // Add "Article Bottom" ad after every 3 news items
+    if ((i + 1) % 3 === 0 && i !== regularNews.length - 1) {
+      newsWithAds.push(
+        <div key={`ad-bottom-${i}`} className="col-span-full">
+          <AdCard position="Article Bottom" />
+        </div>
+      );
     }
   }
 
@@ -73,29 +63,24 @@ export default async function Home() {
     <main>
       <NavBar />
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Mobile-only ad between feature and special news */}
+        <div className="lg:hidden mb-6">
+          <AdCard position="Article Top" />
+        </div>
+
+        {/* Featured and Special News in single row on desktop */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          <div className="lg:w-1/3">
+            <FeatureNews />
+          </div>
+          <div className="lg:w-2/3">
+            <SpecialNews />
+          </div>
+        </div>
+
+        {/* Regular News Section with Ads */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {combinedItems.map((item) =>
-            item.type === "news" ? (
-              <NewsCard
-                key={item.data._id}
-                url={item.data.url}
-                image={item.data.headlineImage}
-                category={item.data.category || ""}
-                title={item.data.headline1 || ""}
-                author={item.data.author}
-                date={formatDistanceToNow(new Date(item.data.createdTime), {
-                  addSuffix: true, // Adds "ago" at the end
-                })}
-              />
-            ) : (
-              <AdCard
-                key={item.data.id}
-                image={item.data.image}
-                title={item.data.title}
-                brand={item.data.brand || ""}
-              />
-            )
-          )}
+          {newsWithAds}
         </div>
       </div>
       <Footer />
