@@ -54,9 +54,13 @@ export const createAdvertisement = async (advertisement: AdvertisementData) => {
 };
 
 // Get all advertisements
-export const getAllAdvertisements = async (): Promise<{ data: AdvertisementData[] }> => {
+export const getAllAdvertisements = async (): Promise<{
+  data: AdvertisementData[];
+}> => {
   try {
-    const response = await axiosInstance.get<{ data: AdvertisementData[] }>("/advertisements");
+    const response = await axiosInstance.get<{ data: AdvertisementData[] }>(
+      "/advertisement"
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching advertisements:", error);

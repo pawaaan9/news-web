@@ -187,18 +187,18 @@ const AdvertisementPage = () => {
 
   return (
     <AdminLayout pageTitle="advertisements">
-      <div className="flex justify-between">
-        <PageTitle title="Manage Advertisements" />
-        <Button
-          className="bg-primary text-white hover:bg-primary/80"
-          onClick={() => {
-            router.push("/admin/advertisements/create-advertisement");
-          }}
-        >
-          <IconAd size={20} className="mr-2" />
-          Add Advertisement
-        </Button>
-      </div>
+      <Button
+        className="bg-primary text-white hover:bg-primary/80 mb-6"
+        onClick={() => {
+          router.push("/admin/advertisements/create-advertisement");
+        }}
+      >
+        <IconAd size={20} className="mr-2" />
+        Add Advertisement
+      </Button>
+
+      <PageTitle title="Manage Advertisements" />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4 items-end">
         <div>
           <LabelText text="Advertisement Title" />

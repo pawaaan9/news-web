@@ -41,6 +41,7 @@ const CreateContent = () => {
   ]);
   const [author, setAuthor] = useState<string>("");
   const router = useRouter();
+  const [content, setContent] = useState<string>("");
 
   const handleKeywordsChange = (keywords: string[]) => {
     setSelectedKeywords(keywords);

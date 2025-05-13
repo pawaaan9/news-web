@@ -53,9 +53,9 @@ export default function SpecialNews() {
               }
 
               return (
-                <Link 
-                  href={`/news-view/${item.url}`} 
-                  passHref 
+                <Link
+                  href={`/news-view/${item._id}`}
+                  passHref
                   key={item._id}
                   className="cursor-pointer h-full flex flex-col"
                 >
@@ -78,16 +78,21 @@ export default function SpecialNews() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="p-4">
-                      <h3 className="text-lg font-bold mt-1">{item.headline1}</h3>
+                      <h3 className="text-lg font-bold mt-1">
+                        {item.headline1}
+                      </h3>
                       <div className="text-sm text-gray-400 mt-2">
                         විසින් {item.author} •{" "}
-                        {new Date(item.createdTime).toLocaleDateString("si-LK", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
+                        {new Date(item.createdTime).toLocaleDateString(
+                          "si-LK",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
                       </div>
                     </div>
                   </div>
