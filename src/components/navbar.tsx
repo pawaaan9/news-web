@@ -1,36 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X, Search, ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
+import { Menu, X, Search, ChevronDown, ChevronUp, Home } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
 import logo from "../assets/images/logo.png";
 import Image from "next/image";
+import { categories } from "@/data/categories";
 
-const mainNavItems = [
-  "Home",
-  "විදෙස්",
-  "දේශිය",
-  "දේශපාලන",
-  "ව්‍යාපාරික",
-  "තාක්ෂණික",
-  "විනෝදාස්වාද",
-  "ක්‍රීඩා",
-  "විද්‍යාව",
-];
-const additionalNavItems = [
-  "සෞඛ්‍ය",
-  "රාජ්‍ය සේවා",
-  "අධ්‍යාපනය",
-  "කලා",
-  "ආගම",
-  "පරිසරය",
-];
+interface NavBarProps {
+  onCategorySelect: (category: string | null) => void;
+  selectedCategory: string | null;
+}
 
-export default function NavBar() {
+export default function NavBar({ onCategorySelect, selectedCategory }: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [active, setActive] = useState("Home");
-  const [showMoreDropdown, setShowMoreDropdown] = useState(false);
   const [showMobileMore, setShowMobileMore] = useState(false);
+
+  // Split categories into main and additional items
+  const mainNavItems = categories.slice(0, 6);
+  const additionalNavItems = categories.slice(6);
+
+  const handleCategoryClick = (category: string) => {
+    if (selectedCategory === category) {
+      onCategorySelect(null); // Deselect if clicking the same category
+    } else {
+      onCategorySelect(category);
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="w-full bg-primary text-white">
@@ -39,13 +37,15 @@ export default function NavBar() {
       {/* Top Section with Logo and Ad (Desktop) */}
       <div className="flex items-center justify-between px-4 py-3 lg:px-[10%]">
         <div className="text-lg font-bold">
-          <Image
-            src={logo}
-            alt="Website Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
-          />
+          <Link href="/" className="flex items-center" onClick={() => onCategorySelect(null)}>
+            <Image
+              src={logo}
+              alt="Website Logo"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+            />
+          </Link>
         </div>
 
         {/* Desktop Ad - Parallel to logo */}
@@ -79,12 +79,23 @@ export default function NavBar() {
       {/* Desktop Nav */}
       <div className="hidden lg:flex items-center justify-between bg-charcoal px-[10%] py-2">
         <div className="flex space-x-1">
+          <button
+            onClick={() => onCategorySelect(null)}
+            className={`px-3 py-1 text-sm flex items-center gap-1 ${
+              !selectedCategory
+                ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
+                : ""
+            }`}
+          >
+            <Home size={16} />
+            මුල් පිටුව
+          </button>
           {mainNavItems.map((item) => (
             <button
               key={item}
-              onClick={() => setActive(item)}
+              onClick={() => handleCategoryClick(item)}
               className={`px-3 py-1 text-sm ${
-                active === item
+                selectedCategory === item
                   ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
                   : ""
               }`}
@@ -96,27 +107,25 @@ export default function NavBar() {
           {/* More dropdown */}
           <div className="relative">
             <button
-              onClick={() => setShowMoreDropdown(!showMoreDropdown)}
+              onClick={() => handleCategoryClick(additionalNavItems[0])}
               className={`px-3 py-1 text-sm flex items-center ${
-                showMoreDropdown
+                selectedCategory === additionalNavItems[0]
                   ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
                   : ""
               }`}
             >
-              වැඩිදුර <ChevronDown size={16} className="ml-1" />
+              වෙනත් කාණ්ඩ
+              <ChevronDown size={16} className="ml-1" />
             </button>
 
-            {showMoreDropdown && (
+            {selectedCategory === additionalNavItems[0] && (
               <div className="absolute left-0 mt-1 w-48 bg-charcoal text-white shadow-lg rounded-sm z-10">
                 {additionalNavItems.map((item) => (
                   <button
                     key={item}
-                    onClick={() => {
-                      setActive(item);
-                      setShowMoreDropdown(false);
-                    }}
+                    onClick={() => handleCategoryClick(item)}
                     className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal ${
-                      active === item ? "bg-charcoal font-semibold" : ""
+                      selectedCategory === item ? "bg-charcoal font-semibold" : ""
                     }`}
                   >
                     {item}
@@ -177,16 +186,22 @@ export default function NavBar() {
 
           {/* Scrollable menu items */}
           <div className="flex-1 overflow-y-auto pb-4">
+            <div
+              className={`px-4 py-3 text-sm font-medium flex items-center gap-2 ${
+                !selectedCategory ? "bg-primary text-white" : ""
+              }`}
+              onClick={() => onCategorySelect(null)}
+            >
+              <Home size={16} />
+              මුල් පිටුව
+            </div>
             {mainNavItems.map((item) => (
               <div
                 key={item}
                 className={`px-4 py-3 text-sm font-medium ${
-                  active === item ? "bg-primary text-white" : ""
+                  selectedCategory === item ? "bg-primary text-white" : ""
                 }`}
-                onClick={() => {
-                  setActive(item);
-                  setMobileMenuOpen(false);
-                }}
+                onClick={() => handleCategoryClick(item)}
               >
                 {item}
               </div>
@@ -212,12 +227,9 @@ export default function NavBar() {
                     <div
                       key={item}
                       className={`px-4 py-3 text-sm font-medium ${
-                        active === item ? "bg-[#0A3552] text-white" : ""
+                        selectedCategory === item ? "bg-[#0A3552] text-white" : ""
                       }`}
-                      onClick={() => {
-                        setActive(item);
-                        setMobileMenuOpen(false);
-                      }}
+                      onClick={() => handleCategoryClick(item)}
                     >
                       {item}
                     </div>

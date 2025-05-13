@@ -5,12 +5,21 @@ import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function FeatureNews() {
+interface FeatureNewsProps {
+  shouldFetch: boolean;
+}
+
+export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
   const [featuredNews, setFeaturedNews] = useState<ContentData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeaturedNews = async () => {
+      if (!shouldFetch) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await getContent();
         const featuredItem = response.data.find(
@@ -25,8 +34,9 @@ export default function FeatureNews() {
     };
 
     fetchFeaturedNews();
-  }, []);
+  }, [shouldFetch]);
 
+  if (!shouldFetch) return null;
   if (loading) return <p>Loading featured news...</p>;
   if (!featuredNews) return <p>No featured news available.</p>;
 
@@ -59,13 +69,14 @@ export default function FeatureNews() {
           >
             <div className="rounded-lg overflow-hidden shadow-md bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
               {/* Image container with category badge */}
-              <div className="relative w-full aspect-video">
+              <div className="relative w-full pt-[56.25%]"> {/* 16:9 aspect ratio */}
                 <Image
                   src={featuredNews.headlineImage}
                   alt={featuredNews.headline1}
                   fill
-                  className="object-cover"
+                  className="object-cover absolute inset-0 w-full h-full"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority
                 />
                 {/* Category badge in top-right corner */}
                 <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
@@ -78,11 +89,11 @@ export default function FeatureNews() {
               </div>
 
               <div className="p-4">
-                <h3 className="text-lg font-bold mt-1">
+                <h3 className="text-lg font-bold">
                   {featuredNews.headline1}
                 </h3>
                 <div className="text-sm text-gray-400 mt-2">
-                  {featuredNews.author} • විසින්
+                  {featuredNews.author} විසින් •{" "}
                   {new Date(featuredNews.createdTime).toLocaleDateString(
                     "si-LK",
                     {
