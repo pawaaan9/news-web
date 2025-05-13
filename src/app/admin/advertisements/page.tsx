@@ -33,21 +33,9 @@ const countries = [
   "South Africa",
 ];
 
-// Sample data for durations
-const durations = [
-  "7 days",
-  "14 days",
-  "30 days",
-  "60 days",
-  "90 days",
-  "180 days",
-  "365 days",
-];
-
 const AdvertisementPage = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [searchTitle, setSearchTitle] = useState("");
   const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
@@ -113,7 +101,6 @@ const AdvertisementPage = () => {
   const clearFilters = () => {
     setSearchTitle("");
     setSelectedCountry(null);
-    setSelectedDuration(null);
     setStartDate(null);
     setEndDate(null);
   };

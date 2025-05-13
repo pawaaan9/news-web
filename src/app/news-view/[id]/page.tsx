@@ -8,13 +8,27 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getContentById } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
-import  Footer  from "../../../components/footer";
+import Footer from "../../../components/footer";
+
+interface Article {
+  headline1: string;
+  headline2: string;
+  headline3?: string;
+  content: string;
+  headlineImage?: string;
+  author: string;
+  category: string[] | string;
+  keywords: string[] | string;
+  createdTime: string;
+  isFeatured?: boolean;
+  isSpecial?: boolean;
+}
 
 export default function NewsView() {
   const params = useParams();
   const id = params.id as string;
 
-  const [article, setArticle] = useState<any>(null);
+  const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,7 +36,7 @@ export default function NewsView() {
     const fetchArticle = async () => {
       try {
         setLoading(true);
-        const response = (await getContentById(id)) as { data: any };
+        const response = await getContentById(id) as { data: Article };
         setArticle(response.data);
       } catch (err) {
         setError("Failed to load article");
@@ -40,9 +54,7 @@ export default function NewsView() {
   if (loading) {
     return (
       <main>
-        <NavBar onCategorySelect={function (category: string | null): void {
-          throw new Error("Function not implemented.");
-        } } selectedCategory={null} />
+        <NavBar onCategorySelect={() => {}} selectedCategory={null} />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center py-10">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -56,9 +68,7 @@ export default function NewsView() {
   if (error || !article) {
     return (
       <main>
-        <NavBar onCategorySelect={function (category: string | null): void {
-          throw new Error("Function not implemented.");
-        } } selectedCategory={null} />
+        <NavBar onCategorySelect={() => {}} selectedCategory={null} />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center py-10">
             <p className="text-red-500">{error || "Article not found"}</p>
@@ -70,9 +80,7 @@ export default function NewsView() {
 
   return (
     <main className="font-dmSans">
-      <NavBar onCategorySelect={function (category: string | null): void {
-        throw new Error("Function not implemented.");
-      } } selectedCategory={null} />
+      <NavBar onCategorySelect={() => {}} selectedCategory={null} />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumbs */}
         <div className="text-xs mb-4">
@@ -84,7 +92,7 @@ export default function NewsView() {
             href={`/?category=${article.category}`}
             className="text-blue-500 hover:underline ml-1"
           >
-            {article.category}
+            {Array.isArray(article.category) ? article.category[0] : article.category}
           </Link>{" "}
           &gt;
           <span className="text-gray-700 ml-1">
@@ -143,7 +151,7 @@ export default function NewsView() {
         )}
 
         {/* Article Content */}
-        <div className="prose max-w-none mb-8 font-dmSans text-[16px]">
+        <div className="prose max-w-none mb-8 font-dmSans text-[16px] [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:max-w-full">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
 
@@ -152,8 +160,9 @@ export default function NewsView() {
           <div className="mb-6">
             <h3 className="font-semibold mb-2">Keywords</h3>
             <div className="flex flex-wrap gap-2">
-              {Array.isArray(article.keywords?.[0])
-                ? article.keywords[0].map((keyword: string, index: number) => (
+              {Array.isArray(article.keywords) ? (
+                Array.isArray(article.keywords[0]) ? (
+                  article.keywords[0].map((keyword: string, index: number) => (
                     <span
                       key={index}
                       className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
@@ -161,14 +170,21 @@ export default function NewsView() {
                       {keyword}
                     </span>
                   ))
-                : article.keywords.map((keyword: string, index: number) => (
+                ) : (
+                  article.keywords.map((keyword: string, index: number) => (
                     <span
                       key={index}
                       className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
                     >
                       {keyword}
                     </span>
-                  ))}
+                  ))
+                )
+              ) : (
+                <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                  {article.keywords}
+                </span>
+              )}
             </div>
           </div>
         )}

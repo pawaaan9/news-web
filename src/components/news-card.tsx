@@ -2,8 +2,7 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
 interface NewsCardProps {
-  id: string; // Add id to props
-  url: string;
+  id: string;
   image: string | StaticImageData;
   category: string;
   title: string;
@@ -13,7 +12,6 @@ interface NewsCardProps {
 
 export default function NewsCard({
   id,
-  url,
   image,
   category,
   title,
@@ -28,7 +26,7 @@ export default function NewsCard({
     const parsed = JSON.parse(category);
     // Handle both nested array and regular array
     parsedCategories = Array.isArray(parsed?.[0]) ? parsed[0] : parsed;
-  } catch (error) {
+  } catch {
     // If parsing fails, use the category string directly
     parsedCategories = [category];
   }

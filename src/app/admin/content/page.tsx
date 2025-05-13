@@ -18,6 +18,7 @@ import { contentstatus } from "@/data/status";
 import { useRouter } from "next/navigation";
 import { ContentData, deleteContent, getContent } from "@/api/content.api";
 import withAuth from "@/hoc/with-auth";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 const ContentPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -26,6 +27,8 @@ const ContentPage = () => {
   const [author, setAuthor] = useState<string>("");
   const [filteredContent, setFilteredContent] = useState<ContentData[]>([]);
   const [contentData, setContentData] = useState<ContentData[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [contentToDelete, setContentToDelete] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -75,20 +78,23 @@ const ContentPage = () => {
   }, [headline, author, selectedCategory, selectedStatus, contentData]);
 
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this content?"
-    );
-    if (!confirmed) return;
+    setContentToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!contentToDelete) return;
 
     try {
-      await deleteContent(id); // Assuming you have a deleteContent function in your API
-      setContentData((prev) => prev.filter((content) => content._id !== id));
-      setFilteredContent((prev) =>
-        prev.filter((content) => content._id !== id)
-      );
+      await deleteContent(contentToDelete);
+      setContentData((prev) => prev.filter((content) => content._id !== contentToDelete));
+      setFilteredContent((prev) => prev.filter((content) => content._id !== contentToDelete));
     } catch (error) {
       console.error("Error deleting content:", error);
       alert("Failed to delete content.");
+    } finally {
+      setDeleteDialogOpen(false);
+      setContentToDelete(null);
     }
   };
 
@@ -277,6 +283,19 @@ const ContentPage = () => {
             </tbody>
           </table>
         </div>
+
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          onClose={() => {
+            setDeleteDialogOpen(false);
+            setContentToDelete(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Delete Content"
+          message="Are you sure you want to delete this content? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+        />
       </div>
     </AdminLayout>
   );

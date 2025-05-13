@@ -3,13 +3,11 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import Youtube from '@tiptap/extension-youtube'
-import { Button } from './button'
 import {
   IconBold,
   IconItalic,
   IconLink,
   IconPhoto,
-  IconVideo,
   IconSeparator,
   IconBrandYoutube,
 } from '@tabler/icons-react'
@@ -19,6 +17,11 @@ interface RichTextEditorProps {
   content: string
   onChange: (content: string) => void
   onImageUpload: (file: File) => Promise<string>
+}
+
+interface ImageUploadResponse {
+  status: string;
+  urls: string[];
 }
 
 export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProps) => {
@@ -36,6 +39,9 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
       Image,
       Youtube.configure({
         controls: true,
+        HTMLAttributes: {
+          class: 'w-full aspect-video',
+        },
       }),
     ],
     content,
@@ -60,7 +66,14 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
   const handleImageUpload = async (file: File) => {
     try {
       const imageUrl = await onImageUpload(file)
-      editor?.chain().focus().setImage({ src: imageUrl }).run()
+      if (imageUrl && typeof imageUrl === 'string') {
+        editor?.chain().focus().setImage({ 
+          src: imageUrl,
+          alt: 'Uploaded image'
+        }).run()
+      } else {
+        console.error('Invalid image URL received:', imageUrl)
+      }
     } catch (error) {
       console.error('Error uploading image:', error)
     }
@@ -68,7 +81,11 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
 
   const addYoutubeVideo = () => {
     if (youtubeUrl) {
-      editor?.chain().focus().setYoutubeVideo({ src: youtubeUrl }).run()
+      editor?.chain().focus().setYoutubeVideo({ 
+        src: youtubeUrl,
+        width: 640,
+        height: 360
+      }).run()
       setYoutubeUrl('')
       setShowYoutubeInput(false)
     }
@@ -116,10 +133,11 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
           id="image-upload"
           className="hidden"
           accept="image/*"
-          onChange={(e) => {
+          onChange={async (e) => {
             const file = e.target.files?.[0]
             if (file) {
-              handleImageUpload(file)
+              await handleImageUpload(file)
+              e.target.value = ''
             }
           }}
         />
@@ -173,7 +191,10 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
         </div>
       )}
 
-      <EditorContent editor={editor} className="p-4 min-h-[300px]" />
+      <EditorContent 
+        editor={editor} 
+        className="p-4 min-h-[300px] prose max-w-none [&_.ProseMirror]:prose [&_.ProseMirror]:max-w-none [&_.ProseMirror_img]:w-full [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_iframe]:w-full [&_.ProseMirror_iframe]:aspect-video [&_.ProseMirror_iframe]:rounded-lg" 
+      />
     </div>
   )
 } 

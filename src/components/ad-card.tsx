@@ -8,19 +8,31 @@ interface AdCardProps {
   position: "Article Top" | "Article Bottom";
 }
 
+interface Advertisement {
+  adImage: string;
+  title: string;
+  country: string;
+  position: string;
+  status: string;
+  startDatetime: string;
+  endDatetime: string;
+}
+
+interface AdDisplay {
+  image: string;
+  title: string;
+  brand: string;
+}
+
 export default function AdCard({ position }: AdCardProps) {
-  const [ad, setAd] = useState<{
-    image: string;
-    title: string;
-    brand: string;
-  } | null>(null);
+  const [ad, setAd] = useState<AdDisplay | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAd = async () => {
       try {
         const response = await getAllAdvertisements();
-        let ads = (response as { data: any[] }).data;
+        let ads = (response as { data: Advertisement[] }).data;
         
         // Filter by specified position
         ads = ads.filter(ad => ad.position === position);

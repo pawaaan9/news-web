@@ -48,23 +48,6 @@ const CreateContent = () => {
     setSelectedKeywords(keywords);
   };
 
-  const handleImageUpload = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await axios.post<ImageUploadResponse>(`${API_URL}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data.url;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
-  };
-
   const handleRichTextImageUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('images', file);
@@ -133,19 +116,20 @@ const CreateContent = () => {
 
       // Log the form data
       console.log('Form Data being sent:');
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
 
       await submitContent(formData);
       router.push("/admin/content");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting content:", error);
       // Log more details about the error
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data: unknown; status: number; headers: unknown } };
+        console.error('Error response data:', axiosError.response?.data);
+        console.error('Error response status:', axiosError.response?.status);
+        console.error('Error response headers:', axiosError.response?.headers);
       }
     }
   };

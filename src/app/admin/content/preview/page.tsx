@@ -5,8 +5,10 @@ import { format } from "date-fns";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Suspense } from "react";
 
-const PreviewPage = () => {
+const PreviewContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -35,6 +37,20 @@ const PreviewPage = () => {
         </Button>
 
         <article className="prose max-w-none">
+          {/* Status badges */}
+          <div className="flex gap-2 mb-4">
+            {isFeatured && (
+              <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">
+                Featured
+              </span>
+            )}
+            {isSpecial && (
+              <span className="bg-accent-teal text-white px-3 py-1 rounded-full text-sm">
+                Special
+              </span>
+            )}
+          </div>
+
           {/* Headlines */}
           <h1 className="text-4xl font-bold mb-4">{headline1}</h1>
           {headline2 && <h2 className="text-2xl text-gray-600 mb-4">{headline2}</h2>}
@@ -55,11 +71,13 @@ const PreviewPage = () => {
 
           {/* Featured image */}
           {headlineImage && (
-            <div className="mb-8">
-              <img
+            <div className="mb-8 relative w-full h-[400px]">
+              <Image
                 src={headlineImage}
                 alt={headline1}
-                className="w-full h-auto rounded-lg"
+                fill
+                className="object-cover rounded-lg"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           )}
@@ -86,6 +104,18 @@ const PreviewPage = () => {
         </article>
       </div>
     </div>
+  );
+};
+
+const PreviewPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <PreviewContent />
+    </Suspense>
   );
 };
 

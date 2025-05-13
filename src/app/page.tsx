@@ -64,7 +64,6 @@ export default function Home() {
       <NewsCard
         key={displayNews[i]._id}
         id={displayNews[i]._id}
-        url={displayNews[i].url}
         image={displayNews[i].headlineImage}
         category={displayNews[i].category || ""}
         title={displayNews[i].headline1 || ""}

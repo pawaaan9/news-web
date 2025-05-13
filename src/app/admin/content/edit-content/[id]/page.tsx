@@ -15,19 +15,20 @@ import {
   IconNote,
 } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
-import { getContentById, submitContent } from "@/api/content.api";
+import { getContentById, submitContent, updateContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
-import { getProfile } from "@/api/auth.api";
 import withAuth from "@/hoc/with-auth";
 import { format } from "date-fns";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import axios from "axios";
 import { use } from "react";
+import Image from "next/image";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
 interface ImageUploadResponse {
-  url: string;
+  status: string;
+  urls: string[];
 }
 
 interface ContentResponse {
@@ -118,7 +119,12 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      return response.data.url;
+      
+      if (response.data.status === 'success' && response.data.urls && response.data.urls.length > 0) {
+        return response.data.urls[0]; // Return the first URL from the array
+      } else {
+        throw new Error('No image URL received from server');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
@@ -157,7 +163,20 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       formData.append('isFeatured', String(isFeatured));
       formData.append('isSpecial', String(isSpecial));
 
-      await submitContent(formData);
+      await updateContent(params.id, {
+        headline1,
+        headline2,
+        headline3,
+        url,
+        category: selectedCategory[0],
+        status,
+        content,
+        author,
+        isFeatured,
+        isSpecial,
+        ...(headlineImage && { headlineImage: URL.createObjectURL(headlineImage) })
+      });
+
       router.push("/admin/content");
     } catch (error) {
       console.error("Error submitting content:", error);
@@ -303,11 +322,12 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
             <div>
               <InputText text="Headline image" />
               {currentHeadlineImage && (
-                <div className="mt-2 mb-2">
-                  <img 
+                <div className="mt-2 mb-2 relative w-full h-48">
+                  <Image 
                     src={currentHeadlineImage} 
                     alt="Current headline" 
-                    className="max-w-full h-auto rounded"
+                    fill
+                    className="object-contain rounded"
                   />
                 </div>
               )}
@@ -469,4 +489,4 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
   );
 };
 
-export default withAuth(EditContent as any); 
+export default withAuth(EditContent as React.ComponentType); 
