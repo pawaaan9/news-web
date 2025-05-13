@@ -1,46 +1,102 @@
-// import Image, { StaticImageData } from 'next/image';
+"use client";
 
-// interface SpecialNewsCardProps {
-//   image: StaticImageData;
-//   category: string;
-//   title: string;
-//   description: string;
-//   author: string;
-//   date: string;
-// }
+import { useEffect, useState } from "react";
+import { getContent, ContentData } from "@/api/content.api";
+import Image from "next/image";
+import Link from "next/link";
 
-// export default function SpecialNewsCard({
-//   image,
-//   category,
-//   title,
-//   description,
-//   author,
-//   date,
-// }: SpecialNewsCardProps) {
-//   return (
-//     <div className="bg-white text-charcoal rounded-xl overflow-hidden shadow-lg border border-gray-300 font-notoSans md:flex">
-//       <div className="relative w-full h-56 md:h-auto md:w-1/2">
-//         <Image
-//           src={image}
-//           alt={title}
-//           layout="fill"
-//           objectFit="cover"
-//           className="object-cover"
-//         />
-//         <div className="absolute top-3 left-3 bg-red-600 text-white text-xs uppercase px-3 py-1 rounded-full shadow-sm">
-//           {category}
-//         </div>
-//       </div>
+export default function SpecialNews() {
+  const [specialNews, setSpecialNews] = useState<ContentData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-//       <div className="p-6 md:w-1/2 flex flex-col justify-between">
-//         <div>
-//           <h2 className="text-xl font-bold leading-tight mb-3">{title}</h2>
-//           <p className="text-sm text-gray-700 mb-4 line-clamp-5">{description}</p>
-//         </div>
-//         <div className="text-xs text-gray-500 mt-2">
-//           <span className="font-semibold">{author}</span> විසින් • {date}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+  useEffect(() => {
+    const fetchSpecialNews = async () => {
+      try {
+        const response = await getContent();
+        const filtered = response.data
+          .filter((item) => item.isSpecial === true)
+          .slice(0, 2); // Limit to 2 items
+        setSpecialNews(filtered);
+      } catch (error) {
+        console.error("Failed to load special news:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSpecialNews();
+  }, []);
+
+  if (loading) return <p>Loading special news...</p>;
+  if (specialNews.length === 0) return <p>No special news available.</p>;
+
+  return (
+    <div className="h-full">
+      <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
+        {/* Header */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800">Special News</h2>
+          <hr className="mt-2 border-charcoal" />
+        </div>
+
+        {/* News Grid */}
+        <div className="flex-grow">
+          <div className="grid gap-6 md:grid-cols-2 h-full">
+            {specialNews.map((item) => {
+              // Parse categories similar to NewsCard
+              let parsedCategories: string[] = [];
+              try {
+                parsedCategories = JSON.parse(item.category);
+              } catch (error) {
+                console.error("Failed to parse category:", error);
+                parsedCategories = ["Unknown"];
+              }
+
+              return (
+                <Link 
+                  href={`/news-view/${item.url}`} 
+                  passHref 
+                  key={item._id}
+                  className="cursor-pointer h-full flex flex-col"
+                >
+                  <div className="rounded-lg overflow-hidden shadow-md bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
+                    {/* Image container with category badge */}
+                    <div className="relative w-full aspect-video">
+                      <Image
+                        src={item.headlineImage}
+                        alt={item.headline1}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      {/* Category badge in top-right corner */}
+                      <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
+                        {parsedCategories.map((cat, index) => (
+                          <span key={index} className="mr-1">
+                            {cat}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold mt-1">{item.headline1}</h3>
+                      <div className="text-sm text-gray-400 mt-2">
+                        විසින් {item.author} •{" "}
+                        {new Date(item.createdTime).toLocaleDateString("si-LK", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
