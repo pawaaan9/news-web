@@ -24,10 +24,13 @@ export default function NewsCard({
 
   let parsedCategories: string[] = [];
   try {
-    parsedCategories = JSON.parse(category);
+    // First try to parse as JSON
+    const parsed = JSON.parse(category);
+    // Handle both nested array and regular array
+    parsedCategories = Array.isArray(parsed?.[0]) ? parsed[0] : parsed;
   } catch (error) {
-    console.error("Failed to parse category:", error);
-    parsedCategories = ["Unknown"];
+    // If parsing fails, use the category string directly
+    parsedCategories = [category];
   }
 
   return (

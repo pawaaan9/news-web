@@ -64,7 +64,7 @@ export default function NewsView() {
   }
 
   return (
-    <main>
+    <main className="font-dmSans">
       <NavBar />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Breadcrumbs */}
@@ -87,12 +87,28 @@ export default function NewsView() {
 
         {/* Article Header */}
         <div className="mb-6">
-          <span className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded mb-2">
-            {article.category}
-          </span>
-          <h1 className="text-2xl font-bold mb-2">{article.headline1}</h1>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {Array.isArray(article.category?.[0]) ? (
+              article.category[0].map((cat: string, index: number) => (
+                <span
+                  key={index}
+                  className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded"
+                >
+                  {cat}
+                </span>
+              ))
+            ) : (
+              <span className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                {article.category}
+              </span>
+            )}
+          </div>
+
+          <h1 className="text-2xl lg:text-[32px] font-bold mb-2">
+            {article.headline1}
+          </h1>
           <div className="flex items-center text-sm text-gray-600 mb-4">
-            <span className="font-medium">{article.author}</span> විසින් •{" "}
+            <span className="font-medium">{article.author} </span> විසින් •{" "}
             {formatDistanceToNow(new Date(article.createdTime), {
               addSuffix: true,
             })}
@@ -112,36 +128,16 @@ export default function NewsView() {
           </div>
         )}
 
-        <h2 className="text-xl text-gray-700 mb-1 font-bold">{article.headline2}</h2>
+        <h2 className="text-xl text-gray-700 mb-1 font-bold">
+          {article.headline2}
+        </h2>
         {article.headline3 && (
           <h3 className="text-lg text-gray-600 mb-4">{article.headline3}</h3>
         )}
 
         {/* Article Content */}
-        <div className="prose max-w-none mb-8">
-          {article.contentBlocks?.map((block: any, index: number) => (
-            <div key={block._id || index} className="mb-6">
-              {block.type === "paragraph" && (
-                <>
-                  <p className="mb-4 text-gray-800 leading-relaxed">
-                    {block.data || block.content}
-                  </p>
-                </>
-              )}
-              {block.type === "image" && block.file && (
-                <div className="my-4">
-                  <div className="relative w-full h-64">
-                    <Image
-                      src={block.file}
-                      alt=""
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="prose max-w-none mb-8 font-dmSans text-[16px]">
+          <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
 
         {/* Keywords */}
@@ -149,14 +145,23 @@ export default function NewsView() {
           <div className="mb-6">
             <h3 className="font-semibold mb-2">Keywords</h3>
             <div className="flex flex-wrap gap-2">
-              {article.keywords.map((keyword: string, index: number) => (
-                <span
-                  key={index}
-                  className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
-                >
-                  {keyword}
-                </span>
-              ))}
+              {Array.isArray(article.keywords?.[0])
+                ? article.keywords[0].map((keyword: string, index: number) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+                    >
+                      {keyword}
+                    </span>
+                  ))
+                : article.keywords.map((keyword: string, index: number) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
             </div>
           </div>
         )}

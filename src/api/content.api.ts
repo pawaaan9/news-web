@@ -37,81 +37,26 @@ export const getContent = async (): Promise<ContentResponse> => {
 };
 
 // Submit content (Create or Update)
-export const submitContent = async (content: {
-  headline1: string;
-  headline2: string;
-  headline3: string;
-  seoTitle: string;
-  url: string;
-  author: string;
-  category: string[];
-  keywords: string[];
-  status: "Draft" | "Published";
-  isFeatured: boolean;
-  isSpecial: boolean;
-  headlineImage: File | null;
-  contentBlocks: {
-    type: "paragraph" | "image" | "video";
-    id: number;
-    content?: string;
-    file?: File;
-  }[];
-}) => {
-  const formData = new FormData();
-
-  // Generate URL if not provided
-  const generatedUrl = content.headline1
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-
-  // Add headline and other fields
-  formData.append("headline1", content.headline1);
-  formData.append("headline2", content.headline2);
-  formData.append("headline3", content.headline3);
-  formData.append("seoTitle", content.seoTitle);
-  formData.append("url", content.url || generatedUrl);
-  formData.append("category", JSON.stringify(content.category));
-  formData.append("keywords", JSON.stringify(content.keywords));
-  formData.append("status", content.status);
-  formData.append("author", content.author || "");
-  formData.append("isFeatured", content.isFeatured ? "true" : "false");
-  formData.append("isSpecial", content.isSpecial ? "true" : "false");
-  if (content.headlineImage) {
-    formData.append("image", content.headlineImage);
-  }
-
-  // Add content blocks
-  content.contentBlocks.forEach((block, index) => {
-    formData.append(`contentBlocks[${index}][type]`, block.type);
-    formData.append(`contentBlocks[${index}][order]`, (index + 1).toString());
-    if (block.type === "paragraph" || block.type === "video") {
-      formData.append(`contentBlocks[${index}][data]`, block.content || "");
-    } else if (block.type === "image" && block.file) {
-      formData.append(`contentBlocks[${index}][data]`, block.file);
-    }
-  });
-
+export const submitContent = async (formData: FormData) => {
   try {
     const response = await axios.post(`${API_URL}/content`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error(
-      "Error submitting content:",
-      error.response?.data || error.message
-    );
+  } catch (error) {
     throw error;
   }
 };
 
 export const getContentById = async (id: string) => {
-  const response = await axiosInstance.get(`/content/${id}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/content/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const updateContent = async (
