@@ -11,18 +11,23 @@ import KeywordsInput from "@/modules/content/keyword-input";
 import { Button } from "@/components/ui/button";
 import {
   IconBrowserShare,
-  IconCamera,
   IconEye,
   IconNote,
-  IconTextWrap,
-  IconVideo,
 } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
-import { ContentBlock, submitContent } from "@/api/content.api";
+import { submitContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
 import { getProfile } from "@/api/auth.api";
 import withAuth from "@/hoc/with-auth";
 import { format } from "date-fns";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import axios from "axios";
+
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
+
+interface ImageUploadResponse {
+  url: string;
+}
 
 const CreateContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -35,68 +40,50 @@ const CreateContent = () => {
   const [isFeatured, setIsFeatured] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
   const [seoTitle, setSeoTitle] = useState("");
-
-  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([
-    { type: "paragraph", id: 1 },
-  ]);
+  const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
   const router = useRouter();
-  const [content, setContent] = useState<string>("");
 
   const handleKeywordsChange = (keywords: string[]) => {
     setSelectedKeywords(keywords);
   };
 
-  const addParagraph = () => {
-    const lastBlock = contentBlocks[contentBlocks.length - 1];
-    if (lastBlock.type === "paragraph" && !lastBlock.content) {
-      alert("Please fill the current paragraph before adding a new one.");
-      return;
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await axios.post<ImageUploadResponse>(`${API_URL}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.url;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
     }
-    setContentBlocks([
-      ...contentBlocks,
-      { type: "paragraph", id: contentBlocks.length + 1, content: "" },
-    ]);
   };
 
-  const addImage = () => {
-    const lastBlock = contentBlocks[contentBlocks.length - 1];
-    if (lastBlock.type === "paragraph" && !lastBlock.content) {
-      alert("Please fill the current paragraph before adding an image.");
-      return;
-    }
-    setContentBlocks([
-      ...contentBlocks,
-      { type: "image", id: contentBlocks.length + 1, file: undefined },
-    ]);
-  };
+  const handleRichTextImageUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('images', file);
 
-  const addVideoLink = () => {
-    const lastBlock = contentBlocks[contentBlocks.length - 1];
-    if (lastBlock.type === "paragraph" && !lastBlock.content) {
-      alert("Please fill the current paragraph before adding a video link.");
-      return;
+    try {
+      const response = await axios.post<ImageUploadResponse>(`${API_URL}/content/upload/rich-text`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.url;
+    } catch (error) {
+      console.error('Error uploading rich text image:', error);
+      throw error;
     }
-    setContentBlocks([
-      ...contentBlocks,
-      { type: "video", id: contentBlocks.length + 1, content: "" },
-    ]);
-  };
-
-  const handleContentChange = (id: number, value: string | File | null) => {
-    setContentBlocks((prevBlocks) =>
-      prevBlocks.map((block) =>
-        block.id === id
-          ? block.type === "paragraph" || block.type === "video"
-            ? { ...block, content: value as string }
-            : { ...block, file: value as File | undefined } // Ensure `file` is `undefined` if `null`
-          : block
-      )
-    );
   };
 
   const generateUrl = (title: string) => {
-    const today = format(new Date(), "yyyy-MM-dd"); // Format today's date as YYYY-MM-DD
+    const today = format(new Date(), "yyyy-MM-dd");
     return `${title
       .toLowerCase()
       .replace(/\s+/g, "-")
@@ -106,7 +93,7 @@ const CreateContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getProfile(); // ✅ now correctly typed
+        const result = await getProfile();
         setAuthor(result.data.user.username);
         console.log("Author fetched:", result.data.user.username);
       } catch (err) {
@@ -124,23 +111,23 @@ const CreateContent = () => {
     }
 
     try {
-      await submitContent({
-        headline1,
-        headline2,
-        headline3,
-        seoTitle,
-        url,
-        category: selectedCategory,
-        keywords: selectedKeywords,
-        status,
-        headlineImage,
-        contentBlocks,
-        author,
-        isFeatured,
-        isSpecial,
-      });
+      const formData = new FormData();
+      formData.append('headlineImage', headlineImage as File);
+      formData.append('headline1', headline1);
+      formData.append('headline2', headline2);
+      formData.append('headline3', headline3);
+      formData.append('seoTitle', seoTitle);
+      formData.append('url', url);
+      formData.append('category', JSON.stringify([selectedCategory]));
+      formData.append('keywords', JSON.stringify(selectedKeywords));
+      formData.append('status', status);
+      formData.append('content', content);
+      formData.append('author', author);
+      formData.append('isFeatured', String(isFeatured));
+      formData.append('isSpecial', String(isSpecial));
 
-      router.push("/admin/content"); // Redirect to the content page after submission
+      await submitContent(formData);
+      router.push("/admin/content");
     } catch (error) {
       console.error("Error submitting content:", error);
     }
@@ -303,10 +290,10 @@ const CreateContent = () => {
                     onChange={(e) => {
                       const value = e.target.value;
                       if (e.target.checked) {
-                        setSelectedCategory([...selectedCategory, value]); // Add category
+                        setSelectedCategory([...selectedCategory, value]);
                       } else {
                         setSelectedCategory(
-                          selectedCategory.filter((cat) => cat !== value) // Remove category
+                          selectedCategory.filter((cat) => cat !== value)
                         );
                       }
                     }}
@@ -325,7 +312,6 @@ const CreateContent = () => {
           <div>
             <InputText text="Special Options" />
             <div className="flex items-center gap-4 mt-2">
-              {/* Featured Radio Button */}
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -334,14 +320,13 @@ const CreateContent = () => {
                   checked={isFeatured}
                   onChange={() => {
                     setIsFeatured(true);
-                    setIsSpecial(false); // Ensure only one is selected
+                    setIsSpecial(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
                 <span className="text-charcoal">Featured</span>
               </label>
 
-              {/* Special Radio Button */}
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -350,7 +335,7 @@ const CreateContent = () => {
                   checked={isSpecial}
                   onChange={() => {
                     setIsSpecial(true);
-                    setIsFeatured(false); // Ensure only one is selected
+                    setIsFeatured(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
@@ -363,90 +348,15 @@ const CreateContent = () => {
           </div>
 
           <div>
-            <label className="font-[600] text-[16px] text-charcoal ">
+            <label className="font-[600] text-[16px] text-charcoal">
               Content
             </label>
             <div className="mt-4">
-              {contentBlocks.map((block, index) => (
-                <div key={block.id} className="mb-4">
-                  {block.type === "paragraph" ? (
-                    <div>
-                      <InputText text={`Paragraph ${index + 1}`} />
-                      <Textarea
-                        rows={4}
-                        placeholder={`Enter content for Paragraph ${index + 1}`}
-                        value={block.content || ""}
-                        onChange={(e) =>
-                          handleContentChange(block.id, e.target.value)
-                        }
-                        className="border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
-                      />
-                    </div>
-                  ) : block.type === "image" ? (
-                    <div>
-                      <InputText text="Image" />
-                      <Input
-                        type="file"
-                        onChange={(e) =>
-                          handleContentChange(
-                            block.id,
-                            e.target.files?.[0] || null
-                          )
-                        }
-                        className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
-                      />
-                    </div>
-                  ) : block.type === "video" ? (
-                    <div>
-                      <InputText text="YouTube Video Link" />
-                      <Input
-                        type="text"
-                        value={block.content || ""}
-                        onChange={(e) =>
-                          handleContentChange(block.id, e.target.value)
-                        }
-                        placeholder="Enter YouTube video link"
-                        className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
-                      />
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-              <div className="flex gap-2 mt-4">
-                <Button
-                  variant="outline"
-                  className="bg-red-400 text-white border border-red-400 hover:bg-red-600"
-                  onClick={() => {
-                    if (contentBlocks.length > 1) {
-                      setContentBlocks(contentBlocks.slice(0, -1)); // Remove the last block
-                    } else {
-                      alert("You must have at least one content block.");
-                    }
-                  }}
-                >
-                  Cancel Last
-                </Button>
-                <Button
-                  className="bg-primary text-white"
-                  onClick={addParagraph}
-                >
-                  <IconTextWrap size={20} /> Add Paragraph
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-white text-primary border border-primary"
-                  onClick={addImage}
-                >
-                  <IconCamera size={20} /> Add Image
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-white text-primary border border-primary"
-                  onClick={addVideoLink}
-                >
-                  <IconVideo size={20} /> Add Video Link
-                </Button>
-              </div>
+              <RichTextEditor 
+                content={content} 
+                onChange={setContent} 
+                onImageUpload={handleRichTextImageUpload}
+              />
             </div>
           </div>
 
