@@ -10,6 +10,7 @@ import {
   IconPhoto,
   IconSeparator,
   IconBrandYoutube,
+  IconLoader2,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 
@@ -17,9 +18,10 @@ interface RichTextEditorProps {
   content: string
   onChange: (content: string) => void
   onImageUpload: (file: File) => Promise<string>
+  isUploading?: boolean
 }
 
-export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProps) => {
+export const RichTextEditor = ({ content, onChange, onImageUpload, isUploading = false }: RichTextEditorProps) => {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [youtubeUrl, setYoutubeUrl] = useState('')
@@ -119,9 +121,14 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
         </button>
         <button
           onClick={() => document.getElementById('image-upload')?.click()}
-          className="p-2 rounded hover:bg-gray-100"
+          className={`p-2 rounded hover:bg-gray-100 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isUploading}
         >
-          <IconPhoto size={20} />
+          {isUploading ? (
+            <IconLoader2 size={20} className="animate-spin" />
+          ) : (
+            <IconPhoto size={20} />
+          )}
         </button>
         <input
           type="file"
@@ -135,6 +142,7 @@ export const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEdi
               e.target.value = ''
             }
           }}
+          disabled={isUploading}
         />
         <button
           onClick={() => setShowYoutubeInput(!showYoutubeInput)}

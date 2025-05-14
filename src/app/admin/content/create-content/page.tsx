@@ -13,6 +13,7 @@ import {
   IconBrowserShare,
   IconEye,
   IconNote,
+  IconLoader2,
 } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
 import { submitContent } from "@/api/content.api";
@@ -25,9 +26,6 @@ import axios from "axios";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
-interface ImageUploadResponse {
-  url: string;
-}
 
 const CreateContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -42,6 +40,8 @@ const CreateContent = () => {
   const [seoTitle, setSeoTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
   const router = useRouter();
 
   const handleKeywordsChange = (keywords: string[]) => {
@@ -49,19 +49,38 @@ const CreateContent = () => {
   };
 
   const handleRichTextImageUpload = async (file: File): Promise<string> => {
+    setIsImageUploading(true);
     const formData = new FormData();
     formData.append('images', file);
 
     try {
-      const response = await axios.post<ImageUploadResponse>(`${API_URL}/content/upload/rich-text`, formData, {
+      const response = await axios.post<{ urls: string[] }>(`${API_URL}/content/upload/rich-text`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      return response.data.url;
-    } catch (error) {
+
+      // Check if we have a valid URL in the response
+      if (response.data && Array.isArray(response.data.urls) && response.data.urls.length > 0) {
+        console.log('Rich text image upload successful:', response.data.urls[0]);
+        return response.data.urls[0];
+      } else {
+        console.error('Invalid response format:', response.data);
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error: unknown) {
       console.error('Error uploading rich text image:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string };
+        console.error('Upload error details:', {
+          status: axiosError.response?.status,
+          data: axiosError.response?.data,
+          message: axiosError.message
+        });
+      }
       throw error;
+    } finally {
+      setIsImageUploading(false);
     }
   };
 
@@ -98,6 +117,7 @@ const CreateContent = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const formData = new FormData();
       formData.append('image', headlineImage as File);
@@ -131,6 +151,8 @@ const CreateContent = () => {
         console.error('Error response status:', axiosError.response?.status);
         console.error('Error response headers:', axiosError.response?.headers);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -268,11 +290,22 @@ const CreateContent = () => {
           <div>
             <InputText text="Headline image" />
             <Input
-              onChange={(e) => setHeadlineImage(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  console.log('File selected:', file.name); // Debug log
+                  setHeadlineImage(file);
+                }
+              }}
               type="file"
               accept="image/*"
-              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none  focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+              className={`border ${headlineImage ? 'border-primary' : 'border-charcoal/60'} focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2`}
             />
+            {headlineImage && (
+              <p className="text-sm text-primary mt-1">
+                ✓ Image selected: {headlineImage.name}
+              </p>
+            )}
           </div>
 
           <div>
@@ -357,6 +390,7 @@ const CreateContent = () => {
                 content={content} 
                 onChange={setContent} 
                 onImageUpload={handleRichTextImageUpload}
+                isUploading={isImageUploading}
               />
             </div>
           </div>
@@ -377,15 +411,36 @@ const CreateContent = () => {
               className="bg-white text-primary border-primary border hover:bg-primary/10 cursor-pointer"
               variant="outline"
               onClick={() => handleSubmit("Draft")}
+              disabled={isSubmitting}
             >
-              <IconNote size={20} />
-              Save as Draft
+              {isSubmitting ? (
+                <>
+                  <IconLoader2 size={20} className="animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <IconNote size={20} />
+                  Save as Draft
+                </>
+              )}
             </Button>
             <Button
               className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
               onClick={() => handleSubmit("Published")}
+              disabled={isSubmitting}
             >
-              <IconBrowserShare size={20} /> Publish
+              {isSubmitting ? (
+                <>
+                  <IconLoader2 size={20} className="animate-spin mr-2" />
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <IconBrowserShare size={20} />
+                  Publish
+                </>
+              )}
             </Button>
           </div>
         </div>
