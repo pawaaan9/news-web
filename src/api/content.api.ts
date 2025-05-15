@@ -17,7 +17,7 @@ export interface ContentData {
   isFeatured: boolean;
   isSpecial: boolean;
   content: string;
-  
+  scheduledPublishDate?: string;
 }
 
 
@@ -91,5 +91,17 @@ export const getAllContentsByUrl = async (
   const response = await axiosInstance.get<ContentData[]>(
     `/content/all-by-url/${url}`
   );
+  return response.data;
+};
+
+// Get all scheduled content
+export const getScheduledContent = async (): Promise<ContentResponse> => {
+  const response = await axiosInstance.get<ContentResponse>("/content/scheduled");
+  return response.data;
+};
+
+// Process scheduled content
+export const processScheduledContent = async (): Promise<ContentResponse> => {
+  const response = await axiosInstance.post<ContentResponse>("/content/scheduled/process");
   return response.data;
 };
