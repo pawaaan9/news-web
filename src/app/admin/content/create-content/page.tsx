@@ -42,6 +42,9 @@ const CreateContent = () => {
   const [author, setAuthor] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [publishOption, setPublishOption] = useState<"now" | "schedule">("now");
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
   const router = useRouter();
 
   const handleKeywordsChange = (keywords: string[]) => {
@@ -117,6 +120,11 @@ const CreateContent = () => {
       return;
     }
 
+    if (publishOption === "schedule" && (!scheduledDate || !scheduledTime)) {
+      alert("Please select both date and time for scheduling.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -134,6 +142,12 @@ const CreateContent = () => {
       formData.append('isFeatured', String(isFeatured));
       formData.append('isSpecial', String(isSpecial));
 
+      // Add scheduling information if scheduled
+      if (publishOption === "schedule") {
+        const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
+        formData.append('scheduledPublishDate', scheduledDateTime.toISOString());
+      }
+
       // Log the form data
       console.log('Form Data being sent:');
       for (const [key, value] of formData.entries()) {
@@ -144,7 +158,6 @@ const CreateContent = () => {
       router.push("/admin/content");
     } catch (error: unknown) {
       console.error("Error submitting content:", error);
-      // Log more details about the error
       if (error && typeof error === 'object' && 'response' in error) {
         const axiosError = error as { response?: { data: unknown; status: number; headers: unknown } };
         console.error('Error response data:', axiosError.response?.data);
@@ -400,6 +413,62 @@ const CreateContent = () => {
             <LabelText text="- Click Preview to see how it will appear to readers." />
             <LabelText text="- Click Save as Draft if you're not ready to publish yet, your progress will be saved." />
             <LabelText text="- Click Publish to make this article live immediately." />
+            <LabelText text="- Click Schedule to publish at a specific date and time." />
+          </div>
+
+          <div>
+            <InputText text="Publishing Options" />
+            <div className="flex flex-col gap-4 mt-2">
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="publishOption"
+                    value="now"
+                    checked={publishOption === "now"}
+                    onChange={() => setPublishOption("now")}
+                    className="form-radio text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">Publish Now</span>
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="publishOption"
+                    value="schedule"
+                    checked={publishOption === "schedule"}
+                    onChange={() => setPublishOption("schedule")}
+                    className="form-radio text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">Schedule for Later</span>
+                </label>
+              </div>
+
+              {publishOption === "schedule" && (
+                <div className="flex gap-4">
+                  <div>
+                    <label className="block text-sm text-charcoal/60 mb-1">Date</label>
+                    <Input
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      min={format(new Date(), "yyyy-MM-dd")}
+                      className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-charcoal/60 mb-1">Time</label>
+                    <Input
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4 mt-4">
@@ -425,23 +494,43 @@ const CreateContent = () => {
                 </>
               )}
             </Button>
-            <Button
-              className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
-              onClick={() => handleSubmit("Published")}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <IconLoader2 size={20} className="animate-spin mr-2" />
-                  Publishing...
-                </>
-              ) : (
-                <>
-                  <IconBrowserShare size={20} />
-                  Publish
-                </>
-              )}
-            </Button>
+            {publishOption === "now" ? (
+              <Button
+                className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
+                onClick={() => handleSubmit("Published")}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <IconBrowserShare size={20} />
+                    Publish
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button
+                className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
+                onClick={() => handleSubmit("Draft")}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    Scheduling...
+                  </>
+                ) : (
+                  <>
+                    <IconBrowserShare size={20} />
+                    Schedule
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </div>

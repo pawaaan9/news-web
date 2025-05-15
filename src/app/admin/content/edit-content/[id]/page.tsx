@@ -433,7 +433,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                 Content Preview
               </label>
               <div 
-                className="prose max-w-none p-4 border border-charcoal/20 rounded-lg"
+                className="prose max-w-none p-4 border border-charcoal/20 rounded-lg h-[500px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </div>

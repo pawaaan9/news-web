@@ -5,57 +5,55 @@
 
 @font-face {
   font-family: "DM Sans";
-  src: url("/src/assets/fonts/DMSans-VariableFont_opsz\,wght.ttf")
-    format("truetype");
+  src: url("/fonts/DMSans-VariableFont_opsz,wght.ttf") format("truetype");
   font-weight: 100 900;
 }
 
 @font-face {
   font-family: "Noto Sans Sinhala";
-  src: url("/src/assets/fonts/NotoSansSinhala-VariableFont_wdth\,wght.ttf")
-    format("truetype");
+  src: url("/fonts/NotoSansSinhala-VariableFont_wdth,wght.ttf") format("truetype");
   font-weight: 100 900;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-ExtraLight.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-ExtraLight.ttf") format("truetype");
   font-weight: 200;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-Light.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-Light.ttf") format("truetype");
   font-weight: 300;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-Regular.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-Regular.ttf") format("truetype");
   font-weight: 400;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-Medium.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-Medium.ttf") format("truetype");
   font-weight: 500;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-SemiBold.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-SemiBold.ttf") format("truetype");
   font-weight: 600;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-Bold.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-Bold.ttf") format("truetype");
   font-weight: 700;
 }
 
 @font-face {
   font-family: "Mukta Malar";
-  src: url("/src/assets/fonts/MuktaMalar-ExtraBold.ttf") format("truetype");
+  src: url("/fonts/MuktaMalar-ExtraBold.ttf") format("truetype");
   font-weight: 800;
 }
 
@@ -189,5 +187,5 @@
 } */
 
 body {
-  font-family: "Muktamalar", "sans-serif";
+  font-family: "Mukta Malar", sans-serif;
 }
