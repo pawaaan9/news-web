@@ -54,7 +54,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
       <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">
+          <h2 className="text-2xl font-semibold text-gray-800 font-dmSans">
             Featured News
           </h2>
           <hr className="mt-2 border-charcoal" />
@@ -69,7 +69,9 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
           >
             <div className="rounded-lg overflow-hidden shadow-md bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
               {/* Image container with category badge */}
-              <div className="relative w-full pt-[56.25%]"> {/* 16:9 aspect ratio */}
+              <div className="relative w-full pt-[56.25%]">
+                {" "}
+                {/* 16:9 aspect ratio */}
                 <Image
                   src={featuredNews.headlineImage}
                   alt={featuredNews.headline1}
@@ -89,11 +91,11 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
               </div>
 
               <div className="p-4">
-                <h3 className="text-lg font-bold">
+                <h3 className="text-lg font-bold font-muktaMalar">
                   {featuredNews.headline1}
                 </h3>
                 <div className="text-sm text-gray-400 mt-2">
-                  {featuredNews.author} විසින් •{" "}
+                  by {featuredNews.author} •{" "}
                   {new Date(featuredNews.createdTime).toLocaleDateString(
                     "si-LK",
                     {

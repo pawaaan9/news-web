@@ -36,7 +36,7 @@ export default function NewsView() {
     const fetchArticle = async () => {
       try {
         setLoading(true);
-        const response = await getContentById(id) as { data: Article };
+        const response = (await getContentById(id)) as { data: Article };
         setArticle(response.data);
       } catch (err) {
         setError("Failed to load article");
@@ -92,10 +92,12 @@ export default function NewsView() {
             href={`/?category=${article.category}`}
             className="text-blue-500 hover:underline ml-1"
           >
-            {Array.isArray(article.category) ? article.category[0] : article.category}
+            {Array.isArray(article.category)
+              ? article.category[0]
+              : article.category}
           </Link>{" "}
           &gt;
-          <span className="text-gray-700 ml-1">
+          <span className="text-gray-700 ml-1 font-muktaMalar">
             {article.headline1.substring(0, 20)}...
           </span>
         </div>
@@ -119,11 +121,11 @@ export default function NewsView() {
             )}
           </div>
 
-          <h1 className="text-2xl lg:text-[32px] font-bold mb-2">
+          <h1 className="text-2xl lg:text-[32px] font-bold mb-2 font-muktaMalar">
             {article.headline1}
           </h1>
           <div className="flex items-center text-sm text-gray-600 mb-4">
-            <span className="font-medium">{article.author} </span> විසින් •{" "}
+            by<span className="font-medium ml-1">{article.author} </span> •{" "}
             {formatDistanceToNow(new Date(article.createdTime), {
               addSuffix: true,
             })}
@@ -132,7 +134,7 @@ export default function NewsView() {
 
         {/* Featured Image */}
         {article.headlineImage && (
-          <div className="relative w-full h-80 mb-6 rounded-lg overflow-hidden">
+          <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden ">
             <Image
               src={article.headlineImage}
               alt={article.headline1}
@@ -143,15 +145,17 @@ export default function NewsView() {
           </div>
         )}
 
-        <h2 className="text-xl text-gray-700 mb-1 font-bold">
+        <h2 className="text-xl text-gray-700 mb-1 font-bold font-muktaMalar">
           {article.headline2}
         </h2>
         {article.headline3 && (
-          <h3 className="text-lg text-gray-600 mb-4">{article.headline3}</h3>
+          <h3 className="text-lg text-gray-600 mb-4 font-muktaMalar">
+            {article.headline3}
+          </h3>
         )}
 
         {/* Article Content */}
-        <div className="prose max-w-none mb-8 font-dmSans text-[16px] [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:max-w-full">
+        <div className="prose max-w-none mb-8 font-muktaMalar text-[16px] [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:max-w-full">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
 

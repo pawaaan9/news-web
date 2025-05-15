@@ -31,7 +31,7 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
   };
 
   return (
-    <div className="w-full bg-primary text-white">
+    <div className="w-full bg-primary text-white font-dmSans">
       <CountryAndDate />
 
       {/* Top Section with Logo and Ad (Desktop) */}
@@ -88,7 +88,7 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
             }`}
           >
             <Home size={16} />
-            මුල් පිටුව
+            Home
           </button>
           {mainNavItems.map((item) => (
             <button
@@ -114,7 +114,7 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
                   : ""
               }`}
             >
-              වෙනත් කාණ්ඩ
+              Other
               <ChevronDown size={16} className="ml-1" />
             </button>
 

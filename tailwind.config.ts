@@ -16,9 +16,14 @@ const config: Config = {
         "accent-teal": "#0d9488",
         charcoal: "#1f2937",
       },
+      fontFamily: {
+        muktaMalar: ['"Mukta Malar"', "sans-serif"],
+        dmSans: ['"DM Sans"', "sans-serif"],
+        notoSans: ['"Noto Sans"', "sans-serif"],
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
 };
 
-export default config; 
+export default config;

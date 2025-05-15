@@ -17,9 +17,52 @@
   font-weight: 100 900;
 }
 
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-Light.ttf") format("truetype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Mukta Malar";
+  src: url("/src/assets/fonts/MuktaMalar-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+}
+
 @theme {
   --font-dmSans: "DM Sans", sans-serif;
   --font-notoSans: "Noto Sans Sinhala", sans-serif;
+  --font-muktaMalar: "Mukta Malar", sans-serif;
 
   --color-primary: #0d3b66;
   --color-white: #ffffff;
@@ -144,3 +187,7 @@
     @apply bg-background text-foreground;
   }
 } */
+
+body {
+  font-family: "Muktamalar", "sans-serif";
+}

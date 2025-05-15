@@ -45,7 +45,9 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
       <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Special News</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 font-dmSans">
+            Special News
+          </h2>
           <hr className="mt-2 border-charcoal" />
         </div>
 
@@ -71,7 +73,9 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                 >
                   <div className="rounded-lg overflow-hidden shadow-md bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
                     {/* Image container with category badge */}
-                    <div className="relative w-full pt-[56.25%]"> {/* 16:9 aspect ratio */}
+                    <div className="relative w-full pt-[56.25%]">
+                      {" "}
+                      {/* 16:9 aspect ratio */}
                       <Image
                         src={item.headlineImage}
                         alt={item.headline1}
@@ -91,11 +95,11 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-lg font-bold">
+                      <h3 className="text-lg font-bold font-muktaMalar">
                         {item.headline1}
                       </h3>
                       <div className="text-sm text-gray-400 mt-2">
-                        විසින් {item.author} •{" "}
+                        by {item.author} •{" "}
                         {new Date(item.createdTime).toLocaleDateString(
                           "si-LK",
                           {
