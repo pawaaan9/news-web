@@ -64,7 +64,11 @@ const PreviewContent = () => {
             {category.length > 0 && (
               <>
                 <span>•</span>
-                <span>{category.join(", ")}</span>
+                <span>
+                  {category.map((cat: { name: string; subCategory?: string }) => 
+                    cat.subCategory ? `${cat.name} (${cat.subCategory})` : cat.name
+                  ).join(", ")}
+                </span>
               </>
             )}
           </div>

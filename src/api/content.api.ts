@@ -18,6 +18,7 @@ export interface ContentData {
   isSpecial: boolean;
   content: string;
   scheduledPublishDate?: string;
+  keywords?: string[];
 }
 
 

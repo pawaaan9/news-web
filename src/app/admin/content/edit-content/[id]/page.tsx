@@ -43,14 +43,14 @@ interface ContentResponse {
     author: string;
     isFeatured: boolean;
     isSpecial: boolean;
-    category: string[];
+    category: Array<{ name: string; subCategory?: string }>;
     keywords: string[];
   }
 }
 
 const EditContent = (props: { params: Promise<{ id: string }> }) => {
   const params = use(props.params);
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<{ name: string; subCategory?: string }[]>([]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [headline1, setHeadline1] = useState("");
   const [headline2, setHeadline2] = useState("");
@@ -84,10 +84,14 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         setIsFeatured(data.isFeatured);
         setIsSpecial(data.isSpecial);
         
-        if (Array.isArray(data.category?.[0])) {
-          setSelectedCategory(data.category[0]);
-        } else {
-          setSelectedCategory(data.category || []);
+        if (Array.isArray(data.category)) {
+          const parsedCategories = data.category.map((cat: any) => {
+            if (typeof cat === 'string') {
+              return { name: cat };
+            }
+            return cat;
+          });
+          setSelectedCategories(parsedCategories);
         }
         
         if (Array.isArray(data.keywords?.[0])) {
@@ -139,8 +143,26 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       .replace(/[^a-z0-9-]/g, "")}-${today}`;
   };
 
+  const handleCategoryChange = (categoryName: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCategories([...selectedCategories, { name: categoryName }]);
+    } else {
+      setSelectedCategories(
+        selectedCategories.filter((cat) => cat.name !== categoryName)
+      );
+    }
+  };
+
+  const handleSubCategoryChange = (categoryName: string, subCategory: string) => {
+    setSelectedCategories(
+      selectedCategories.map((cat) =>
+        cat.name === categoryName ? { ...cat, subCategory } : cat
+      )
+    );
+  };
+
   const handleSubmit = async (status: "Draft" | "Published") => {
-    if (!selectedCategory) {
+    if (!selectedCategories.length) {
       alert("Category is required.");
       return;
     }
@@ -155,7 +177,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       formData.append('headline3', headline3);
       formData.append('seoTitle', seoTitle);
       formData.append('url', url);
-      formData.append('category', JSON.stringify([selectedCategory]));
+      formData.append('category', JSON.stringify(selectedCategories));
       formData.append('keywords', JSON.stringify(selectedKeywords));
       formData.append('status', status);
       formData.append('content', content);
@@ -168,7 +190,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         headline2,
         headline3,
         url,
-        category: selectedCategory[0],
+        category: JSON.stringify(selectedCategories),
         status,
         content,
         author,
@@ -341,32 +363,49 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
 
             <div>
               <InputText text="Categories (Select one or more)" />
-              <div className="mt-2 grid grid-cols-2">
-                {categories.map((category, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
-                  >
-                    <input
-                      type="checkbox"
-                      name="category"
-                      value={category}
-                      checked={selectedCategory.includes(category)}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (e.target.checked) {
-                          setSelectedCategory([...selectedCategory, value]);
-                        } else {
-                          setSelectedCategory(
-                            selectedCategory.filter((cat) => cat !== value)
-                          );
-                        }
-                      }}
-                      className="form-checkbox text-primary focus:ring-primary/80"
-                    />
-                    <span className="text-charcoal">{category}</span>
-                  </label>
-                ))}
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {categories.map((category, index) => {
+                  const isChecked = selectedCategories.some(
+                    (cat) => cat.name === category.name
+                  );
+                  const selectedCat = selectedCategories.find(
+                    (cat) => cat.name === category.name
+                  );
+                  return (
+                    <div key={index} className="mb-2">
+                      <label className="flex items-center space-x-2 cursor-pointer text-[14px]">
+                        <input
+                          type="checkbox"
+                          name="category"
+                          value={category.name}
+                          checked={isChecked}
+                          onChange={(e) =>
+                            handleCategoryChange(category.name, e.target.checked)
+                          }
+                          className="form-checkbox text-primary focus:ring-primary/80"
+                        />
+                        <span className="text-charcoal">{category.label}</span>
+                      </label>
+                      {/* Show subcategory select if category has subCategories and is checked */}
+                      {category.subCategories && isChecked && (
+                        <select
+                          className="mt-1 block w-full border border-charcoal/60 rounded px-2 py-1 text-sm"
+                          value={selectedCat?.subCategory || ""}
+                          onChange={(e) =>
+                            handleSubCategoryChange(category.name, e.target.value)
+                          }
+                        >
+                          <option value="">Select subcategory</option>
+                          {category.subCategories.map((sub, idx) => (
+                            <option key={idx} value={sub.name}>
+                              {sub.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -456,7 +495,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                     content,
                     headlineImage: currentHeadlineImage,
                     author,
-                    category: JSON.stringify(selectedCategory),
+                    category: JSON.stringify(selectedCategories),
                     keywords: JSON.stringify(selectedKeywords),
                     isFeatured: String(isFeatured),
                     isSpecial: String(isSpecial)
