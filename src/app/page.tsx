@@ -27,26 +27,26 @@ export default function Home() {
     fetchNews();
   }, []);
 
-  const featuredNews = newsItems.find(item => item.isFeatured);
-  const specialNews = newsItems.filter(item => item.isSpecial).slice(0, 2);
-  
+  const featuredNews = newsItems.find((item) => item.isFeatured);
+  const specialNews = newsItems.filter((item) => item.isSpecial).slice(0, 2);
+
   const regularNews = newsItems.filter((item) => {
     const isFeatured = item._id === featuredNews?._id;
-    const isSpecial = specialNews.some(specialItem => specialItem._id === item._id);
+    const isSpecial = specialNews.some(
+      (specialItem) => specialItem._id === item._id
+    );
     return !item.isSpecial && !item.isFeatured && !isFeatured && !isSpecial;
   });
 
   // Filter news based on selected category
   const displayNews = selectedCategory
     ? newsItems.filter((item) => {
-        try {
-          const categories = JSON.parse(item.category);
-          return Array.isArray(categories?.[0])
-            ? categories[0].includes(selectedCategory)
-            : categories.includes(selectedCategory);
-        } catch {
-          return item.category === selectedCategory;
-        }
+        const categories = Array.isArray(item.category) ? item.category : [];
+        return categories.some(
+          (cat: { name: string; subCategory?: string }) =>
+            cat.name === selectedCategory ||
+            cat.subCategory === selectedCategory
+        );
       })
     : regularNews;
 
@@ -59,13 +59,23 @@ export default function Home() {
         </div>
       );
     }
-    
+
+    // const categoriesArr = Array.isArray(displayNews[i].category)
+    //   ? displayNews[i].category
+    //   : displayNews[i].category
+    //   ? [{ name: String(displayNews[i].category) }]
+    //   : [];
+
     newsWithAds.push(
       <NewsCard
         key={displayNews[i]._id}
         id={displayNews[i]._id}
         image={displayNews[i].headlineImage}
-        category={displayNews[i].category || ""}
+        // category={categoriesArr
+        //   .map((cat: { name: string; subCategory?: string }) =>
+        //     cat.subCategory ? `${cat.name} (${cat.subCategory})` : cat.name
+        //   )
+        //   .join(", ")}
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
         date={formatDistanceToNow(new Date(displayNews[i].createdTime), {
@@ -85,7 +95,10 @@ export default function Home() {
 
   return (
     <main>
-      <NavBar onCategorySelect={setSelectedCategory} selectedCategory={selectedCategory} />
+      <NavBar
+        onCategorySelect={setSelectedCategory}
+        selectedCategory={selectedCategory}
+      />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="lg:hidden mb-6">
           <AdCard position="Article Top" />

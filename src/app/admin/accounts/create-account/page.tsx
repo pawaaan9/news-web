@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { userRoles, getRoleNumber } from "@/data/user-roles";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import { createUser } from "../../../../api/user.api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ const AddUser = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -34,25 +34,18 @@ const AddUser = () => {
     setSelectedRole(role);
   };
 
-  const handleCategoryChange = (category: string) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter((item) => item !== category)
-      );
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-  };
+  // const handleCategoryChange = (category: string) => {
+  //   if (selectedCategories.includes(category)) {
+  //     setSelectedCategories(
+  //       selectedCategories.filter((item) => item !== category)
+  //     );
+  //   } else {
+  //     setSelectedCategories([...selectedCategories, category]);
+  //   }
+  // };
 
   const handleSubmit = async () => {
-    if (
-      !fullname ||
-      !username ||
-      !email ||
-      !password ||
-      !selectedRole ||
-      selectedCategories.length === 0
-    ) {
+    if (!fullname || !username || !email || !password || !selectedRole) {
       toast.error("Please fill all required fields.");
       return;
     }
@@ -64,7 +57,6 @@ const AddUser = () => {
       password,
       userRole: selectedRole,
       userRoleNo: getRoleNumber(selectedRole),
-      category: selectedCategories,
     };
 
     try {
@@ -164,7 +156,7 @@ const AddUser = () => {
           </div>
 
           {/* Categories */}
-          <div>
+          {/* <div>
             <InputText text="Assign category (Select at least 1)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
@@ -183,7 +175,7 @@ const AddUser = () => {
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Submit button */}
           <Button

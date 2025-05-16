@@ -4,7 +4,7 @@ import Link from "next/link";
 interface NewsCardProps {
   id: string;
   image: string | StaticImageData;
-  category: string;
+  // category: string | string[]; // Accept both
   title: string;
   author: string;
   date: string;
@@ -13,29 +13,28 @@ interface NewsCardProps {
 export default function NewsCard({
   id,
   image,
-  category,
+  // category,
   title,
   author,
   date,
 }: NewsCardProps) {
   const fallbackImage = "/fallback-image.jpg";
 
-  let parsedCategories: string[] = [];
-  try {
-    // First try to parse as JSON
-    const parsed = JSON.parse(category);
-    // Handle both nested array and regular array
-    parsedCategories = Array.isArray(parsed?.[0]) ? parsed[0] : parsed;
-  } catch {
-    // If parsing fails, use the category string directly
-    parsedCategories = [category];
-  }
+  // // Handle category as array or comma-separated string
+  // let parsedCategories: string[] = [];
+  // if (Array.isArray(category)) {
+  //   parsedCategories = category;
+  // } else if (typeof category === "string") {
+  //   parsedCategories = category
+  //     .split(",")
+  //     .map((c) => c.trim())
+  //     .filter(Boolean);
+  // }
 
   return (
     <Link href={`/news-view/${id}`} passHref>
       <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
         <div className="relative w-full pt-[56.25%]">
-          {" "}
           {/* 16:9 aspect ratio */}
           <Image
             src={image || fallbackImage}
@@ -45,13 +44,13 @@ export default function NewsCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
           />
-          <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
+          {/* <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
             {parsedCategories.map((cat, index) => (
               <span key={index} className="mr-1">
                 {cat}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <div className="p-4 flex flex-col flex-grow">

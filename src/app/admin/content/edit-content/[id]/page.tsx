@@ -9,11 +9,7 @@ import { categories } from "@/data/categories";
 import { useEffect, useState } from "react";
 import KeywordsInput from "@/modules/content/keyword-input";
 import { Button } from "@/components/ui/button";
-import {
-  IconBrowserShare,
-  IconEye,
-  IconNote,
-} from "@tabler/icons-react";
+import { IconBrowserShare, IconEye, IconNote } from "@tabler/icons-react";
 import { LabelText } from "@/modules/shared/label-text";
 import { getContentById, updateContent } from "@/api/content.api";
 import { useRouter } from "next/navigation";
@@ -45,12 +41,14 @@ interface ContentResponse {
     isSpecial: boolean;
     category: Array<{ name: string; subCategory?: string }>;
     keywords: string[];
-  }
+  };
 }
 
 const EditContent = (props: { params: Promise<{ id: string }> }) => {
   const params = use(props.params);
-  const [selectedCategories, setSelectedCategories] = useState<{ name: string; subCategory?: string }[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    { name: string; subCategory?: string }[]
+  >([]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [headline1, setHeadline1] = useState("");
   const [headline2, setHeadline2] = useState("");
@@ -70,9 +68,9 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
     const fetchContent = async () => {
       try {
         setIsLoading(true);
-        const response = await getContentById(params.id) as ContentResponse;
+        const response = (await getContentById(params.id)) as ContentResponse;
         const data = response.data;
-        
+
         setHeadline1(data.headline1);
         setHeadline2(data.headline2);
         setHeadline3(data.headline3 || "");
@@ -83,17 +81,19 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         setAuthor(data.author);
         setIsFeatured(data.isFeatured);
         setIsSpecial(data.isSpecial);
-        
+
         if (Array.isArray(data.category)) {
-          const parsedCategories = data.category.map((cat: any) => {
-            if (typeof cat === 'string') {
-              return { name: cat };
+          const parsedCategories = data.category.map(
+            (cat: { name: string; subCategory?: string } | string) => {
+              if (typeof cat === "string") {
+                return { name: cat };
+              }
+              return cat;
             }
-            return cat;
-          });
+          );
           setSelectedCategories(parsedCategories);
         }
-        
+
         if (Array.isArray(data.keywords?.[0])) {
           setSelectedKeywords(data.keywords[0]);
         } else {
@@ -115,22 +115,30 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
 
   const handleImageUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append('images', file);
+    formData.append("images", file);
 
     try {
-      const response = await axios.post<ImageUploadResponse>(`${API_URL}/content/upload/rich-text`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      if (response.data.status === 'success' && response.data.urls && response.data.urls.length > 0) {
+      const response = await axios.post<ImageUploadResponse>(
+        `${API_URL}/content/upload/rich-text`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (
+        response.data.status === "success" &&
+        response.data.urls &&
+        response.data.urls.length > 0
+      ) {
         return response.data.urls[0]; // Return the first URL from the array
       } else {
-        throw new Error('No image URL received from server');
+        throw new Error("No image URL received from server");
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       throw error;
     }
   };
@@ -153,7 +161,10 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
     }
   };
 
-  const handleSubCategoryChange = (categoryName: string, subCategory: string) => {
+  const handleSubCategoryChange = (
+    categoryName: string,
+    subCategory: string
+  ) => {
     setSelectedCategories(
       selectedCategories.map((cat) =>
         cat.name === categoryName ? { ...cat, subCategory } : cat
@@ -170,20 +181,20 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
     try {
       const formData = new FormData();
       if (headlineImage) {
-        formData.append('headlineImage', headlineImage as File);
+        formData.append("headlineImage", headlineImage as File);
       }
-      formData.append('headline1', headline1);
-      formData.append('headline2', headline2);
-      formData.append('headline3', headline3);
-      formData.append('seoTitle', seoTitle);
-      formData.append('url', url);
-      formData.append('category', JSON.stringify(selectedCategories));
-      formData.append('keywords', JSON.stringify(selectedKeywords));
-      formData.append('status', status);
-      formData.append('content', content);
-      formData.append('author', author);
-      formData.append('isFeatured', String(isFeatured));
-      formData.append('isSpecial', String(isSpecial));
+      formData.append("headline1", headline1);
+      formData.append("headline2", headline2);
+      formData.append("headline3", headline3);
+      formData.append("seoTitle", seoTitle);
+      formData.append("url", url);
+      formData.append("category", JSON.stringify(selectedCategories));
+      formData.append("keywords", JSON.stringify(selectedKeywords));
+      formData.append("status", status);
+      formData.append("content", content);
+      formData.append("author", author);
+      formData.append("isFeatured", String(isFeatured));
+      formData.append("isSpecial", String(isSpecial));
 
       await updateContent(params.id, {
         headline1,
@@ -196,7 +207,9 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         author,
         isFeatured,
         isSpecial,
-        ...(headlineImage && { headlineImage: URL.createObjectURL(headlineImage) })
+        ...(headlineImage && {
+          headlineImage: URL.createObjectURL(headlineImage),
+        }),
       });
 
       router.push("/admin/content");
@@ -345,9 +358,9 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
               <InputText text="Headline image" />
               {currentHeadlineImage && (
                 <div className="mt-2 mb-2 relative w-full h-48">
-                  <Image 
-                    src={currentHeadlineImage} 
-                    alt="Current headline" 
+                  <Image
+                    src={currentHeadlineImage}
+                    alt="Current headline"
                     fill
                     className="object-contain rounded"
                   />
@@ -380,7 +393,10 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                           value={category.name}
                           checked={isChecked}
                           onChange={(e) =>
-                            handleCategoryChange(category.name, e.target.checked)
+                            handleCategoryChange(
+                              category.name,
+                              e.target.checked
+                            )
                           }
                           className="form-checkbox text-primary focus:ring-primary/80"
                         />
@@ -392,7 +408,10 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                           className="mt-1 block w-full border border-charcoal/60 rounded px-2 py-1 text-sm"
                           value={selectedCat?.subCategory || ""}
                           onChange={(e) =>
-                            handleSubCategoryChange(category.name, e.target.value)
+                            handleSubCategoryChange(
+                              category.name,
+                              e.target.value
+                            )
                           }
                         >
                           <option value="">Select subcategory</option>
@@ -410,8 +429,8 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
             </div>
 
             <div>
-              <KeywordsInput 
-                onKeywordsChange={handleKeywordsChange} 
+              <KeywordsInput
+                onKeywordsChange={handleKeywordsChange}
                 initialKeywords={selectedKeywords}
               />
             </div>
@@ -459,9 +478,9 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                 Content
               </label>
               <div className="mt-4">
-                <RichTextEditor 
-                  content={content} 
-                  onChange={setContent} 
+                <RichTextEditor
+                  content={content}
+                  onChange={setContent}
                   onImageUpload={handleImageUpload}
                 />
               </div>
@@ -471,7 +490,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
               <label className="font-[600] text-[16px] text-charcoal mb-4 block">
                 Content Preview
               </label>
-              <div 
+              <div
                 className="prose max-w-none p-4 border border-charcoal/20 rounded-lg h-[500px] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
@@ -485,7 +504,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-4 mt-4">
-              <Button 
+              <Button
                 className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer"
                 onClick={() => {
                   const params = new URLSearchParams({
@@ -498,7 +517,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                     category: JSON.stringify(selectedCategories),
                     keywords: JSON.stringify(selectedKeywords),
                     isFeatured: String(isFeatured),
-                    isSpecial: String(isSpecial)
+                    isSpecial: String(isSpecial),
                   });
                   router.push(`/admin/content/preview?${params.toString()}`);
                 }}
@@ -528,4 +547,4 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
   );
 };
 
-export default withAuth(EditContent as React.ComponentType); 
+export default withAuth(EditContent as React.ComponentType);

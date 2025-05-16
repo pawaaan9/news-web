@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { userRoles, getRoleNumber } from "@/data/user-roles";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import {
   createUser,
   updateUser,
@@ -82,21 +82,21 @@ const EditUser = () => {
     setFormData((prev) => ({ ...prev, userRole: role }));
   };
 
-  const handleCategoryChange = (category: string) => {
-    setFormData((prev) => {
-      if (prev.category.includes(category)) {
-        return {
-          ...prev,
-          category: prev.category.filter((item) => item !== category),
-        };
-      } else {
-        return {
-          ...prev,
-          category: [...prev.category, category],
-        };
-      }
-    });
-  };
+  // const handleCategoryChange = (category: string) => {
+  //   setFormData((prev) => {
+  //     if (prev.category.includes(category)) {
+  //       return {
+  //         ...prev,
+  //         category: prev.category.filter((item) => item !== category),
+  //       };
+  //     } else {
+  //       return {
+  //         ...prev,
+  //         category: [...prev.category, category],
+  //       };
+  //     }
+  //   });
+  // };
 
   const handleSubmit = async () => {
     if (
@@ -238,7 +238,7 @@ const EditUser = () => {
           </div>
 
           {/* Categories */}
-          <div>
+          {/* <div>
             <InputText text="Assign category (Select at least 1)" />
             <div className="mt-2 grid grid-cols-2">
               {categories.map((category, index) => (
@@ -257,7 +257,7 @@ const EditUser = () => {
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Submit button */}
           <Button

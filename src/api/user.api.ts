@@ -8,7 +8,7 @@ export interface UserData {
   password: string;
   userRole: string;
   userRoleNo: number;
-  category: string[];
+  // category: string[];
 }
 
 export interface UpdateUserData {
@@ -18,7 +18,7 @@ export interface UpdateUserData {
   password?: string;
   userRole?: string;
   userRoleNo?: number;
-  category?: string[];
+  // category?: string[];
 }
 
 // Create a new user

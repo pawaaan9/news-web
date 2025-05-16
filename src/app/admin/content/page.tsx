@@ -22,7 +22,6 @@ import {
   ContentData,
   deleteContent,
   getContent,
-  getScheduledContent,
   processScheduledContent,
 } from "@/api/content.api";
 import withAuth from "@/hoc/with-auth";
@@ -65,19 +64,6 @@ const ContentPage = () => {
     };
 
     fetchContent();
-  }, []);
-
-  useEffect(() => {
-    const fetchScheduledContent = async () => {
-      try {
-        const response = await getScheduledContent();
-        setScheduledContent(response.data);
-      } catch (error) {
-        console.error("Error fetching scheduled content:", error);
-      }
-    };
-
-    fetchScheduledContent();
   }, []);
 
   useEffect(() => {

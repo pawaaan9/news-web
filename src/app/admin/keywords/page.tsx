@@ -170,8 +170,8 @@ const KeywordsPage = () => {
         >
           <option value="">All Categories</option>
           {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
+            <option key={category.name} value={category.name}>
+              {category.label}
             </option>
           ))}
         </select>
@@ -267,8 +267,8 @@ const KeywordsPage = () => {
                   Select a category
                 </option>
                 {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                  <option key={category.name} value={category.name}>
+                    {category.label}
                   </option>
                 ))}
               </select>

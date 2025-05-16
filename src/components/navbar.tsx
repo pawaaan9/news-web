@@ -13,9 +13,13 @@ interface NavBarProps {
   selectedCategory: string | null;
 }
 
-export default function NavBar({ onCategorySelect, selectedCategory }: NavBarProps) {
+export default function NavBar({
+  onCategorySelect,
+  selectedCategory,
+}: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showMobileMore, setShowMobileMore] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Split categories into main and additional items
   const mainNavItems = categories.slice(0, 6);
@@ -30,6 +34,14 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
     setMobileMenuOpen(false);
   };
 
+  const handleCategoryHover = (categoryName: string) => {
+    setExpandedCategory(categoryName);
+  };
+
+  const handleCategoryLeave = () => {
+    setExpandedCategory(null);
+  };
+
   return (
     <div className="w-full bg-primary text-white font-dmSans">
       <CountryAndDate />
@@ -37,7 +49,11 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
       {/* Top Section with Logo and Ad (Desktop) */}
       <div className="flex items-center justify-between px-4 py-3 lg:px-[10%]">
         <div className="text-lg font-bold">
-          <Link href="/" className="flex items-center" onClick={() => onCategorySelect(null)}>
+          <Link
+            href="/"
+            className="flex items-center"
+            onClick={() => onCategorySelect(null)}
+          >
             <Image
               src={logo}
               alt="Website Logo"
@@ -52,16 +68,7 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
         <div className="hidden lg:block w-[970px] h-[90px] bg-gray-300 relative">
           <div className="w-full h-full flex items-center justify-center">
             <p className="text-gray-500">970×90 Desktop Ad</p>
-            {/* Replace with your actual ad component */}
-            {/* <Image 
-              src="/desktop-ad.jpg" 
-              alt="Desktop Advertisement"
-              width={970}
-              height={90}
-              className="object-contain"
-            /> */}
           </div>
-          {/* Ad label */}
           <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
             Ad
           </div>
@@ -91,25 +98,52 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
             Home
           </button>
           {mainNavItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => handleCategoryClick(item)}
-              className={`px-3 py-1 text-sm ${
-                selectedCategory === item
-                  ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
-                  : ""
-              }`}
+            <div
+              key={item.name}
+              className="relative"
+              onMouseEnter={() => handleCategoryHover(item.name)}
+              onMouseLeave={handleCategoryLeave}
             >
-              {item}
-            </button>
+              <button
+                onClick={() => handleCategoryClick(item.name)}
+                className={`px-3 py-1 text-sm flex items-center ${
+                  selectedCategory === item.name
+                    ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
+                    : ""
+                }`}
+              >
+                {item.name}
+                {item.subCategories && (
+                  <ChevronDown size={16} className="ml-1" />
+                )}
+              </button>
+
+              {item.subCategories && expandedCategory === item.name && (
+                <div className="absolute left-0 mt-1 w-48 bg-charcoal text-white shadow-lg rounded-sm z-10">
+                  {item.subCategories.map((subCat) => (
+                    <button
+                      key={subCat.name}
+                      onClick={() => handleCategoryClick(subCat.name)}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal ${
+                        selectedCategory === subCat.name
+                          ? "bg-accent-teal text-charcoal font-semibold"
+                          : ""
+                      }`}
+                    >
+                      {subCat.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
 
           {/* More dropdown */}
           <div className="relative">
             <button
-              onClick={() => handleCategoryClick(additionalNavItems[0])}
+              onClick={() => handleCategoryClick(additionalNavItems[0].name)}
               className={`px-3 py-1 text-sm flex items-center ${
-                selectedCategory === additionalNavItems[0]
+                selectedCategory === additionalNavItems[0].name
                   ? "bg-accent-teal text-charcoal font-semibold rounded-sm"
                   : ""
               }`}
@@ -118,18 +152,39 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
               <ChevronDown size={16} className="ml-1" />
             </button>
 
-            {selectedCategory === additionalNavItems[0] && (
+            {selectedCategory === additionalNavItems[0].name && (
               <div className="absolute left-0 mt-1 w-48 bg-charcoal text-white shadow-lg rounded-sm z-10">
                 {additionalNavItems.map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => handleCategoryClick(item)}
-                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal ${
-                      selectedCategory === item ? "bg-charcoal font-semibold" : ""
-                    }`}
-                  >
-                    {item}
-                  </button>
+                  <div key={item.name} className="relative group">
+                    <button
+                      onClick={() => handleCategoryClick(item.name)}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal flex items-center justify-between ${
+                        selectedCategory === item.name
+                          ? "bg-accent-teal text-charcoal font-semibold"
+                          : ""
+                      }`}
+                    >
+                      {item.name}
+                      {item.subCategories && <ChevronDown size={16} />}
+                    </button>
+                    {item.subCategories && (
+                      <div className="hidden group-hover:block absolute left-full top-0 w-48 bg-charcoal text-white shadow-lg rounded-sm">
+                        {item.subCategories.map((subCat) => (
+                          <button
+                            key={subCat.name}
+                            onClick={() => handleCategoryClick(subCat.name)}
+                            className={`block w-full text-left px-4 py-2 text-sm hover:bg-accent-teal ${
+                              selectedCategory === subCat.name
+                                ? "bg-accent-teal text-charcoal font-semibold"
+                                : ""
+                            }`}
+                          >
+                            {subCat.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
@@ -165,20 +220,11 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
             />
           </div>
 
-          {/* Mobile Ad - Below search but above categories */}
+          {/* Mobile Ad */}
           <div className="w-[92%] h-20 bg-gray-300 mx-4 mb-2 relative">
             <div className="w-full h-full flex items-center justify-center">
               <p className="text-gray-500">Mobile Ad</p>
-              {/* Replace with your actual ad component */}
-              {/* <Image 
-                src="/mobile-ad.jpg" 
-                alt="Mobile Advertisement"
-                width={320}
-                height={80}
-                className="object-contain"
-              /> */}
             </div>
-            {/* Ad label */}
             <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
               Ad
             </div>
@@ -193,17 +239,51 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
               onClick={() => onCategorySelect(null)}
             >
               <Home size={16} />
-              මුල් පිටුව
+              Home
             </div>
             {mainNavItems.map((item) => (
-              <div
-                key={item}
-                className={`px-4 py-3 text-sm font-medium ${
-                  selectedCategory === item ? "bg-primary text-white" : ""
-                }`}
-                onClick={() => handleCategoryClick(item)}
-              >
-                {item}
+              <div key={item.name}>
+                <div
+                  className={`px-4 py-3 text-sm font-medium flex items-center justify-between ${
+                    selectedCategory === item.name
+                      ? "bg-primary text-white"
+                      : ""
+                  }`}
+                  onClick={() => {
+                    if (item.subCategories) {
+                      setExpandedCategory(
+                        expandedCategory === item.name ? null : item.name
+                      );
+                    } else {
+                      handleCategoryClick(item.name);
+                    }
+                  }}
+                >
+                  <span>{item.name}</span>
+                  {item.subCategories &&
+                    (expandedCategory === item.name ? (
+                      <ChevronUp size={16} />
+                    ) : (
+                      <ChevronDown size={16} />
+                    ))}
+                </div>
+                {item.subCategories && expandedCategory === item.name && (
+                  <div className="pl-4">
+                    {item.subCategories.map((subCat) => (
+                      <div
+                        key={subCat.name}
+                        className={`px-4 py-3 text-sm font-medium ${
+                          selectedCategory === subCat.name
+                            ? "bg-primary text-white"
+                            : ""
+                        }`}
+                        onClick={() => handleCategoryClick(subCat.name)}
+                      >
+                        {subCat.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
 
@@ -213,7 +293,7 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
                 onClick={() => setShowMobileMore(!showMobileMore)}
                 className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium"
               >
-                <span>වෙනත් කාණ්ඩ</span>
+                <span>Other Categories</span>
                 {showMobileMore ? (
                   <ChevronUp size={16} />
                 ) : (
@@ -224,14 +304,48 @@ export default function NavBar({ onCategorySelect, selectedCategory }: NavBarPro
               {showMobileMore && (
                 <div className="pl-4">
                   {additionalNavItems.map((item) => (
-                    <div
-                      key={item}
-                      className={`px-4 py-3 text-sm font-medium ${
-                        selectedCategory === item ? "bg-[#0A3552] text-white" : ""
-                      }`}
-                      onClick={() => handleCategoryClick(item)}
-                    >
-                      {item}
+                    <div key={item.name}>
+                      <div
+                        className={`px-4 py-3 text-sm font-medium flex items-center justify-between ${
+                          selectedCategory === item.name
+                            ? "bg-primary text-white"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          if (item.subCategories) {
+                            setExpandedCategory(
+                              expandedCategory === item.name ? null : item.name
+                            );
+                          } else {
+                            handleCategoryClick(item.name);
+                          }
+                        }}
+                      >
+                        <span>{item.label}</span>
+                        {item.subCategories &&
+                          (expandedCategory === item.name ? (
+                            <ChevronUp size={16} />
+                          ) : (
+                            <ChevronDown size={16} />
+                          ))}
+                      </div>
+                      {item.subCategories && expandedCategory === item.name && (
+                        <div className="pl-4">
+                          {item.subCategories.map((subCat) => (
+                            <div
+                              key={subCat.name}
+                              className={`px-4 py-3 text-sm font-medium ${
+                                selectedCategory === subCat.name
+                                  ? "bg-primary text-white"
+                                  : ""
+                              }`}
+                              onClick={() => handleCategoryClick(subCat.name)}
+                            >
+                              {subCat.label}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
