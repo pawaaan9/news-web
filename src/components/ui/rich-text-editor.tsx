@@ -17,6 +17,9 @@ import {
   IconLoader2,
   IconTable,
   IconTypography,
+  IconList,
+  IconListNumbers,
+  IconHeading,
 } from '@tabler/icons-react'
 import { useState, useEffect } from 'react'
 
@@ -43,10 +46,12 @@ export const RichTextEditor = ({ content, onChange, onImageUpload, isUploading =
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: false,
-        bulletList: false,
-        listItem: false,
-        orderedList: false,
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6]
+        },
+        bulletList: {},
+        listItem: {},
+        orderedList: {},
       }),
       Link.configure({
         openOnClick: false,
@@ -148,6 +153,30 @@ export const RichTextEditor = ({ content, onChange, onImageUpload, isUploading =
   return (
     <div className="border border-charcoal/60 rounded-lg">
       <div className="flex flex-wrap gap-2 p-2 border-b border-charcoal/60">
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('heading', { level: 1 }) ? 'bg-gray-100' : ''
+          }`}
+        >
+          <IconHeading size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('bulletList') ? 'bg-gray-100' : ''
+          }`}
+        >
+          <IconList size={20} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive('orderedList') ? 'bg-gray-100' : ''
+          }`}
+        >
+          <IconListNumbers size={20} />
+        </button>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-100 ${

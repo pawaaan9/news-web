@@ -15,15 +15,21 @@ import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { categories } from "@/data/categories";
+// import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
 import { useRouter } from "next/navigation";
-import { ContentData, deleteContent, getContent, getScheduledContent, processScheduledContent } from "@/api/content.api";
+import {
+  ContentData,
+  deleteContent,
+  getContent,
+  getScheduledContent,
+  processScheduledContent,
+} from "@/api/content.api";
 import withAuth from "@/hoc/with-auth";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 const ContentPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [headline, setHeadline] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
@@ -81,18 +87,16 @@ const ContentPage = () => {
         content.headline1.toLowerCase().includes(headline.toLowerCase());
       const matchesAuthor =
         !author || content.author?.toLowerCase().includes(author.toLowerCase());
-      const matchesCategory =
-        !selectedCategory || content.category.includes(selectedCategory);
+      // const matchesCategory =
+      //   !selectedCategory || content.category.includes(selectedCategory);
       const matchesStatus =
         !selectedStatus || content.status === selectedStatus;
 
-      return (
-        matchesHeadline && matchesAuthor && matchesCategory && matchesStatus
-      );
+      return matchesHeadline && matchesAuthor && matchesStatus;
     });
 
     setFilteredContent(filtered);
-  }, [headline, author, selectedCategory, selectedStatus, contentData]);
+  }, [headline, author, selectedStatus, contentData]);
 
   const handleDelete = async (id: string) => {
     setContentToDelete(id);
@@ -104,8 +108,12 @@ const ContentPage = () => {
 
     try {
       await deleteContent(contentToDelete);
-      setContentData((prev) => prev.filter((content) => content._id !== contentToDelete));
-      setFilteredContent((prev) => prev.filter((content) => content._id !== contentToDelete));
+      setContentData((prev) =>
+        prev.filter((content) => content._id !== contentToDelete)
+      );
+      setFilteredContent((prev) =>
+        prev.filter((content) => content._id !== contentToDelete)
+      );
     } catch (error) {
       console.error("Error deleting content:", error);
       alert("Failed to delete content.");
@@ -149,7 +157,9 @@ const ContentPage = () => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-2">
                 <IconClock size={20} className="text-yellow-600" />
-                <h3 className="text-lg font-semibold text-yellow-800">Scheduled Content</h3>
+                <h3 className="text-lg font-semibold text-yellow-800">
+                  Scheduled Content
+                </h3>
               </div>
               <Button
                 className="bg-yellow-600 text-white hover:bg-yellow-700"
@@ -180,13 +190,29 @@ const ContentPage = () => {
                 </thead>
                 <tbody>
                   {scheduledContent.map((content) => (
-                    <tr key={content._id} className="border-b border-yellow-200">
+                    <tr
+                      key={content._id}
+                      className="border-b border-yellow-200"
+                    >
                       <td className="p-4">{content.headline1}</td>
                       <td className="p-4">{content.author}</td>
-                      <td className="p-4">{content.category}</td>
+                      <td className="p-4">
+                        {Array.isArray(content.category) &&
+                        content.category.length > 0
+                          ? content.category.map((cat, idx) => (
+                              <span key={idx} className="inline-block mr-2">
+                                {cat.name}
+                                {cat.subCategory ? ` (${cat.subCategory})` : ""}
+                              </span>
+                            ))
+                          : "-"}
+                      </td>
                       <td className="p-4">
                         {content.scheduledPublishDate
-                          ? format(new Date(content.scheduledPublishDate), "yyyy-MM-dd HH:mm")
+                          ? format(
+                              new Date(content.scheduledPublishDate),
+                              "yyyy-MM-dd HH:mm"
+                            )
                           : "N/A"}
                       </td>
                       <td className="p-4">
@@ -202,23 +228,27 @@ const ContentPage = () => {
                             const params = new URLSearchParams({
                               headline1: content.headline1,
                               headline2: content.headline2,
-                              headline3: content.headline3 || '',
-                              content: content.content || '',
+                              headline3: content.headline3 || "",
+                              content: content.content || "",
                               headlineImage: content.headlineImage,
                               author: content.author,
                               category: JSON.stringify([content.category]),
                               keywords: JSON.stringify([]),
                               isFeatured: String(content.isFeatured),
-                              isSpecial: String(content.isSpecial)
+                              isSpecial: String(content.isSpecial),
                             });
-                            router.push(`/admin/content/preview?${params.toString()}`);
+                            router.push(
+                              `/admin/content/preview?${params.toString()}`
+                            );
                           }}
                         />
                         <IconPencilMinus
                           size={22}
                           className="text-primary cursor-pointer"
                           onClick={() =>
-                            router.push(`/admin/content/edit-content/${content._id}`)
+                            router.push(
+                              `/admin/content/edit-content/${content._id}`
+                            )
                           }
                         />
                         <IconTrash
@@ -260,7 +290,7 @@ const ContentPage = () => {
                 className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
               />
             </div>
-            <div>
+            {/* <div>
               <LabelText text="Category" />
               <select
                 id="category"
@@ -277,7 +307,7 @@ const ContentPage = () => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
             <div>
               <LabelText text="Status" />
               <select
@@ -310,7 +340,8 @@ const ContentPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
+                {Array.isArray(filteredContent) &&
+                filteredContent.length > 0 ? (
                   filteredContent.map((content) => (
                     <tr
                       key={content._id}
@@ -360,20 +391,22 @@ const ContentPage = () => {
                           size={22}
                           className="text-accent-teal cursor-pointer"
                           onClick={() => {
-                            console.log('Content data:', content);
+                            console.log("Content data:", content);
                             const params = new URLSearchParams({
                               headline1: content.headline1,
                               headline2: content.headline2,
-                              headline3: content.headline3 || '',
-                              content: content.content || '',
+                              headline3: content.headline3 || "",
+                              content: content.content || "",
                               headlineImage: content.headlineImage,
                               author: content.author,
                               category: JSON.stringify([content.category]),
                               keywords: JSON.stringify([]),
                               isFeatured: String(content.isFeatured),
-                              isSpecial: String(content.isSpecial)
+                              isSpecial: String(content.isSpecial),
                             });
-                            router.push(`/admin/content/preview?${params.toString()}`);
+                            router.push(
+                              `/admin/content/preview?${params.toString()}`
+                            );
                           }}
                         />
                         <IconPencilMinus

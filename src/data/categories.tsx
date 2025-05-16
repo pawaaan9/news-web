@@ -1,18 +1,49 @@
 export const categories = [
-  "Foreign",
-  "Local",
-  "Business",
-  "Politics",
-  "Technology",
-  "Entertainment",
-  "Sports",
-  "Science",
-  "Health",
-  "Public Service",
-  "Education",
-  "Arts",
-  "Religion",
-  "Environment",
+  {
+    name: "உலகம்", // Tamil (to be sent to backend)
+    label: "உலகம் (World)", // For display
+    subCategories: [
+      { name: "கனடா", label: "கனடா (Canada)" },
+      { name: "சுவிஸ்", label: "சுவிஸ் (Switzerland)" },
+      { name: "பிரித்தானியா", label: "பிரித்தானியா (Britain)" },
+      { name: "ஜேர்மனி", label: "ஜேர்மனி (Germany)" },
+      { name: "பிரான்ஸ்", label: "பிரான்ஸ் (France)" },
+      { name: "அமெரிக்கா", label: "அமெரிக்கா (America)" },
+      { name: "அவுஸ்திரேலியா", label: "அவுஸ்திரேலியா (Australia)" },
+    ],
+  },
+  { name: "ஆன்மீகம்", label: "ஆன்மீகம் (Spirituality)" },
+  { name: "ஜோதிடம்", label: "ஜோதிடம் (Astrology)" },
+  { name: "இந்தியா", label: "இந்தியா (India)" },
+  { name: "இலங்கை", label: "இலங்கை (Sri Lanka)" },
+  {
+    name: "விளையாட்டு",
+    label: "விளையாட்டு (Sports)",
+    subCategories: [
+      { name: "கிரிக்கெட்", label: "கிரிக்கெட் (Cricket)" },
+      { name: "கால்பந்து", label: "கால்பந்து (Football)" },
+      { name: "பிற விளையாட்டுகள்", label: "பிற விளையாட்டுகள் (Other Sports)" },
+    ],
+  },
+  { name: "தொழில்நுட்பம்", label: "தொழில்நுட்பம் (Technology)" },
+  { name: "கல்வி", label: "கல்வி (Education)" },
+  { name: "வணிகம்", label: "வணிகம் (Business)" },
+  {
+    name: "வாழ்க்கை முறை",
+    label: "வாழ்க்கை முறை (Lifestyle)",
+    subCategories: [
+      { name: "அழகு", label: "அழகு (Beauty)" },
+      { name: "ஆரோக்கியம்", label: "ஆரோக்கியம் (Health)" },
+      { name: "உணவு", label: "உணவு (Food)" },
+    ],
+  },
+  { name: "அரசியல்", label: "அரசியல் (Politics)" },
+  { name: "சினிமா", label: "சினிமா (Cinema)" },
+  { name: "பொழுதுபோக்கு", label: "பொழுதுபோக்கு (Entertainment)" },
+  { name: "சுற்றுலா", label: "சுற்றுலா (Tourism)" },
+  { name: "வரலாறு", label: "வரலாறு (History)" },
+  { name: "குற்றம்", label: "குற்றம் (Crime)" },
+  { name: "வேலைவாய்ப்பு", label: "வேலைவாய்ப்பு (Employment)" },
 ];
 
 // "විදෙස්",

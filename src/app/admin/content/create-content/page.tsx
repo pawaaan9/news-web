@@ -26,9 +26,10 @@ import axios from "axios";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
-
 const CreateContent = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    { name: string; subCategory?: string }[]
+  >([]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [headline1, setHeadline1] = useState("");
   const [headline2, setHeadline2] = useState("");
@@ -47,6 +48,29 @@ const CreateContent = () => {
   const [scheduledTime, setScheduledTime] = useState("");
   const router = useRouter();
 
+  // Handler for category checkbox
+  const handleCategoryChange = (categoryName: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCategories([...selectedCategories, { name: categoryName }]);
+    } else {
+      setSelectedCategories(
+        selectedCategories.filter((cat) => cat.name !== categoryName)
+      );
+    }
+  };
+
+  // Handler for subcategory select
+  const handleSubCategoryChange = (
+    categoryName: string,
+    subCategory: string
+  ) => {
+    setSelectedCategories(
+      selectedCategories.map((cat) =>
+        cat.name === categoryName ? { ...cat, subCategory } : cat
+      )
+    );
+  };
+
   const handleKeywordsChange = (keywords: string[]) => {
     setSelectedKeywords(keywords);
   };
@@ -54,31 +78,45 @@ const CreateContent = () => {
   const handleRichTextImageUpload = async (file: File): Promise<string> => {
     setIsImageUploading(true);
     const formData = new FormData();
-    formData.append('images', file);
+    formData.append("images", file);
 
     try {
-      const response = await axios.post<{ urls: string[] }>(`${API_URL}/content/upload/rich-text`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post<{ urls: string[] }>(
+        `${API_URL}/content/upload/rich-text`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       // Check if we have a valid URL in the response
-      if (response.data && Array.isArray(response.data.urls) && response.data.urls.length > 0) {
-        console.log('Rich text image upload successful:', response.data.urls[0]);
+      if (
+        response.data &&
+        Array.isArray(response.data.urls) &&
+        response.data.urls.length > 0
+      ) {
+        console.log(
+          "Rich text image upload successful:",
+          response.data.urls[0]
+        );
         return response.data.urls[0];
       } else {
-        console.error('Invalid response format:', response.data);
-        throw new Error('Invalid response format from server');
+        console.error("Invalid response format:", response.data);
+        throw new Error("Invalid response format from server");
       }
     } catch (error: unknown) {
-      console.error('Error uploading rich text image:', error);
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string };
-        console.error('Upload error details:', {
+      console.error("Error uploading rich text image:", error);
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: unknown };
+          message?: string;
+        };
+        console.error("Upload error details:", {
           status: axiosError.response?.status,
           data: axiosError.response?.data,
-          message: axiosError.message
+          message: axiosError.message,
         });
       }
       throw error;
@@ -110,7 +148,7 @@ const CreateContent = () => {
   }, []);
 
   const handleSubmit = async (status: "Draft" | "Published") => {
-    if (!selectedCategory) {
+    if (!selectedCategories) {
       alert("Category is required.");
       return;
     }
@@ -128,28 +166,31 @@ const CreateContent = () => {
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append('image', headlineImage as File);
-      formData.append('headline1', headline1);
-      formData.append('headline2', headline2);
-      formData.append('headline3', headline3);
-      formData.append('seoTitle', seoTitle);
-      formData.append('url', url);
-      formData.append('category', JSON.stringify(selectedCategory));
-      formData.append('keywords', JSON.stringify(selectedKeywords));
-      formData.append('status', status);
-      formData.append('content', content);
-      formData.append('author', author);
-      formData.append('isFeatured', String(isFeatured));
-      formData.append('isSpecial', String(isSpecial));
+      formData.append("image", headlineImage as File);
+      formData.append("headline1", headline1);
+      formData.append("headline2", headline2);
+      formData.append("headline3", headline3);
+      formData.append("seoTitle", seoTitle);
+      formData.append("url", url);
+      formData.append("category", JSON.stringify(selectedCategories));
+      formData.append("keywords", JSON.stringify(selectedKeywords));
+      formData.append("status", status);
+      formData.append("content", content);
+      formData.append("author", author);
+      formData.append("isFeatured", String(isFeatured));
+      formData.append("isSpecial", String(isSpecial));
 
       // Add scheduling information if scheduled
       if (publishOption === "schedule") {
         const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
-        formData.append('scheduledPublishDate', scheduledDateTime.toISOString());
+        formData.append(
+          "scheduledPublishDate",
+          scheduledDateTime.toISOString()
+        );
       }
 
       // Log the form data
-      console.log('Form Data being sent:');
+      console.log("Form Data being sent:");
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
@@ -158,11 +199,13 @@ const CreateContent = () => {
       router.push("/admin/content");
     } catch (error: unknown) {
       console.error("Error submitting content:", error);
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { data: unknown; status: number; headers: unknown } };
-        console.error('Error response data:', axiosError.response?.data);
-        console.error('Error response status:', axiosError.response?.status);
-        console.error('Error response headers:', axiosError.response?.headers);
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { data: unknown; status: number; headers: unknown };
+        };
+        console.error("Error response data:", axiosError.response?.data);
+        console.error("Error response status:", axiosError.response?.status);
+        console.error("Error response headers:", axiosError.response?.headers);
       }
     } finally {
       setIsSubmitting(false);
@@ -306,13 +349,15 @@ const CreateContent = () => {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  console.log('File selected:', file.name); // Debug log
+                  console.log("File selected:", file.name); // Debug log
                   setHeadlineImage(file);
                 }
               }}
               type="file"
               accept="image/*"
-              className={`border ${headlineImage ? 'border-primary' : 'border-charcoal/60'} focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2`}
+              className={`border ${
+                headlineImage ? "border-primary" : "border-charcoal/60"
+              } focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2`}
             />
             {headlineImage && (
               <p className="text-sm text-primary mt-1">
@@ -323,32 +368,49 @@ const CreateContent = () => {
 
           <div>
             <InputText text="Categories (Select one or more)" />
-            <div className="mt-2 grid grid-cols-2">
-              {categories.map((category, index) => (
-                <label
-                  key={index}
-                  className="flex items-center space-x-2 mb-2 cursor-pointer text-[14px]"
-                >
-                  <input
-                    type="checkbox"
-                    name="category"
-                    value={category}
-                    checked={selectedCategory.includes(category)}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (e.target.checked) {
-                        setSelectedCategory([...selectedCategory, value]);
-                      } else {
-                        setSelectedCategory(
-                          selectedCategory.filter((cat) => cat !== value)
-                        );
-                      }
-                    }}
-                    className="form-checkbox text-primary focus:ring-primary/80"
-                  />
-                  <span className="text-charcoal">{category}</span>
-                </label>
-              ))}
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {categories.map((category, index) => {
+                const isChecked = selectedCategories.some(
+                  (cat) => cat.name === category.name
+                );
+                const selectedCat = selectedCategories.find(
+                  (cat) => cat.name === category.name
+                );
+                return (
+                  <div key={index} className="mb-2">
+                    <label className="flex items-center space-x-2 cursor-pointer text-[14px]">
+                      <input
+                        type="checkbox"
+                        name="category"
+                        value={category.name}
+                        checked={isChecked}
+                        onChange={(e) =>
+                          handleCategoryChange(category.name, e.target.checked)
+                        }
+                        className="form-checkbox text-primary focus:ring-primary/80"
+                      />
+                      <span className="text-charcoal">{category.label}</span>
+                    </label>
+                    {/* Show subcategory select if category has subCategories and is checked */}
+                    {category.subCategories && isChecked && (
+                      <select
+                        className="mt-1 block w-full border border-charcoal/60 rounded px-2 py-1 text-sm"
+                        value={selectedCat?.subCategory || ""}
+                        onChange={(e) =>
+                          handleSubCategoryChange(category.name, e.target.value)
+                        }
+                      >
+                        <option value="">Select subcategory</option>
+                        {category.subCategories.map((sub, idx) => (
+                          <option key={idx} value={sub.name}>
+                            {sub.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -399,9 +461,9 @@ const CreateContent = () => {
               Content
             </label>
             <div className="mt-4">
-              <RichTextEditor 
-                content={content} 
-                onChange={setContent} 
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
                 onImageUpload={handleRichTextImageUpload}
                 isUploading={isImageUploading}
               />
@@ -448,7 +510,9 @@ const CreateContent = () => {
               {publishOption === "schedule" && (
                 <div className="flex gap-4">
                   <div>
-                    <label className="block text-sm text-charcoal/60 mb-1">Date</label>
+                    <label className="block text-sm text-charcoal/60 mb-1">
+                      Date
+                    </label>
                     <Input
                       type="date"
                       value={scheduledDate}
@@ -458,7 +522,9 @@ const CreateContent = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-charcoal/60 mb-1">Time</label>
+                    <label className="block text-sm text-charcoal/60 mb-1">
+                      Time
+                    </label>
                     <Input
                       type="time"
                       value={scheduledTime}
