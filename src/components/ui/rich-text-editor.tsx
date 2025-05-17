@@ -19,7 +19,6 @@ import {
   IconTypography,
   IconList,
   IconListNumbers,
-  IconHeading,
 } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 
@@ -177,8 +176,29 @@ export const RichTextEditor = ({
             editor.isActive("heading", { level: 1 }) ? "bg-gray-100" : ""
           }`}
         >
-          <IconHeading size={20} />
+          <span className="text-xs font-bold">H1</span>
         </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive("heading", { level: 2 }) ? "bg-gray-100" : ""
+          }`}
+        >
+          <span className="text-xs font-bold">H2</span>
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={`p-2 rounded hover:bg-gray-100 ${
+            editor.isActive("heading", { level: 3 }) ? "bg-gray-100" : ""
+          }`}
+        >
+          <span className="text-xs font-bold">H3</span>
+        </button>
+
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
@@ -402,7 +422,7 @@ export const RichTextEditor = ({
 
       <EditorContent
         editor={editor}
-        className="p-4 min-h-[300px] max-h-[500px] overflow-y-auto prose max-w-none [&_.ProseMirror]:prose [&_.ProseMirror]:max-w-none [&_.ProseMirror_img]:w-full [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_iframe]:w-full [&_.ProseMirror_iframe]:aspect-video [&_.ProseMirror_iframe]:rounded-lg [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus:ring-2 [&_.ProseMirror]:focus:ring-primary/20 [&_.ProseMirror]:rounded-lg [&_.ProseMirror]:transition-all [&_.ProseMirror]:duration-200 [&_.ProseMirror]:relative [&_.ProseMirror]:before:content-[''] [&_.ProseMirror]:before:absolute [&_.ProseMirror]:before:left-0 [&_.ProseMirror]:before:top-0 [&_.ProseMirror]:before:w-1 [&_.ProseMirror]:before:h-full [&_.ProseMirror]:before:bg-primary/20 [&_.ProseMirror]:before:opacity-0 [&_.ProseMirror]:before:transition-opacity [&_.ProseMirror]:before:duration-200 [&_.ProseMirror]:focus:before:opacity-100 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&_.ProseMirror_table]:border-collapse [&_.ProseMirror_table]:w-full [&_.ProseMirror_table]:border [&_.ProseMirror_table]:border-charcoal/20 [&_.ProseMirror_th]:border [&_.ProseMirror_th]:border-charcoal/20 [&_.ProseMirror_th]:bg-gray-50 [&_.ProseMirror_th]:p-2 [&_.ProseMirror_td]:border [&_.ProseMirror_td]:border-charcoal/20 [&_.ProseMirror_td]:p-2"
+        className="p-4 min-h-[300px] max-h-[500px] overflow-y-auto prose max-w-none [&_.ProseMirror_h1]:text-2xl [&_.ProseMirror_h2]:text-xl [&_.ProseMirror_h3]:text-lg [&_.ProseMirror_h1]:font-bold [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h3]:font-medium ..."
       />
     </div>
   );
