@@ -165,7 +165,7 @@ export default function NewsView() {
         )}
 
         {/* Article Content */}
-        <div className="prose max-w-none mb-8 font-muktaMalar text-[16px] [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:max-w-full">
+        <div className="prose max-w-none mb-8 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
 

@@ -507,19 +507,28 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
               <Button
                 className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer"
                 onClick={() => {
-                  const params = new URLSearchParams({
+                  // Prefer uploaded image URL, fallback to local preview if new file selected
+                  let previewImage = currentHeadlineImage;
+                  if (headlineImage) {
+                    previewImage = URL.createObjectURL(headlineImage);
+                  }
+                  const previewContent = {
                     headline1,
                     headline2,
                     headline3,
                     content,
-                    headlineImage: currentHeadlineImage,
+                    headlineImage: previewImage,
                     author,
-                    category: JSON.stringify(selectedCategories),
-                    keywords: JSON.stringify(selectedKeywords),
-                    isFeatured: String(isFeatured),
-                    isSpecial: String(isSpecial),
-                  });
-                  router.push(`/admin/content/preview?${params.toString()}`);
+                    category: selectedCategories,
+                    keywords: selectedKeywords,
+                    isFeatured,
+                    isSpecial,
+                  };
+                  sessionStorage.setItem(
+                    "previewContent",
+                    JSON.stringify(previewContent)
+                  );
+                  router.push("/admin/content/preview");
                 }}
               >
                 <IconEye size={20} />

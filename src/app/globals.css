@@ -205,3 +205,20 @@ ol {
 li {
   margin-bottom: 0.25rem;
 }
+
+.prose {
+  font-family: "Mukta Malar", serif;
+}
+
+.prose h1 {
+  font-size: 2.25em;
+  font-weight: bold;
+}
+.prose h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+}
+.prose h3 {
+  font-size: 1.25em;
+  font-weight: 500;
+}

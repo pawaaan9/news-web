@@ -378,22 +378,12 @@ const ContentPage = () => {
                           size={22}
                           className="text-accent-teal cursor-pointer"
                           onClick={() => {
-                            console.log("Content data:", content);
-                            const params = new URLSearchParams({
-                              headline1: content.headline1,
-                              headline2: content.headline2,
-                              headline3: content.headline3 || "",
-                              content: content.content || "",
-                              headlineImage: content.headlineImage,
-                              author: content.author,
-                              category: JSON.stringify(content.category),
-                              keywords: JSON.stringify(content.keywords || []),
-                              isFeatured: String(content.isFeatured),
-                              isSpecial: String(content.isSpecial),
-                            });
-                            router.push(
-                              `/admin/content/preview?${params.toString()}`
+                            // Save content to sessionStorage
+                            sessionStorage.setItem(
+                              "previewContent",
+                              JSON.stringify(content)
                             );
+                            router.push("/admin/content/preview");
                           }}
                         />
                         <IconPencilMinus

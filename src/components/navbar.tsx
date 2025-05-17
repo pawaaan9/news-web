@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search, ChevronDown, ChevronUp, Home } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
-import logo from "../assets/images/logo.png";
 import Image from "next/image";
 import { categories } from "@/data/categories";
+import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
 
 interface NavBarProps {
   onCategorySelect: (category: string | null) => void;
@@ -55,11 +55,11 @@ export default function NavBar({
             onClick={() => onCategorySelect(null)}
           >
             <Image
-              src={logo}
+              src={logoTamil}
               alt="Website Logo"
               width={120}
               height={40}
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
         </div>

@@ -538,7 +538,31 @@ const CreateContent = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-4 mt-4">
-            <Button className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer">
+            <Button
+              className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer"
+              onClick={() => {
+                // Prepare preview data
+                const previewContent = {
+                  headline1,
+                  headline2,
+                  headline3,
+                  content,
+                  headlineImage: headlineImage
+                    ? URL.createObjectURL(headlineImage)
+                    : "",
+                  author,
+                  category: selectedCategories,
+                  keywords: selectedKeywords,
+                  isFeatured,
+                  isSpecial,
+                };
+                sessionStorage.setItem(
+                  "previewContent",
+                  JSON.stringify(previewContent)
+                );
+                router.push("/admin/content/preview");
+              }}
+            >
               <IconEye size={20} />
               Preview
             </Button>

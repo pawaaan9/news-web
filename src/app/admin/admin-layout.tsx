@@ -55,12 +55,15 @@ const AdminLayout: React.FC<{
           News
         </div>
         <nav className="flex-1">
-          <ul className="space-y-2">
+          <ul
+            className="space-y-2 list-none p-0 m-0"
+            style={{ listStyleType: "none" }}
+          >
             {menuItems.map((item, index) => (
               <li key={index}>
                 <Link
                   href={item.href}
-                  className={`p-2 rounded flex items-center pl-10 ${
+                  className={`p-2 rounded flex items-center mr-4 ${
                     pathname.startsWith(item.href)
                       ? "bg-primary text-white"
                       : "hover:bg-gray-200 hover:text-primary"
@@ -102,8 +105,8 @@ const AdminLayout: React.FC<{
               <IconX size={30} />
             </button>
           </div>
-          <nav className="flex-1 p-4">
-            <ul className="space-y-4">
+          <nav className="flex-1 pl-0 p-4">
+            <ul className="space-y-4  p-0 m-0 !list-none">
               {menuItems.map((item, index) => (
                 <li key={index}>
                   <Link
