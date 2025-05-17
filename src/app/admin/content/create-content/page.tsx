@@ -348,10 +348,28 @@ const CreateContent = () => {
             <Input
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) {
-                  console.log("File selected:", file.name); // Debug log
-                  setHeadlineImage(file);
+                if (!file) return;
+                if (file.size > 10 * 1024 * 1024) {
+                  alert("Image must be less than 10MB.");
+                  return;
                 }
+                if (
+                  ![
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/gif",
+                    "image/tiff",
+                    "image/bmp",
+                    "image/avif",
+                  ].includes(file.type)
+                ) {
+                  alert(
+                    "Unsupported image type. Please use JPG, PNG, WebP, GIF, TIFF, BMP, or AVIF."
+                  );
+                  return;
+                }
+                setHeadlineImage(file);
               }}
               type="file"
               accept="image/*"
