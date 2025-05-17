@@ -17,7 +17,7 @@ interface Article {
   content: string;
   headlineImage?: string;
   author: string;
-  category: string[] | string;
+  category: { name: string; subCategory?: string }[] | string;
   keywords: string[] | string;
   createdTime: string;
   isFeatured?: boolean;
@@ -56,9 +56,8 @@ export default function NewsView() {
       <main>
         <NavBar onCategorySelect={() => {}} selectedCategory={null} />
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="text-center py-10">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p>පුවත් ලිපිය ලබා ගැනීමට...</p>
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         </div>
       </main>
@@ -89,13 +88,17 @@ export default function NewsView() {
           </Link>{" "}
           &gt;
           <Link
-            href={`/?category=${article.category}`}
+            href={`/?category=${
+              Array.isArray(article.category)
+                ? article.category[0]?.name
+                : article.category
+            }`}
             className="text-blue-500 hover:underline ml-1"
           >
             {Array.isArray(article.category)
-              ? article.category[0]
+              ? article.category[0]?.name
               : article.category}
-          </Link>{" "}
+          </Link>
           &gt;
           <span className="text-gray-700 ml-1 font-muktaMalar">
             {article.headline1.substring(0, 20)}...
@@ -105,15 +108,22 @@ export default function NewsView() {
         {/* Article Header */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2 mb-2">
-            {Array.isArray(article.category?.[0]) ? (
-              article.category[0].map((cat: string, index: number) => (
-                <span
-                  key={index}
-                  className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded"
-                >
-                  {cat}
-                </span>
-              ))
+            {Array.isArray(article.category) ? (
+              article.category.map(
+                (
+                  cat: { name: string; subCategory?: string },
+                  index: number
+                ) => (
+                  <span
+                    key={index}
+                    className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded"
+                  >
+                    {cat.subCategory
+                      ? `${cat.name} (${cat.subCategory})`
+                      : cat.name}
+                  </span>
+                )
+              )
             ) : (
               <span className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded">
                 {article.category}
