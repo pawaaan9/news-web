@@ -177,27 +177,32 @@ export default function NewsView() {
               {Array.isArray(article.keywords) ? (
                 Array.isArray(article.keywords[0]) ? (
                   article.keywords[0].map((keyword: string, index: number) => (
-                    <span
+                    <Link
                       key={index}
-                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+                      href={`/keyword/${encodeURIComponent(keyword)}`}
+                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
                     >
                       {keyword}
-                    </span>
+                    </Link>
                   ))
                 ) : (
                   article.keywords.map((keyword: string, index: number) => (
-                    <span
+                    <Link
                       key={index}
-                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded"
+                      href={`/keyword/${encodeURIComponent(keyword)}`}
+                      className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
                     >
                       {keyword}
-                    </span>
+                    </Link>
                   ))
                 )
               ) : (
-                <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                <Link
+                  href={`/keyword/${encodeURIComponent(article.keywords)}`}
+                  className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
+                >
                   {article.keywords}
-                </span>
+                </Link>
               )}
             </div>
           </div>

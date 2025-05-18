@@ -106,3 +106,20 @@ export const processScheduledContent = async (): Promise<ContentResponse> => {
   const response = await axiosInstance.post<ContentResponse>("/content/scheduled/process");
   return response.data;
 };
+
+export const getContentsByKeyword = async (keyword: string) => {
+  try {
+    const response = await fetch(`${API_URL}/content/keyword/${keyword}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching contents by keyword:", error);
+    throw error;
+  }
+};
