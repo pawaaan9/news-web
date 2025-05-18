@@ -1,17 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
-import Image from "next/image";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import AdminLayout from "../../admin-layout";
 import { PageTitle } from "@/modules/shared/page-title";
+import AdminLayout from "../../../admin-layout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { LabelText } from "@/modules/shared/label-text";
-import { Textarea } from "@/components/ui/textarea";
 import {
   IconAd,
   IconPhoto,
@@ -21,11 +12,22 @@ import {
   IconBrandFacebook,
   IconLink,
 } from "@tabler/icons-react";
+import { Input } from "@/components/ui/input";
+import { LabelText } from "@/modules/shared/label-text";
+
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";
+import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import {
+  AdvertisementData,
   getAdvertisementById,
   updateAdvertisement,
 } from "@/api/advertisement.api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
 
 const advertisementPositions = [
   { name: "Medium Rectangle", size: "300×250" },
@@ -40,6 +42,7 @@ const advertisementPositions = [
   { name: "Skyscraper", size: "120×600" },
 ];
 
+// Sample data for countries
 const countries = [
   "Sri Lanka",
   "United States",
@@ -52,13 +55,13 @@ const countries = [
   "India",
   "Brazil",
   "South Africa",
+  "All Countries",
 ];
 
 const EditAdvertisement = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
+  const params = useParams();
+  const id = params.id as string;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
@@ -70,6 +73,8 @@ const EditAdvertisement = () => {
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
   const [adUrl, setAdUrl] = useState("");
+
+  // Contact information fields
   const [hasWebsite, setHasWebsite] = useState("yes");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -83,26 +88,29 @@ const EditAdvertisement = () => {
     setIsLoading(true);
     getAdvertisementById(id)
       .then((data) => {
-        setTitle(data.title || "");
-        setDescription(data.description || "");
-        setSelectedPosition(data.position || "");
-        setSelectedCountry(data.country || "");
-        setHasWebsite(data.isWebsiteHave ? "yes" : "no");
-        setAdUrl(data.adUrl || "");
-        setEmail(data.email || "");
-        setWhatsapp(data.whatsappNo || "");
-        setPhone(data.phoneNo || "");
-        setFacebookProfile(data.fbProfile || "");
-        setPreviewImage(data.adImage || null);
+        // Narrow the type of data
+        const ad = (data as { data: AdvertisementData }).data;
+
+        setTitle(ad.title);
+        setDescription(ad.description || "");
+        setSelectedPosition(ad.position);
+        setSelectedCountry(ad.country);
+        setHasWebsite(ad.isWebsiteHave ? "yes" : "no");
+        setAdUrl(ad.adUrl || "");
+        setEmail(ad.email || "");
+        setWhatsapp(ad.whatsappNo || "");
+        setPhone(ad.phoneNo || "");
+        setFacebookProfile(ad.fbProfile || "");
+        setPreviewImage(typeof ad.adImage === "string" ? ad.adImage : null);
 
         // Parse dates and times
-        if (data.startDatetime) {
-          const start = new Date(data.startDatetime);
+        if (ad.startDatetime) {
+          const start = new Date(ad.startDatetime);
           setStartDate(start);
           setStartTime(format(start, "HH:mm"));
         }
-        if (data.endDatetime) {
-          const end = new Date(data.endDatetime);
+        if (ad.endDatetime) {
+          const end = new Date(ad.endDatetime);
           setEndDate(end);
           setEndTime(format(end, "HH:mm"));
         }
@@ -158,8 +166,12 @@ const EditAdvertisement = () => {
         whatsappNo: hasWebsite === "no" ? whatsapp : undefined,
         phoneNo: hasWebsite === "no" ? phone : undefined,
         fbProfile: hasWebsite === "no" ? facebookProfile : undefined,
-        startDatetime: `${format(startDate, "yyyy-MM-dd")}T${startTime}:00`,
-        endDatetime: `${format(endDate, "yyyy-MM-dd")}T${endTime}:00`,
+        startDatetime: startDate
+          ? `${format(startDate, "yyyy-MM-dd")}T${startTime}:00`
+          : "",
+        endDatetime: endDate
+          ? `${format(endDate, "yyyy-MM-dd")}T${endTime}:00`
+          : "",
         status,
       };
 
@@ -170,6 +182,7 @@ const EditAdvertisement = () => {
           : "Advertisement updated successfully!"
       );
       router.push("/admin/advertisements");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message || "Failed to update advertisement."
@@ -198,7 +211,9 @@ const EditAdvertisement = () => {
               id="title"
               placeholder="Enter advertisement title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
               required
             />
@@ -250,6 +265,7 @@ const EditAdvertisement = () => {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                    required
                   />
                   <IconPhoto className="text-charcoal/60" />
                 </div>
@@ -260,7 +276,7 @@ const EditAdvertisement = () => {
                     src={previewImage}
                     alt="Preview"
                     className="w-full h-full object-cover"
-                    width={128}
+                    width={128} // Specify width
                     height={128}
                   />
                 </div>
@@ -293,7 +309,7 @@ const EditAdvertisement = () => {
           <div className="border border-charcoal/20 rounded-lg p-4">
             <LabelText text="Advertisement Link Options" />
             <div className="mt-3">
-              <Tabs defaultValue={hasWebsite} onValueChange={setHasWebsite}>
+              <Tabs defaultValue="yes" onValueChange={setHasWebsite}>
                 <TabsList className="grid grid-cols-2 w-full max-w-md mb-4">
                   <TabsTrigger value="yes" className="flex items-center gap-2">
                     <IconLink size={18} />I have a website
@@ -492,7 +508,7 @@ const EditAdvertisement = () => {
               onClick={(e) => handleSubmit(e, "toPublish")}
             >
               <IconAd className="mr-2" size={20} />
-              Update Advertisement
+              Publish Advertisement
             </Button>
           </div>
         </form>

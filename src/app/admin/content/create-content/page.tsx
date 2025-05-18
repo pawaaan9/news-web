@@ -23,6 +23,7 @@ import withAuth from "@/hoc/with-auth";
 import { format } from "date-fns";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
@@ -189,13 +190,16 @@ const CreateContent = () => {
         );
       }
 
-      // Log the form data
-      console.log("Form Data being sent:");
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
 
       await submitContent(formData);
+      toast.success(
+        status === "Draft"
+          ? "Content saved as draft!"
+          : "Content updated and published successfully!"
+      );
       router.push("/admin/content");
     } catch (error: unknown) {
       console.error("Error submitting content:", error);
@@ -642,6 +646,7 @@ const CreateContent = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </AdminLayout>
   );
 };

@@ -13,8 +13,10 @@ import { AdvertisementCard } from "@/modules/content/manage-ad-card";
 import withAuth from "@/hoc/with-auth";
 import {
   AdvertisementData,
+  deleteAdvertisement,
   getAllAdvertisements,
 } from "@/api/advertisement.api";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 // Sample data for countries
 const countries = [
@@ -39,6 +41,8 @@ const AdvertisementPage = () => {
   const [searchTitle, setSearchTitle] = useState("");
   const [advertisements, setAdvertisements] = useState<AdvertisementData[]>([]);
   const [filteredAds, setFilteredAds] = useState<AdvertisementData[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [adToDelete, setAdToDelete] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -114,8 +118,21 @@ const AdvertisementPage = () => {
   };
 
   const handleDelete = (id: string) => {
-    console.log("Delete advertisement ID:", id);
-    setFilteredAds(filteredAds.filter((ad) => ad._id !== id));
+    setAdToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+  const confirmDelete = async () => {
+    if (!adToDelete) return;
+    try {
+      await deleteAdvertisement(adToDelete);
+      setFilteredAds(filteredAds.filter((ad) => ad._id !== adToDelete));
+      setDeleteDialogOpen(false);
+      setAdToDelete(null);
+    } catch (error) {
+      console.error("Error deleting content:", error);
+      setDeleteDialogOpen(false);
+      setAdToDelete(null);
+    }
   };
 
   return (
@@ -140,7 +157,10 @@ const AdvertisementPage = () => {
             id="title"
             placeholder="Search by title"
             value={searchTitle}
-            onChange={(e) => setSearchTitle(e.target.value)}
+            onChange={(e) => {
+              setSearchTitle(e.target.value);
+              filterAdvertisements();
+            }}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
           />
         </div>
@@ -149,7 +169,10 @@ const AdvertisementPage = () => {
           <select
             id="country"
             value={selectedCountry || ""}
-            onChange={(e) => setSelectedCountry(e.target.value || null)}
+            onChange={(e) => {
+              setSelectedCountry(e.target.value || null);
+              filterAdvertisements();
+            }}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
           >
             <option value="">All Countries</option>
@@ -170,6 +193,7 @@ const AdvertisementPage = () => {
             onChange={(e) => {
               const val = e.target.value;
               setStartDate(val ? new Date(val) : null);
+              filterAdvertisements();
             }}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
             min={format(new Date(), "yyyy-MM-dd")}
@@ -185,29 +209,17 @@ const AdvertisementPage = () => {
             onChange={(e) => {
               const val = e.target.value;
               setEndDate(val ? new Date(val) : null);
+              filterAdvertisements();
             }}
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
           />
         </div>
-        <div className="flex gap-2">
-          <Button
-            className="bg-primary text-white hover:bg-primary/80"
-            size="lg"
-            onClick={filterAdvertisements}
-          >
-            Apply Filters
-          </Button>
-          <Button
-            variant="outline"
-            className="border-charcoal/60 text-charcoal hover:bg-gray-100"
-            size="lg"
-            onClick={clearFilters}
-          >
-            Clear
-          </Button>
-        </div>
-      </div>
+        {/* Optional: Clear all link */}
 
+        <Button variant="outline" onClick={clearFilters}>
+          Clear all filters
+        </Button>
+      </div>
       {/* Advertisements Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
         {filteredAds.length > 0 ? (
@@ -245,6 +257,19 @@ const AdvertisementPage = () => {
             </Button>
           </div>
         )}
+
+        <ConfirmationDialog
+          isOpen={deleteDialogOpen}
+          onClose={() => {
+            setDeleteDialogOpen(false);
+            setAdToDelete(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Delete Advertisement"
+          message="Are you sure you want to delete this advertisement? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+        />
       </div>
     </AdminLayout>
   );

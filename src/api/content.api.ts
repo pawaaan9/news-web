@@ -21,7 +21,6 @@ export interface ContentData {
   keywords?: string[];
 }
 
-
 interface ContentResponse {
   data: ContentData[];
 }
@@ -37,7 +36,7 @@ export const submitContent = async (formData: FormData) => {
   try {
     const response = await axios.post(`${API_URL}/content`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
@@ -55,12 +54,17 @@ export const getContentById = async (id: string) => {
   }
 };
 
-export const updateContent = async (
-  id: string,
-  updateData: Partial<ContentData>
-) => {
-  const response = await axiosInstance.put(`/content/${id}`, updateData);
-  return response.data;
+export const updateContent = async (id: string, formData: FormData) => {
+  try {
+    const response = await axios.put(`${API_URL}/content/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const deleteContent = async (id: string) => {
@@ -97,12 +101,16 @@ export const getAllContentsByUrl = async (
 
 // Get all scheduled content
 export const getScheduledContent = async (): Promise<ContentResponse> => {
-  const response = await axiosInstance.get<ContentResponse>("/content/scheduled");
+  const response = await axiosInstance.get<ContentResponse>(
+    "/content/scheduled"
+  );
   return response.data;
 };
 
 // Process scheduled content
 export const processScheduledContent = async (): Promise<ContentResponse> => {
-  const response = await axiosInstance.post<ContentResponse>("/content/scheduled/process");
+  const response = await axiosInstance.post<ContentResponse>(
+    "/content/scheduled/process"
+  );
   return response.data;
 };
