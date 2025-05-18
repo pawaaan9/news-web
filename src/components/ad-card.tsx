@@ -2,40 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { getAllAdvertisements } from "@/api/advertisement.api";
+import { getAllAdvertisements, AdvertisementData } from "@/api/advertisement.api";
 
 interface AdCardProps {
-  position: "Article Top" | "Article Bottom";
-}
-
-interface Advertisement {
-  adImage: string;
-  title: string;
-  country: string;
-  position: string;
-  status: string;
-  startDatetime: string;
-  endDatetime: string;
-}
-
-interface AdDisplay {
-  image: string;
-  title: string;
-  brand: string;
+  position: "Medium Rectangle";
 }
 
 export default function AdCard({ position }: AdCardProps) {
-  const [ad, setAd] = useState<AdDisplay | null>(null);
+  const [ad, setAd] = useState<AdvertisementData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAd = async () => {
       try {
         const response = await getAllAdvertisements();
-        let ads = (response as { data: Advertisement[] }).data;
+        let ads = response.data;
         
-        // Filter by specified position
-        ads = ads.filter(ad => ad.position === position);
+        // Always filter for Medium Rectangle ads
+        ads = ads.filter(ad => ad.position === "Medium Rectangle");
         
         // Filter active ads (published and not expired)
         const now = new Date();
@@ -48,11 +32,9 @@ export default function AdCard({ position }: AdCardProps) {
         if (activeAds.length > 0) {
           // Select a random ad from available ones
           const randomAd = activeAds[Math.floor(Math.random() * activeAds.length)];
-          setAd({
-            image: typeof randomAd.adImage === 'string' ? randomAd.adImage : '',
-            title: randomAd.title,
-            brand: randomAd.country
-          });
+          if (typeof randomAd.adImage === 'string') {
+            setAd(randomAd);
+          }
         }
       } catch (error) {
         console.error("Failed to load advertisement:", error);
@@ -66,37 +48,48 @@ export default function AdCard({ position }: AdCardProps) {
 
   if (loading) {
     return (
-      <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs border-secondary-grey border-1 mx-auto md:mx-0">
-        <div className="relative w-full h-40 bg-gray-200 animate-pulse"></div>
-        <div className="p-3">
-          <div className="h-4 w-1/2 bg-gray-200 animate-pulse mb-1"></div>
-          <div className="h-5 w-full bg-gray-200 animate-pulse mb-2"></div>
-          <div className="h-3 w-10 bg-gray-200 animate-pulse"></div>
-        </div>
+      <div className="bg-white rounded-lg overflow-hidden shadow-md mx-auto">
+        <div className="relative w-[300px] h-[250px] bg-gray-200 animate-pulse"></div>
       </div>
     );
   }
 
-  if (!ad) return null;
+  if (!ad || typeof ad.adImage !== 'string') return null;
 
   return (
-    <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md max-w-xs border-secondary-grey border-1 mx-auto md:mx-0">
-      <div className="relative w-full h-40">
-        <Image
-          src={ad.image}
-          alt={ad.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
-      <div className="p-3">
-        <p className="text-xs text-gray-400 mb-1">{ad.brand}</p>
-        <h2 className="text-sm font-semibold leading-snug mb-2">{ad.title}</h2>
-        <span className="text-[10px] border border-gray-500 px-1.5 py-0.5 rounded text-charcoal">
-          Ad
-        </span>
-      </div>
+    <div className="bg-white rounded-lg overflow-hidden shadow-md mx-auto">
+      {ad.adUrl ? (
+        <a
+          href={ad.adUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative block w-[300px] h-[250px]"
+        >
+          <Image
+            src={ad.adImage}
+            alt={ad.title}
+            fill
+            className="object-contain"
+            sizes="300px"
+          />
+          <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
+            Ad
+          </div>
+        </a>
+      ) : (
+        <div className="relative w-[300px] h-[250px]">
+          <Image
+            src={ad.adImage}
+            alt={ad.title}
+            fill
+            className="object-contain"
+            sizes="300px"
+          />
+          <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
+            Ad
+          </div>
+        </div>
+      )}
     </div>
   );
 }

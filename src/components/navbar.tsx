@@ -64,16 +64,6 @@ export default function NavBar({
           </Link>
         </div>
 
-        {/* Desktop Ad - Parallel to logo */}
-        <div className="hidden lg:block w-[970px] h-[90px] bg-gray-300 relative">
-          <div className="w-full h-full flex items-center justify-center">
-            <p className="text-gray-500">970×90 Desktop Ad</p>
-          </div>
-          <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
-            Ad
-          </div>
-        </div>
-
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

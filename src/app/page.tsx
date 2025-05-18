@@ -9,6 +9,7 @@ import SpecialNews from "@/components/special-news";
 import { getContent, ContentData } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import FeatureNews from "@/components/feature-news";
+import TopAdvertisement from "@/components/top-advertisement";
 
 export default function Home() {
   const [newsItems, setNewsItems] = useState<ContentData[]>([]);
@@ -50,32 +51,16 @@ export default function Home() {
       })
     : regularNews;
 
+  // Create groups of 4 news items followed by an ad
   const newsWithAds = [];
+  let newsGroup = [];
+
   for (let i = 0; i < displayNews.length; i++) {
-    if (i === 0) {
-      newsWithAds.push(
-        <div key={`ad-top`} className="col-span-full">
-          <AdCard position="Article Top" />
-        </div>
-      );
-    }
-
-    // const categoriesArr = Array.isArray(displayNews[i].category)
-    //   ? displayNews[i].category
-    //   : displayNews[i].category
-    //   ? [{ name: String(displayNews[i].category) }]
-    //   : [];
-
-    newsWithAds.push(
+    newsGroup.push(
       <NewsCard
         key={displayNews[i]._id}
         id={displayNews[i]._id}
         image={displayNews[i].headlineImage}
-        // category={categoriesArr
-        //   .map((cat: { name: string; subCategory?: string }) =>
-        //     cat.subCategory ? `${cat.name} (${cat.subCategory})` : cat.name
-        //   )
-        //   .join(", ")}
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
         date={formatDistanceToNow(new Date(displayNews[i].createdTime), {
@@ -84,12 +69,22 @@ export default function Home() {
       />
     );
 
-    if ((i + 1) % 3 === 0 && i !== displayNews.length - 1) {
-      newsWithAds.push(
-        <div key={`ad-bottom-${i}`} className="col-span-full">
-          <AdCard position="Article Bottom" />
-        </div>
-      );
+    // After every 4 news items or at the end of all news
+    if (newsGroup.length === 4 || i === displayNews.length - 1) {
+      // Add the news group
+      newsWithAds.push(...newsGroup);
+      
+      // Add an ad if we have a full group of 4 and it's not the end
+      if (newsGroup.length === 4 && i !== displayNews.length - 1) {
+        newsWithAds.push(
+          <div key={`ad-${i}`} className="col-span-full flex justify-center py-6">
+            <AdCard position="Medium Rectangle" />
+          </div>
+        );
+      }
+      
+      // Reset the news group
+      newsGroup = [];
     }
   }
 
@@ -99,11 +94,16 @@ export default function Home() {
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
       />
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="lg:hidden mb-6">
-          <AdCard position="Article Top" />
+      
+      {/* Top Advertisement Section - Full Width Container */}
+      <div className="w-full bg-gray-100 py-4">
+        <div className="max-w-6xl mx-auto px-4">
+          <TopAdvertisement />
         </div>
+      </div>
 
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {!selectedCategory && (
           <div className="flex flex-col lg:flex-row gap-6 mb-8">
             <div className="lg:w-1/3">
@@ -116,7 +116,7 @@ export default function Home() {
         )}
 
         {displayNews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {newsWithAds}
           </div>
         ) : (
