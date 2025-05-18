@@ -32,14 +32,17 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 
-// Sample data for advertisement positions
 const advertisementPositions = [
-  "Homepage Banner",
-  "Article Top",
-  "Article Bottom",
-  "Sidebar",
-  "Newsletter",
-  "Featured Slot",
+  { name: "Medium Rectangle", size: "300×250" },
+  { name: "Large Rectangle", size: "336×280" },
+  { name: "Leaderboard", size: "728×90" },
+  { name: "Large Leaderboard", size: "970×90" },
+  { name: "Half Page", size: "300×600" },
+  { name: "Wide Skyscraper", size: "160×600" },
+  { name: "Large Mobile Banner", size: "320×100" },
+  { name: "Mobile Banner", size: "320×50" },
+  { name: "Billboard", size: "970×250" },
+  { name: "Skyscraper", size: "120×600" },
 ];
 
 // Sample data for countries
@@ -178,6 +181,27 @@ const CreateAdvertisement = () => {
             />
           </div>
 
+          {/* Advertisement Position */}
+          <div>
+            <LabelText text="Advertisement Position (Required)" />
+            <select
+              id="position"
+              value={selectedPosition || ""}
+              onChange={(e) => setSelectedPosition(e.target.value)}
+              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+              required
+            >
+              <option value="" disabled>
+                Select advertisement position
+              </option>
+              {advertisementPositions.map((position, index) => (
+                <option key={index} value={position.name}>
+                  {position.name} ({position.size})
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Advertisement Photo */}
           <div>
             <LabelText text="Advertisement Photo (Required)" />
@@ -194,10 +218,6 @@ const CreateAdvertisement = () => {
                   />
                   <IconPhoto className="text-charcoal/60" />
                 </div>
-                <p className="text-sm text-charcoal/60 mt-1">
-                  Recommended size: 1200x600px (for banners) or 300x300px (for
-                  squares)
-                </p>
               </div>
               {previewImage && (
                 <div className="w-32 h-32 border border-charcoal/20 rounded-md overflow-hidden">
@@ -211,27 +231,6 @@ const CreateAdvertisement = () => {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Advertisement Position */}
-          <div>
-            <LabelText text="Advertisement Position (Required)" />
-            <select
-              id="position"
-              value={selectedPosition || ""}
-              onChange={(e) => setSelectedPosition(e.target.value)}
-              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
-              required
-            >
-              <option value="" disabled>
-                Select advertisement position
-              </option>
-              {advertisementPositions.map((position, index) => (
-                <option key={index} value={position}>
-                  {position}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Target Country */}
