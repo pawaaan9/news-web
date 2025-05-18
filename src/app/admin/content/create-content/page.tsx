@@ -39,6 +39,7 @@ const CreateContent = () => {
   const [headlineImage, setHeadlineImage] = useState<File | null>(null);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
+  const [isBreaking, setIsBreaking] = useState(false);
   const [seoTitle, setSeoTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
@@ -452,6 +453,7 @@ const CreateContent = () => {
                   onChange={() => {
                     setIsFeatured(true);
                     setIsSpecial(false);
+                    setIsBreaking(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
@@ -467,10 +469,27 @@ const CreateContent = () => {
                   onChange={() => {
                     setIsSpecial(true);
                     setIsFeatured(false);
+                    setIsBreaking(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
                 <span className="text-charcoal">Special</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="specialOption"
+                  value="breaking"
+                  checked={isBreaking}
+                  onChange={() => {
+                    setIsBreaking(true);
+                    setIsFeatured(false);
+                    setIsSpecial(false);
+                  }}
+                  className="form-radio text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">Breaking</span>
               </label>
             </div>
             <p className="text-sm text-charcoal/60 mt-1">

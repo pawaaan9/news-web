@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import NavBar from "@/components/navbar";
 import NewsCard from "@/components/news-card";
 import Footer from "@/components/footer";
-import AdCard from "@/components/ad-card";
 import { getContentsByKeyword } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 
@@ -48,42 +47,55 @@ export default function KeywordNewsPage() {
     }
   }, [keyword]);
 
-  const newsWithAds = [];
-  for (let i = 0; i < newsItems.length; i++) {
-    if (i === 0) {
-      newsWithAds.push(
-        <div key={`ad-top`} className="col-span-full">
-          <AdCard position="Article Top" />
-        </div>
-      );
-    }
+  // const newsWithAds = [];
+  // for (let i = 0; i < newsItems.length; i++) {
+  //   if (i === 0) {
+  //     newsWithAds.push(
+  //       <div key={`ad-top`} className="col-span-full">
+  //         <AdCard position="Medium Rectangle" />
+  //       </div>
+  //     );
+  //   }
 
-    newsWithAds.push(
-      <NewsCard
-        key={newsItems[i]._id}
-        id={newsItems[i]._id}
-        image={newsItems[i].headlineImage}
-        title={newsItems[i].headline1}
-        author={newsItems[i].author}
-        date={formatDistanceToNow(new Date(newsItems[i].createdTime), {
-          addSuffix: true,
-        })}
-      />
-    );
+  //   newsWithAds.push(
+  //     <NewsCard
+  //       key={newsItems[i]._id}
+  //       id={newsItems[i]._id}
+  //       image={newsItems[i].headlineImage}
+  //       title={newsItems[i].headline1}
+  //       author={newsItems[i].author}
+  //       date={formatDistanceToNow(new Date(newsItems[i].createdTime), {
+  //         addSuffix: true,
+  //       })}
+  //     />
+  //   );
 
-    if ((i + 1) % 3 === 0 && i !== newsItems.length - 1) {
-      newsWithAds.push(
-        <div key={`ad-bottom-${i}`} className="col-span-full">
-          <AdCard position="Article Bottom" />
-        </div>
-      );
-    }
-  }
+  //   if ((i + 1) % 3 === 0 && i !== newsItems.length - 1) {
+  //     newsWithAds.push(
+  //       <div key={`ad-bottom-${i}`} className="col-span-full">
+  //         <AdCard position="Medium Rectangle" />
+  //       </div>
+  //     );
+  //   }
+  // }
+
+  const newsCards = newsItems.map((item) => (
+    <NewsCard
+      key={item._id}
+      id={item._id}
+      image={item.headlineImage}
+      title={item.headline1}
+      author={item.author}
+      date={formatDistanceToNow(new Date(item.createdTime), {
+        addSuffix: true,
+      })}
+    />
+  ));
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gray-100 ">
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 lg:my-6 bg-white rounded-lg shadow">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-muktaMalar mb-2">
@@ -106,11 +118,11 @@ export default function KeywordNewsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {newsWithAds}
+            {newsCards}
           </div>
         )}
       </div>
       <Footer />
     </main>
   );
-} 
+}

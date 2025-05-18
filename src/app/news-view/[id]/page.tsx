@@ -78,9 +78,9 @@ export default function NewsView() {
   }
 
   return (
-    <main className="font-dmSans">
+    <main className="font-dmSans bg-gray-100 ">
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 bg-white my-4 rounded-lg shadow">
         {/* Breadcrumbs */}
         <div className="text-xs mb-4">
           <Link href="/" className="text-blue-500 hover:underline">
@@ -210,7 +210,7 @@ export default function NewsView() {
 
         {/* Advertisement */}
         <div className="my-8">
-          <AdCard position="Article Bottom" />
+          <AdCard position="Medium Rectangle" />
         </div>
       </div>
 
