@@ -1,8 +1,17 @@
 "use client";
 
-import { PageTitle } from "@/modules/shared/page-title";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { format } from "date-fns";
+import Image from "next/image";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../admin-layout";
+import { PageTitle } from "@/modules/shared/page-title";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { LabelText } from "@/modules/shared/label-text";
+import { Textarea } from "@/components/ui/textarea";
 import {
   IconAd,
   IconPhoto,
@@ -12,18 +21,11 @@ import {
   IconBrandFacebook,
   IconLink,
 } from "@tabler/icons-react";
-import { Input } from "@/components/ui/input";
-import { LabelText } from "@/modules/shared/label-text";
-
-import { useState } from "react";
-import { format } from "date-fns";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { createAdvertisement } from "@/api/advertisement.api";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Image from "next/image";
+import {
+  getAdvertisementById,
+  updateAdvertisement,
+} from "@/api/advertisement.api";
 
 const advertisementPositions = [
   { name: "Medium Rectangle", size: "300×250" },
@@ -38,7 +40,6 @@ const advertisementPositions = [
   { name: "Skyscraper", size: "120×600" },
 ];
 
-// Sample data for countries
 const countries = [
   "Sri Lanka",
   "United States",
@@ -51,11 +52,13 @@ const countries = [
   "India",
   "Brazil",
   "South Africa",
-  "All Countries",
 ];
 
-const CreateAdvertisement = () => {
+const EditAdvertisement = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
@@ -67,21 +70,55 @@ const CreateAdvertisement = () => {
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
   const [adUrl, setAdUrl] = useState("");
-
-  // Contact information fields
   const [hasWebsite, setHasWebsite] = useState("yes");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [phone, setPhone] = useState("");
   const [facebookProfile, setFacebookProfile] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch ad data
+  useEffect(() => {
+    if (!id) return;
+    setIsLoading(true);
+    getAdvertisementById(id)
+      .then((data) => {
+        setTitle(data.title || "");
+        setDescription(data.description || "");
+        setSelectedPosition(data.position || "");
+        setSelectedCountry(data.country || "");
+        setHasWebsite(data.isWebsiteHave ? "yes" : "no");
+        setAdUrl(data.adUrl || "");
+        setEmail(data.email || "");
+        setWhatsapp(data.whatsappNo || "");
+        setPhone(data.phoneNo || "");
+        setFacebookProfile(data.fbProfile || "");
+        setPreviewImage(data.adImage || null);
+
+        // Parse dates and times
+        if (data.startDatetime) {
+          const start = new Date(data.startDatetime);
+          setStartDate(start);
+          setStartTime(format(start, "HH:mm"));
+        }
+        if (data.endDatetime) {
+          const end = new Date(data.endDatetime);
+          setEndDate(end);
+          setEndTime(format(end, "HH:mm"));
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to load advertisement.");
+        router.push("/admin/advertisements");
+      })
+      .finally(() => setIsLoading(false));
+  }, [id, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
       setPhoto(file);
-
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
@@ -97,7 +134,6 @@ const CreateAdvertisement = () => {
     status: "draft" | "toPublish"
   ) => {
     e.preventDefault();
-
     if (
       !title ||
       !selectedPosition ||
@@ -113,7 +149,7 @@ const CreateAdvertisement = () => {
       const advertisementData = {
         title,
         description,
-        adImage: photo as File, // Pass the file object
+        adImage: photo as File, // Only send if changed
         position: selectedPosition,
         country: selectedCountry,
         isWebsiteHave: hasWebsite === "yes",
@@ -127,23 +163,32 @@ const CreateAdvertisement = () => {
         status,
       };
 
-      await createAdvertisement(advertisementData);
+      await updateAdvertisement(id!, advertisementData);
       toast.success(
         status === "draft"
           ? "Advertisement saved as draft!"
-          : "Advertisement published successfully!"
+          : "Advertisement updated successfully!"
       );
       router.push("/admin/advertisements");
-    } catch (error) {
-      console.error("Error creating advertisement:", error);
-      toast.error("Failed to create advertisement.");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to update advertisement."
+      );
     }
   };
+
+  if (isLoading) {
+    return (
+      <AdminLayout pageTitle="ADVERTISEMENTS">
+        <div className="p-8 text-center">Loading...</div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout pageTitle="ADVERTISEMENTS">
       <div className="bg-white p-4 rounded-lg">
-        <PageTitle title="Create Advertisement" />
+        <PageTitle title="Edit Advertisement" />
         <form className="flex flex-col gap-6 mt-4">
           {/* Advertisement Title */}
           <div>
@@ -153,9 +198,7 @@ const CreateAdvertisement = () => {
               id="title"
               placeholder="Enter advertisement title"
               value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
+              onChange={(e) => setTitle(e.target.value)}
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
               required
             />
@@ -207,7 +250,6 @@ const CreateAdvertisement = () => {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
-                    required
                   />
                   <IconPhoto className="text-charcoal/60" />
                 </div>
@@ -218,7 +260,7 @@ const CreateAdvertisement = () => {
                     src={previewImage}
                     alt="Preview"
                     className="w-full h-full object-cover"
-                    width={128} // Specify width
+                    width={128}
                     height={128}
                   />
                 </div>
@@ -251,7 +293,7 @@ const CreateAdvertisement = () => {
           <div className="border border-charcoal/20 rounded-lg p-4">
             <LabelText text="Advertisement Link Options" />
             <div className="mt-3">
-              <Tabs defaultValue="yes" onValueChange={setHasWebsite}>
+              <Tabs defaultValue={hasWebsite} onValueChange={setHasWebsite}>
                 <TabsList className="grid grid-cols-2 w-full max-w-md mb-4">
                   <TabsTrigger value="yes" className="flex items-center gap-2">
                     <IconLink size={18} />I have a website
@@ -450,7 +492,7 @@ const CreateAdvertisement = () => {
               onClick={(e) => handleSubmit(e, "toPublish")}
             >
               <IconAd className="mr-2" size={20} />
-              Publish Advertisement
+              Update Advertisement
             </Button>
           </div>
         </form>
@@ -460,4 +502,4 @@ const CreateAdvertisement = () => {
   );
 };
 
-export default CreateAdvertisement;
+export default EditAdvertisement;

@@ -6,21 +6,19 @@ import { Button } from "@/components/ui/button";
 import { IconAd } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useState, useEffect, useCallback } from "react";
 import { format, isAfter, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { AdvertisementCard } from "@/modules/content/manage-ad-card";
 import withAuth from "@/hoc/with-auth";
-import { AdvertisementData, getAllAdvertisements } from "@/api/advertisement.api";
+import {
+  AdvertisementData,
+  getAllAdvertisements,
+} from "@/api/advertisement.api";
 
 // Sample data for countries
 const countries = [
+  "Sri Lanka",
   "United States",
   "Canada",
   "United Kingdom",
@@ -31,6 +29,7 @@ const countries = [
   "India",
   "Brazil",
   "South Africa",
+  "All Countries",
 ];
 
 const AdvertisementPage = () => {
@@ -111,7 +110,7 @@ const AdvertisementPage = () => {
 
   const handleEdit = (id: string) => {
     console.log("Edit advertisement ID:", id);
-    router.push(`/admin/advertisements/edit/${id}`);
+    router.push(`/admin/advertisements/edit-advertisement/${id}`);
   };
 
   const handleDelete = (id: string) => {
@@ -147,83 +146,48 @@ const AdvertisementPage = () => {
         </div>
         <div>
           <LabelText text="Country" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="country"
-                placeholder="Select a country"
-                value={selectedCountry || ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 rounded-md bg-white shadow-md">
-              <ul className="space-y-2 max-h-60 overflow-y-auto">
-                <li
-                  onClick={() => setSelectedCountry(null)}
-                  className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                >
-                  All Countries
-                </li>
-                {countries.map((country, index) => (
-                  <li
-                    key={index}
-                    onClick={() => setSelectedCountry(country)}
-                    className="p-2 hover:bg-primary hover:text-white cursor-pointer rounded"
-                  >
-                    {country}
-                  </li>
-                ))}
-              </ul>
-            </PopoverContent>
-          </Popover>
+          <select
+            id="country"
+            value={selectedCountry || ""}
+            onChange={(e) => setSelectedCountry(e.target.value || null)}
+            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
+          >
+            <option value="">All Countries</option>
+            {countries.map((country, index) => (
+              <option key={index} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <LabelText text="Start Date" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="startDate"
-                placeholder="Select start date"
-                value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={startDate || undefined}
-                onSelect={(date) => setStartDate(date || null)}
-                className="rounded-md bg-white"
-              />
-            </PopoverContent>
-          </Popover>
+          <Input
+            type="date"
+            id="startDate"
+            placeholder="Select start date"
+            value={startDate ? format(startDate, "yyyy-MM-dd") : ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStartDate(val ? new Date(val) : null);
+            }}
+            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+            min={format(new Date(), "yyyy-MM-dd")}
+          />
         </div>
         <div>
           <LabelText text="End Date" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Input
-                type="text"
-                id="endDate"
-                placeholder="Select end date"
-                value={endDate ? format(endDate, "yyyy-MM-dd") : ""}
-                readOnly
-                className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer"
-              />
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={endDate || undefined}
-                onSelect={(date) => setEndDate(date || null)}
-                className="rounded-md bg-white"
-              />
-            </PopoverContent>
-          </Popover>
+          <Input
+            type="date"
+            id="endDate"
+            placeholder="Select end date"
+            value={endDate ? format(endDate, "yyyy-MM-dd") : ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              setEndDate(val ? new Date(val) : null);
+            }}
+            className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2"
+          />
         </div>
         <div className="flex gap-2">
           <Button
@@ -250,17 +214,21 @@ const AdvertisementPage = () => {
           filteredAds.map((ad) => (
             <AdvertisementCard
               key={ad._id}
-              id={ad._id || ''}
+              id={ad._id || ""}
               title={ad.title}
               photo={ad.adImage as string}
-              startDate={format(new Date(ad.startDatetime), 'yyyy-MM-dd HH:mm')}
-              endDate={format(new Date(ad.endDatetime), 'yyyy-MM-dd HH:mm')}
-              duration={`${Math.ceil((new Date(ad.endDatetime).getTime() - new Date(ad.startDatetime).getTime()) / (1000 * 60 * 60 * 24))} days`}
+              startDate={format(new Date(ad.startDatetime), "yyyy-MM-dd HH:mm")}
+              endDate={format(new Date(ad.endDatetime), "yyyy-MM-dd HH:mm")}
+              duration={`${Math.ceil(
+                (new Date(ad.endDatetime).getTime() -
+                  new Date(ad.startDatetime).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )} days`}
               country={ad.country}
               status={ad.status}
-              onPreview={() => handlePreview(ad._id || '')}
-              onEdit={() => handleEdit(ad._id || '')}
-              onDelete={() => handleDelete(ad._id || '')}
+              onPreview={() => handlePreview(ad._id || "")}
+              onEdit={() => handleEdit(ad._id || "")}
+              onDelete={() => handleDelete(ad._id || "")}
             />
           ))
         ) : (
