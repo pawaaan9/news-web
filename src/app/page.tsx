@@ -73,16 +73,19 @@ export default function Home() {
     if (newsGroup.length === 4 || i === displayNews.length - 1) {
       // Add the news group
       newsWithAds.push(...newsGroup);
-      
-      // Add an ad if we have a full group of 4
-      if (newsGroup.length === 4) {
+
+      // Add an ad if we have a full group of 4 and it's not the end
+      if (newsGroup.length === 4 && i !== displayNews.length - 1) {
         newsWithAds.push(
-          <div key={`ad-${i}`} className="col-span-1">
+          <div
+            key={`ad-${i}`}
+            className="col-span-full flex justify-center py-6"
+          >
             <AdCard position="Medium Rectangle" />
           </div>
         );
       }
-      
+
       // Reset the news group
       newsGroup = [];
     }
@@ -94,27 +97,17 @@ export default function Home() {
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
       />
-      
-      {/* Add padding-top to account for fixed navbar */}
-      <div className="pt-[120px]">
-        {/* Top Advertisement Section - Full Width Container */}
-        <div className="w-full bg-gray-100 py-4">
-          <div className="max-w-6xl mx-auto px-4">
-            <TopAdvertisement />
-          </div>
+
+      {/* Top Advertisement Section - Full Width Container */}
+      <div className="w-full bg-gray-100 lg:bg-white lg:pt-6">
+        <div className="max-w-6xl mx-auto px-4">
+          <TopAdvertisement />
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Category Name Display */}
-          {selectedCategory && (
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold font-muktaMalar bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white px-4 py-2 rounded inline-block">
-                {selectedCategory}
-              </h1>
-            </div>
-          )}
-
+      {/* Main Content */}
+      <div className="bg-gray-100 py-6">
+        <div className="max-w-4xl mx-auto px-4 py-8 lg:bg-white bg-gray-100 rounded-lg lg:shadow">
           {!selectedCategory && (
             <div className="flex flex-col lg:flex-row gap-6 mb-8">
               <div className="lg:w-1/3">

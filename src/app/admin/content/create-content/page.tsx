@@ -23,6 +23,7 @@ import withAuth from "@/hoc/with-auth";
 import { format } from "date-fns";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
@@ -38,6 +39,7 @@ const CreateContent = () => {
   const [headlineImage, setHeadlineImage] = useState<File | null>(null);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
+  const [isBreaking, setIsBreaking] = useState(false);
   const [seoTitle, setSeoTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
@@ -189,13 +191,16 @@ const CreateContent = () => {
         );
       }
 
-      // Log the form data
-      console.log("Form Data being sent:");
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
 
       await submitContent(formData);
+      toast.success(
+        status === "Draft"
+          ? "Content saved as draft!"
+          : "Content updated and published successfully!"
+      );
       router.push("/admin/content");
     } catch (error: unknown) {
       console.error("Error submitting content:", error);
@@ -448,6 +453,7 @@ const CreateContent = () => {
                   onChange={() => {
                     setIsFeatured(true);
                     setIsSpecial(false);
+                    setIsBreaking(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
@@ -463,10 +469,27 @@ const CreateContent = () => {
                   onChange={() => {
                     setIsSpecial(true);
                     setIsFeatured(false);
+                    setIsBreaking(false);
                   }}
                   className="form-radio text-primary focus:ring-primary/80"
                 />
                 <span className="text-charcoal">Special</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="specialOption"
+                  value="breaking"
+                  checked={isBreaking}
+                  onChange={() => {
+                    setIsBreaking(true);
+                    setIsFeatured(false);
+                    setIsSpecial(false);
+                  }}
+                  className="form-radio text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">Breaking</span>
               </label>
             </div>
             <p className="text-sm text-charcoal/60 mt-1">
@@ -642,6 +665,7 @@ const CreateContent = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </AdminLayout>
   );
 };

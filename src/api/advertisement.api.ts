@@ -98,7 +98,7 @@ export const updateAdvertisement = async (
 
   // Add image file if provided
   if (advertisement.adImage instanceof File) {
-    formData.append("adImage", advertisement.adImage);
+    formData.append("image", advertisement.adImage);
   }
 
   const response = await axios.put(`${API_URL}/advertisement/${id}`, formData, {

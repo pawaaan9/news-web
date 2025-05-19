@@ -1,7 +1,7 @@
 "use client";
 
 import { PageTitle } from "@/modules/shared/page-title";
-import AdminLayout from "../../admin-layout";
+import AdminLayout from "../../../admin-layout";
 import { Button } from "@/components/ui/button";
 import {
   IconAd,
@@ -15,12 +15,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { createAdvertisement } from "@/api/advertisement.api";
+import {
+  AdvertisementData,
+  getAdvertisementById,
+  updateAdvertisement,
+} from "@/api/advertisement.api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
@@ -54,8 +58,10 @@ const countries = [
   "All Countries",
 ];
 
-const CreateAdvertisement = () => {
+const EditAdvertisement = () => {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
@@ -74,14 +80,53 @@ const CreateAdvertisement = () => {
   const [whatsapp, setWhatsapp] = useState("");
   const [phone, setPhone] = useState("");
   const [facebookProfile, setFacebookProfile] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch ad data
+  useEffect(() => {
+    if (!id) return;
+    setIsLoading(true);
+    getAdvertisementById(id)
+      .then((data) => {
+        // Narrow the type of data
+        const ad = (data as { data: AdvertisementData }).data;
+
+        setTitle(ad.title);
+        setDescription(ad.description || "");
+        setSelectedPosition(ad.position);
+        setSelectedCountry(ad.country);
+        setHasWebsite(ad.isWebsiteHave ? "yes" : "no");
+        setAdUrl(ad.adUrl || "");
+        setEmail(ad.email || "");
+        setWhatsapp(ad.whatsappNo || "");
+        setPhone(ad.phoneNo || "");
+        setFacebookProfile(ad.fbProfile || "");
+        setPreviewImage(typeof ad.adImage === "string" ? ad.adImage : null);
+
+        // Parse dates and times
+        if (ad.startDatetime) {
+          const start = new Date(ad.startDatetime);
+          setStartDate(start);
+          setStartTime(format(start, "HH:mm"));
+        }
+        if (ad.endDatetime) {
+          const end = new Date(ad.endDatetime);
+          setEndDate(end);
+          setEndTime(format(end, "HH:mm"));
+        }
+      })
+      .catch(() => {
+        toast.error("Failed to load advertisement.");
+        router.push("/admin/advertisements");
+      })
+      .finally(() => setIsLoading(false));
+  }, [id, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
       setPhoto(file);
-
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
@@ -97,7 +142,6 @@ const CreateAdvertisement = () => {
     status: "draft" | "toPublish"
   ) => {
     e.preventDefault();
-
     if (
       !title ||
       !selectedPosition ||
@@ -113,7 +157,7 @@ const CreateAdvertisement = () => {
       const advertisementData = {
         title,
         description,
-        adImage: photo as File, // Pass the file object
+        adImage: photo as File, // Only send if changed
         position: selectedPosition,
         country: selectedCountry,
         isWebsiteHave: hasWebsite === "yes",
@@ -122,28 +166,42 @@ const CreateAdvertisement = () => {
         whatsappNo: hasWebsite === "no" ? whatsapp : undefined,
         phoneNo: hasWebsite === "no" ? phone : undefined,
         fbProfile: hasWebsite === "no" ? facebookProfile : undefined,
-        startDatetime: `${format(startDate, "yyyy-MM-dd")}T${startTime}:00`,
-        endDatetime: `${format(endDate, "yyyy-MM-dd")}T${endTime}:00`,
+        startDatetime: startDate
+          ? `${format(startDate, "yyyy-MM-dd")}T${startTime}:00`
+          : "",
+        endDatetime: endDate
+          ? `${format(endDate, "yyyy-MM-dd")}T${endTime}:00`
+          : "",
         status,
       };
 
-      await createAdvertisement(advertisementData);
+      await updateAdvertisement(id!, advertisementData);
       toast.success(
         status === "draft"
           ? "Advertisement saved as draft!"
-          : "Advertisement published successfully!"
+          : "Advertisement updated successfully!"
       );
       router.push("/admin/advertisements");
-    } catch (error) {
-      console.error("Error creating advertisement:", error);
-      toast.error("Failed to create advertisement.");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to update advertisement."
+      );
     }
   };
+
+  if (isLoading) {
+    return (
+      <AdminLayout pageTitle="ADVERTISEMENTS">
+        <div className="p-8 text-center">Loading...</div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout pageTitle="ADVERTISEMENTS">
       <div className="bg-white p-4 rounded-lg">
-        <PageTitle title="Create Advertisement" />
+        <PageTitle title="Edit Advertisement" />
         <form className="flex flex-col gap-6 mt-4">
           {/* Advertisement Title */}
           <div>
@@ -460,4 +518,4 @@ const CreateAdvertisement = () => {
   );
 };
 
-export default CreateAdvertisement;
+export default EditAdvertisement;

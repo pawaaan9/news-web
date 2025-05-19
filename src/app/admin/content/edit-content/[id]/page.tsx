@@ -19,7 +19,7 @@ import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import axios from "axios";
 import { use } from "react";
 import Image from "next/image";
-
+import { toast, ToastContainer } from "react-toastify";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
 interface ImageUploadResponse {
@@ -179,42 +179,30 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
     }
 
     try {
-      const formData = new FormData();
-      if (headlineImage) {
-        formData.append("headlineImage", headlineImage as File);
-      }
-      formData.append("headline1", headline1);
-      formData.append("headline2", headline2);
-      formData.append("headline3", headline3);
-      formData.append("seoTitle", seoTitle);
-      formData.append("url", url);
-      formData.append("category", JSON.stringify(selectedCategories));
-      formData.append("keywords", JSON.stringify(selectedKeywords));
-      formData.append("status", status);
-      formData.append("content", content);
-      formData.append("author", author);
-      formData.append("isFeatured", String(isFeatured));
-      formData.append("isSpecial", String(isSpecial));
+      const updatePayload = new FormData();
+      updatePayload.append("headline1", headline1);
+      updatePayload.append("headline2", headline2);
+      updatePayload.append("headline3", headline3);
+      updatePayload.append("url", url);
+      updatePayload.append("category", JSON.stringify(selectedCategories));
+      updatePayload.append("keywords", JSON.stringify(selectedKeywords));
+      updatePayload.append("status", status);
+      updatePayload.append("content", content);
+      updatePayload.append("author", author);
+      updatePayload.append("isFeatured", String(isFeatured));
+      updatePayload.append("isSpecial", String(isSpecial));
+      updatePayload.append("image", headlineImage as File);
 
-      await updateContent(params.id, {
-        headline1,
-        headline2,
-        headline3,
-        url,
-        category: JSON.stringify(selectedCategories),
-        status,
-        content,
-        author,
-        isFeatured,
-        isSpecial,
-        ...(headlineImage && {
-          headlineImage: URL.createObjectURL(headlineImage),
-        }),
-      });
-
+      await updateContent(params.id, updatePayload);
+      toast.success(
+        status === "Draft"
+          ? "Content saved as draft!"
+          : "Content updated and published successfully!"
+      );
       router.push("/admin/content");
     } catch (error) {
-      console.error("Error submitting content:", error);
+      console.error("Error updating content:", error);
+      // toast.error(error?.response?.data?.message || "Failed to update ");
     }
   };
 
@@ -552,6 +540,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
           </div>
         )}
       </div>
+      <ToastContainer />
     </AdminLayout>
   );
 };
