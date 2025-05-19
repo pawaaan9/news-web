@@ -5,18 +5,24 @@ import Link from "next/link";
 import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
 
 const footerLinks = [
-  { name: "Home", href: "/" },
+  { name: "Welcome", href: "/welcome" },
   { name: "About", href: "/about" },
-  { name: "Contact Us", href: "/contact" },
-  { name: "User Policy", href: "/user-policy" },
-  { name: "Cookie Policy", href: "/cookie-policy" },
-  { name: "Privacy Policy", href: "/privacy-policy" },
+  { name: "Reach Out", href: "/contact" },
+  { name: "User Guidelines", href: "/user-guidelines" },
+  { name: "Cookie Settings", href: "/cookie-settings" },
+  { name: "Data Protection", href: "/data-protection" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A3552] text-white py-8">
-      <div className="container mx-auto px-4">
+    <footer className="relative py-12">
+      {/* Gradient Background */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-[#ff3131] to-[#ff914d] opacity-90"
+        style={{ zIndex: -1 }}
+      />
+
+      <div className="container mx-auto px-4 relative">
         <div className="flex flex-col items-center">
           {/* Logo */}
           <div className="mb-8">
@@ -35,7 +41,7 @@ export default function Footer() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-gray-300 hover:text-white transition-colors duration-200"
+                className="text-white hover:text-white/80 transition-colors duration-200 font-medium"
               >
                 {link.name}
               </Link>
@@ -48,7 +54,7 @@ export default function Footer() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-gray-300 hover:text-white transition-colors duration-200"
+                className="text-white hover:text-white/80 transition-colors duration-200 font-medium"
               >
                 {link.name}
               </Link>
@@ -56,10 +62,10 @@ export default function Footer() {
           </div>
 
           {/* Copyright */}
-          <div className="text-center text-sm text-gray-400">
-            <p>
-              Copyrights © 2025 TamilMedia. All rights reserved | Made with{" "}
-              <span className="text-red-500">❤</span> in Sri Lanka for உலக
+          <div className="text-center text-white/90">
+            <p className="text-sm">
+              Copyrights © {new Date().getFullYear()} TamilMedia. All rights reserved | Made with{" "}
+              <span className="text-white">❤</span> in Sri Lanka for உலக
               தமிழர்களுக்கு!
             </p>
           </div>
