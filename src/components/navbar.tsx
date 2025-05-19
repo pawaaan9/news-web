@@ -43,7 +43,7 @@ export default function NavBar({
   };
 
   return (
-    <div className="w-full text-white font-dmSans">
+    <div className="fixed top-0 left-0 right-0 z-50 text-white font-dmSans">
       <div className="bg-charcoal">
         <CountryAndDate />
       </div>

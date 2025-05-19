@@ -95,35 +95,38 @@ export default function Home() {
         selectedCategory={selectedCategory}
       />
       
-      {/* Top Advertisement Section - Full Width Container */}
-      <div className="w-full bg-gray-100 py-4">
-        <div className="max-w-6xl mx-auto px-4">
-          <TopAdvertisement />
+      {/* Add padding-top to account for fixed navbar */}
+      <div className="pt-[120px]">
+        {/* Top Advertisement Section - Full Width Container */}
+        <div className="w-full bg-gray-100 py-4">
+          <div className="max-w-6xl mx-auto px-4">
+            <TopAdvertisement />
+          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {!selectedCategory && (
-          <div className="flex flex-col lg:flex-row gap-6 mb-8">
-            <div className="lg:w-1/3">
-              <FeatureNews shouldFetch={true} />
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {!selectedCategory && (
+            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+              <div className="lg:w-1/3">
+                <FeatureNews shouldFetch={true} />
+              </div>
+              <div className="lg:w-2/3">
+                <SpecialNews shouldFetch={true} />
+              </div>
             </div>
-            <div className="lg:w-2/3">
-              <SpecialNews shouldFetch={true} />
-            </div>
-          </div>
-        )}
+          )}
 
-        {displayNews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newsWithAds}
-          </div>
-        ) : (
-          <div className="text-center py-10">
-            <p>මෙම කාණ්ඩයේ පුවත් නොමැත</p>
-          </div>
-        )}
+          {displayNews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {newsWithAds}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p>මෙම කාණ්ඩයේ පුවත් නොමැත</p>
+            </div>
+          )}
+        </div>
       </div>
       <Footer />
     </main>
