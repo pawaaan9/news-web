@@ -1,12 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ReactCountryFlag from "react-country-flag";
+import { ChevronDown } from "lucide-react";
 
-const countries = ['Sri Lanka','India'];
+interface Country {
+  name: string;
+  code: string;
+}
+
+const countries: Country[] = [
+  { name: 'Sri Lanka', code: 'LK' },
+  { name: 'India', code: 'IN' }
+];
 
 export default function CountryAndDate() {
-  const [selectedCountry, setSelectedCountry] = useState('Sri Lanka');
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
   const [currentDate, setCurrentDate] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const today = new Date();
@@ -19,21 +30,61 @@ export default function CountryAndDate() {
   }, []);
 
   return (
-    <nav className="w-full bg-secondary-grey shadow px-4 py-3 flex items-center">
-      <div className="flex items-center space-x-4 md:px-[10%] h-3.5">
-        <select
-          value={selectedCountry}
-          onChange={(e) => setSelectedCountry(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500 text-charcoal"
-        >
-          {countries.map((country) => (
-            <option key={country} value={country}>
-              {country}
-            </option>
-          ))}
-        </select>
+    <nav className="w-full bg-secondary-grey shadow px-4 py-2">
+      <div className="flex items-center justify-between md:px-[10%]">
+        {/* Country Selector */}
+        <div className="relative">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center gap-2 text-charcoal hover:text-accent-teal transition-colors border rounded-md px-3 py-1 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-teal"
+          >
+            <ReactCountryFlag
+              countryCode={selectedCountry.code}
+              svg
+              style={{
+                width: '1.2em',
+                height: '1.2em',
+              }}
+              title={selectedCountry.name}
+            />
+            <span className="text-sm font-medium">{selectedCountry.name}</span>
+            <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
 
-        <span className="text-gray-700 text-sm">{currentDate}</span>
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg z-50 min-w-[160px]">
+              {countries.map((country) => (
+                <button
+                  key={country.code}
+                  onClick={() => {
+                    setSelectedCountry(country);
+                    setIsDropdownOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
+                    selectedCountry.code === country.code ? 'bg-gray-50 text-accent-teal' : 'text-gray-700'
+                  }`}
+                >
+                  <ReactCountryFlag
+                    countryCode={country.code}
+                    svg
+                    style={{
+                      width: '1.2em',
+                      height: '1.2em',
+                    }}
+                    title={country.name}
+                  />
+                  <span>{country.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Date */}
+        <div className="text-charcoal text-sm font-medium">
+          {currentDate}
+        </div>
       </div>
     </nav>
   );

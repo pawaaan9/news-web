@@ -1,77 +1,75 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
 
 const footerLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Do not sell my personal info", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "nbcnews.com Site Map", href: "#" },
-];
-
-const infoLinks = [
-  { label: "About", href: "#" },
-  { label: "Contact", href: "#" },
-  { label: "Careers", href: "#" },
-  { label: "Coupons", href: "#" },
+  { name: "Welcome", href: "/welcome" },
+  { name: "About", href: "/about" },
+  { name: "Reach Out", href: "/contact" },
+  { name: "User Guidelines", href: "/user-guidelines" },
+  { name: "Cookie Settings", href: "/cookie-settings" },
+  { name: "Data Protection", href: "/data-protection" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A3552] text-white text-sm py-8">
-      {/* Desktop View */}
-      <div className="hidden md:flex justify-between items-start px-[10%]">
-        {/* Left: Logo */}
-        <div className="flex-shrink-0 mr-12">
-          <Image src={logoTamil} alt="Logo" width={100} height={30} />
-        </div>
+    <footer className="relative py-12">
+      {/* Gradient Background */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-[#ff3131] to-[#ff914d] opacity-90"
+        style={{ zIndex: -1 }}
+      />
 
-        {/* Middle: Footer Links */}
-        <div className="flex flex-col space-y-2">
-          {footerLinks.map((link) => (
-            <a key={link.label} href={link.href} className="hover:underline">
-              {link.label}
-            </a>
-          ))}
-        </div>
+      <div className="container mx-auto px-4 relative">
+        <div className="flex flex-col items-center">
+          {/* Logo */}
+          <div className="mb-8 p-4 bg-white/10 rounded-lg backdrop-blur-sm border-2 border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <Image
+              src={logoTamil}
+              alt="TamilMedia Logo"
+              width={120}
+              height={40}
+              className="h-12 w-auto filter drop-shadow-lg"
+            />
+          </div>
 
-        {/* Right: Info Links */}
-        <div className="flex items-center space-x-6">
-          {infoLinks.map((link) => (
-            <a key={link.label} href={link.href} className="hover:underline">
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </div>
+          {/* Links - Desktop */}
+          <div className="hidden md:flex justify-center gap-8 mb-8">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-white hover:text-white/80 transition-colors duration-200 font-medium"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
 
-      {/* Mobile View */}
-      <div className="md:hidden text-center px-4 flex flex-col items-center space-y-3">
-        <Image
-          src={logoTamil}
-          alt="Logo"
-          width={100}
-          height={30}
-          className="mb-2"
-        />
-        {footerLinks.map((link) => (
-          <a key={link.label} href={link.href} className="hover:underline">
-            {link.label}
-          </a>
-        ))}
-        <div className="flex flex-wrap justify-center gap-4 mt-2">
-          {infoLinks.map((link) => (
-            <a key={link.label} href={link.href} className="hover:underline">
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </div>
+          {/* Links - Mobile */}
+          <div className="md:hidden flex flex-col items-center gap-4 mb-8">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-white hover:text-white/80 transition-colors duration-200 font-medium"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
 
-      {/* Copyright with extra mobile padding below */}
-      <div className="text-xs text-center mt-6 text-gray-400 pb-4 md:pb-0">
-        copyright © 2025 | Vigasaa NEWS
+          {/* Copyright */}
+          <div className="text-center text-white/90">
+            <p className="text-sm">
+              Copyrights © {new Date().getFullYear()} TamilMedia. All rights reserved | Made with{" "}
+              <span className="text-white">❤</span> in Sri Lanka for உலக
+              தமிழர்களுக்கு!
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );
