@@ -106,6 +106,15 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Category Name Display */}
+          {selectedCategory && (
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold font-muktaMalar bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white px-4 py-2 rounded inline-block">
+                {selectedCategory}
+              </h1>
+            </div>
+          )}
+
           {!selectedCategory && (
             <div className="flex flex-col lg:flex-row gap-6 mb-8">
               <div className="lg:w-1/3">

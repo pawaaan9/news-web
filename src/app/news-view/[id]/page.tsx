@@ -5,7 +5,7 @@ import Image from "next/image";
 import NavBar from "../../../components/navbar";
 import LargeAdCard from "../../../components/large-ad-card";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getContentById } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import Footer from "../../../components/footer";
@@ -26,6 +26,7 @@ interface Article {
 
 export default function NewsView() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
   const [article, setArticle] = useState<Article | null>(null);
@@ -83,23 +84,24 @@ export default function NewsView() {
       <div className="pt-[120px]">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumbs */}
-          <div className="text-xs mb-4">
+          <div className="text-xs mb-4 bg-secondary-grey p-2 rounded">
             <Link href="/" className="text-blue-500 hover:underline">
               Home
             </Link>{" "}
             &gt;
-            <Link
-              href={`/?category=${
-                Array.isArray(article.category)
+            <button
+              onClick={() => {
+                const categoryName = Array.isArray(article.category)
                   ? article.category[0]?.name
-                  : article.category
-              }`}
-              className="text-blue-500 hover:underline ml-1"
+                  : article.category;
+                router.push(`/?category=${encodeURIComponent(categoryName)}`);
+              }}
+              className="text-blue-500 hover:underline ml-1 cursor-pointer"
             >
               {Array.isArray(article.category)
                 ? article.category[0]?.name
                 : article.category}
-            </Link>
+            </button>
             &gt;
             <span className="text-gray-700 ml-1 font-muktaMalar">
               {article.headline1.substring(0, 20)}...
@@ -117,7 +119,7 @@ export default function NewsView() {
                   ) => (
                     <span
                       key={index}
-                      className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded"
+                      className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded"
                     >
                       {cat.subCategory
                         ? `${cat.name} (${cat.subCategory})`
@@ -126,7 +128,7 @@ export default function NewsView() {
                   )
                 )
               ) : (
-                <span className="inline-block bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                <span className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded">
                   {article.category}
                 </span>
               )}
