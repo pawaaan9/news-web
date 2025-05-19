@@ -10,6 +10,7 @@ const footerLinks = [
   { name: "User Guidelines", href: "/user-guidelines" },
   { name: "Cookie Settings", href: "/cookie-settings" },
   { name: "Data Protection", href: "/data-protection" },
+  { name: "Disclaimer", href: "/disclaimer" },
 ];
 
 export default function Footer() {
