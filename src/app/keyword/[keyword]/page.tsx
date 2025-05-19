@@ -93,7 +93,7 @@ export default function KeywordNewsPage() {
   ));
 
   return (
-    <main className="min-h-screen bg-gray-100 ">
+    <main className="min-h-screen bg-gray-100 mt-[120px] lg:mt-[160px] lg:py-4">
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
       <div className="max-w-4xl mx-auto px-4 py-8 lg:my-6 bg-white rounded-lg shadow">
         {/* Page Header */}

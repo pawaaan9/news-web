@@ -42,7 +42,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
+      <div className="bg-white shadow-accent-teal lg:border lg:border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-gray-800 font-dmSans">

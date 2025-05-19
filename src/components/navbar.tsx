@@ -18,7 +18,6 @@ export default function NavBar({
   selectedCategory,
 }: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showMobileMore, setShowMobileMore] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   // Split categories into main and additional items
@@ -48,9 +47,11 @@ export default function NavBar({
         <CountryAndDate />
       </div>
 
-      <div style={{
-        background: 'linear-gradient(to right, #ff3131, #ff914d)'
-      }}>
+      <div
+        style={{
+          background: "linear-gradient(to right, #ff3131, #ff914d)",
+        }}
+      >
         {/* Top Section with Logo and Ad (Desktop) */}
         <div className="flex items-center justify-between px-4 py-3 lg:px-[10%]">
           {/* Mobile Home Icon */}
@@ -93,8 +94,8 @@ export default function NavBar({
               href="/"
               onClick={() => onCategorySelect(null)}
               className={`px-3 py-1 text-sm flex items-center gap-1 rounded-sm transition-all duration-200 ${
-                !selectedCategory 
-                  ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                !selectedCategory
+                  ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                   : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
               }`}
             >
@@ -115,8 +116,8 @@ export default function NavBar({
                     handleCategoryClick(item.name);
                   }}
                   className={`px-3 py-1 text-sm flex items-center rounded-sm transition-all duration-200 ${
-                    selectedCategory === item.name 
-                      ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                    selectedCategory === item.name
+                      ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                       : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                   }`}
                 >
@@ -137,8 +138,8 @@ export default function NavBar({
                           handleCategoryClick(subCat.name);
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-all duration-200 ${
-                          selectedCategory === subCat.name 
-                            ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                          selectedCategory === subCat.name
+                            ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                             : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                         }`}
                       >
@@ -159,8 +160,8 @@ export default function NavBar({
                   handleCategoryClick(additionalNavItems[0].name);
                 }}
                 className={`px-3 py-1 text-sm flex items-center rounded-sm transition-all duration-200 ${
-                  selectedCategory === additionalNavItems[0].name 
-                    ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                  selectedCategory === additionalNavItems[0].name
+                    ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                     : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                 }`}
               >
@@ -179,8 +180,8 @@ export default function NavBar({
                           handleCategoryClick(item.name);
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-all duration-200 flex items-center justify-between ${
-                          selectedCategory === item.name 
-                            ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                          selectedCategory === item.name
+                            ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                             : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                         }`}
                       >
@@ -199,8 +200,8 @@ export default function NavBar({
                                 handleCategoryClick(subCat.name);
                               }}
                               className={`block w-full text-left px-4 py-2 text-sm transition-all duration-200 ${
-                                selectedCategory === subCat.name 
-                                  ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold" 
+                                selectedCategory === subCat.name
+                                  ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white font-semibold"
                                   : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                               }`}
                             >
@@ -254,13 +255,15 @@ export default function NavBar({
                   setMobileMenuOpen(false);
                 }}
                 className={`px-4 py-3 text-sm font-medium flex items-center gap-2 ${
-                  !selectedCategory ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white" : ""
+                  !selectedCategory
+                    ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white"
+                    : ""
                 }`}
               >
                 <Home size={16} />
                 Home
               </Link>
-              
+
               {categories.map((item) => (
                 <div key={item.name}>
                   <Link
@@ -277,7 +280,9 @@ export default function NavBar({
                       }
                     }}
                     className={`px-4 py-3 text-sm font-medium flex items-center justify-between ${
-                      selectedCategory === item.name ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white" : ""
+                      selectedCategory === item.name
+                        ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white"
+                        : ""
                     }`}
                   >
                     <span>{item.name}</span>
@@ -300,7 +305,9 @@ export default function NavBar({
                             setMobileMenuOpen(false);
                           }}
                           className={`px-4 py-3 text-sm font-medium block ${
-                            selectedCategory === subCat.name ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white" : ""
+                            selectedCategory === subCat.name
+                              ? "bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white"
+                              : ""
                           }`}
                         >
                           {subCat.name}

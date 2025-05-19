@@ -99,7 +99,7 @@ export default function Home() {
       />
 
       {/* Top Advertisement Section - Full Width Container */}
-      <div className="w-full bg-gray-100 lg:bg-white lg:pt-6">
+      <div className="w-full lg:pt-6 mt-[160px]">
         <div className="max-w-6xl mx-auto px-4">
           <TopAdvertisement />
         </div>
