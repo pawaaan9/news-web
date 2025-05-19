@@ -61,13 +61,13 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
           <div className="grid gap-6 md:grid-cols-2 h-full">
             {specialNews.map((item) => {
               // Parse categories similar to NewsCard
-              let parsedCategories: string[] = [];
-              try {
-                parsedCategories = JSON.parse(item.category);
-              } catch (error) {
-                console.error("Failed to parse category:", error);
-                parsedCategories = ["Unknown"];
-              }
+              // let parsedCategories: string[] = [];
+              // try {
+              //   parsedCategories = JSON.parse(item.category);
+              // } catch (error) {
+              //   console.error("Failed to parse category:", error);
+              //   parsedCategories = ["Unknown"];
+              // }
 
               return (
                 <Link

@@ -41,13 +41,13 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
   if (!featuredNews) return <p>No featured news available.</p>;
 
   // Parse categories
-  let parsedCategories: string[] = [];
-  try {
-    parsedCategories = JSON.parse(featuredNews.category);
-  } catch (error) {
-    console.error("Failed to parse category:", error);
-    parsedCategories = ["Unknown"];
-  }
+  // let parsedCategories: string[] = [];
+  // try {
+  //   parsedCategories = JSON.parse(featuredNews.category);
+  // } catch (error) {
+  //   console.error("Failed to parse category:", error);
+  //   parsedCategories = ["Unknown"];
+  // }
 
   return (
     <div className="h-full">
