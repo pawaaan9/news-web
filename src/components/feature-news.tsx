@@ -54,10 +54,14 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
       <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800 font-dmSans">
-            Featured News
-          </h2>
-          <hr className="mt-2 border-charcoal" />
+          <div className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-dmSans text-white shadow"
+            style={{
+              background: 'linear-gradient(90deg, #ff3131 0%, #ff914d 100%)',
+              letterSpacing: '1px',
+            }}
+          >
+            சிறப்பு செய்திகள்
+          </div>
         </div>
 
         {/* Featured News Item */}

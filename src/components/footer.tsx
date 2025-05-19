@@ -25,13 +25,13 @@ export default function Footer() {
       <div className="container mx-auto px-4 relative">
         <div className="flex flex-col items-center">
           {/* Logo */}
-          <div className="mb-8">
+          <div className="mb-8 p-4 bg-white/10 rounded-lg backdrop-blur-sm border-2 border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl">
             <Image
               src={logoTamil}
               alt="TamilMedia Logo"
               width={120}
               height={40}
-              className="h-12 w-auto"
+              className="h-12 w-auto filter drop-shadow-lg"
             />
           </div>
 
