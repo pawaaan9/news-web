@@ -86,13 +86,13 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                   priority
                 />
                 {/* Category badge in top-right corner */}
-                <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
+                {/* <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
                   {parsedCategories.map((cat, index) => (
                     <span key={index} className="mr-1">
                       {cat}
                     </span>
                   ))}
-                </div>
+                </div> */}
               </div>
 
               <div className="p-4">
