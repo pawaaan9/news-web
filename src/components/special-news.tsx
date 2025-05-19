@@ -42,17 +42,17 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-accent-teal lg:border lg:border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
+      <div className="bg-white shadow-accent-teal rounded-lg shadow-lg p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div
-            className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-dmSans text-white shadow"
+            className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-muktaMalar text-white shadow"
             style={{
               background: "linear-gradient(90deg, #0d9488 0%, #14b8a6 100%)",
               letterSpacing: "1px",
             }}
           >
-            சிறப்பு செய்தி
+            முக்கிய செய்திகள்
           </div>
         </div>
 

@@ -11,11 +11,13 @@ import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
 interface NavBarProps {
   onCategorySelect: (category: string | null) => void;
   selectedCategory: string | null;
+  isStaticPage?: boolean;
 }
 
 export default function NavBar({
   onCategorySelect,
   selectedCategory,
+  isStaticPage = false,
 }: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -25,6 +27,7 @@ export default function NavBar({
   const additionalNavItems = categories.slice(6);
 
   const handleCategoryClick = (category: string) => {
+    if (isStaticPage) return; // Don't handle category clicks on static pages
     if (selectedCategory === category) {
       onCategorySelect(null); // Deselect if clicking the same category
     } else {

@@ -5,7 +5,6 @@ import Link from "next/link";
 import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
 
 const footerLinks = [
-  { name: "Welcome", href: "/welcome" },
   { name: "About", href: "/about" },
   { name: "Reach Out", href: "/contact" },
   { name: "User Guidelines", href: "/user-guidelines" },
