@@ -10,6 +10,12 @@
 }
 
 @font-face {
+  font-family: "Rubik";
+  src: url("/fonts/Rubik-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+}
+
+@font-face {
   font-family: "Noto Sans Sinhala";
   src: url("/fonts/NotoSansSinhala-VariableFont_wdth,wght.ttf")
     format("truetype");
@@ -62,6 +68,7 @@
   --font-dmSans: "DM Sans", sans-serif;
   --font-notoSans: "Noto Sans Sinhala", sans-serif;
   --font-muktaMalar: "Mukta Malar", sans-serif;
+  --font-rubik: "Rubik", sans-serif;
 
   --color-primary: #0d3b66;
   --color-white: #ffffff;

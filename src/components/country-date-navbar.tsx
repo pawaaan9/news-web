@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { ChevronDown } from "lucide-react";
 
@@ -10,21 +10,27 @@ interface Country {
 }
 
 const countries: Country[] = [
-  { name: 'Sri Lanka', code: 'LK' },
-  { name: 'India', code: 'IN' }
+  { name: "இலங்கை", code: "LK" }, // Sri Lanka
+  { name: "இந்தியா", code: "IN" }, // India
+  { name: "கனடா", code: "CA" }, // Canada
+  { name: "அமெரிக்கா", code: "US" }, // USA
+  { name: "பிரித்தானியா", code: "GB" }, // UK
+  { name: "சுவிஸ்", code: "CH" }, // Switzerland
+  { name: "ஜேர்மனி", code: "DE" }, // Germany
+  { name: "அவுஸ்திரேலியா", code: "AU" }, // Australia
 ];
 
 export default function CountryAndDate() {
   const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
-  const [currentDate, setCurrentDate] = useState('');
+  const [currentDate, setCurrentDate] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const today = new Date();
     const formattedDate = today.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
     setCurrentDate(formattedDate);
   }, []);
@@ -42,13 +48,18 @@ export default function CountryAndDate() {
               countryCode={selectedCountry.code}
               svg
               style={{
-                width: '1.2em',
-                height: '1.2em',
+                width: "1.2em",
+                height: "1.2em",
               }}
               title={selectedCountry.name}
             />
             <span className="text-sm font-medium">{selectedCountry.name}</span>
-            <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown
+              size={16}
+              className={`transition-transform ${
+                isDropdownOpen ? "rotate-180" : ""
+              }`}
+            />
           </button>
 
           {/* Dropdown Menu */}
@@ -62,15 +73,17 @@ export default function CountryAndDate() {
                     setIsDropdownOpen(false);
                   }}
                   className={`w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
-                    selectedCountry.code === country.code ? 'bg-gray-50 text-accent-teal' : 'text-gray-700'
+                    selectedCountry.code === country.code
+                      ? "bg-gray-50 text-accent-teal"
+                      : "text-gray-700"
                   }`}
                 >
                   <ReactCountryFlag
                     countryCode={country.code}
                     svg
                     style={{
-                      width: '1.2em',
-                      height: '1.2em',
+                      width: "1.2em",
+                      height: "1.2em",
                     }}
                     title={country.name}
                   />
@@ -82,9 +95,7 @@ export default function CountryAndDate() {
         </div>
 
         {/* Date */}
-        <div className="text-charcoal text-sm font-medium">
-          {currentDate}
-        </div>
+        <div className="text-charcoal text-sm font-medium">{currentDate}</div>
       </div>
     </nav>
   );

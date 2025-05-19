@@ -77,10 +77,7 @@ export default function Home() {
       // Add an ad if we have a full group of 4 and it's not the end
       if (newsGroup.length === 4 && i !== displayNews.length - 1) {
         newsWithAds.push(
-          <div
-            key={`ad-${i}`}
-            className="col-span-full flex justify-center py-6"
-          >
+          <div key={`ad-${i}`} className="col-span-full flex justify-center ">
             <AdCard position="Medium Rectangle" />
           </div>
         );
@@ -99,7 +96,7 @@ export default function Home() {
       />
 
       {/* Top Advertisement Section - Full Width Container */}
-      <div className="w-full lg:pt-6 mt-[160px]">
+      <div className="w-full lg:pt-6 lg:mt-[140px] mt-[100px]">
         <div className="max-w-6xl mx-auto px-4">
           <TopAdvertisement />
         </div>
@@ -113,10 +110,10 @@ export default function Home() {
               <h1 className="text-3xl font-bold font-muktaMalar mb-2">
                 {selectedCategory}
               </h1>
-              <div 
-                className="h-1 w-full" 
+              <div
+                className="h-1 w-full"
                 style={{
-                  background: "linear-gradient(to right, #ff3131, #ff914d)"
+                  background: "linear-gradient(to right, #ff3131, #ff914d)",
                 }}
               ></div>
             </div>
@@ -134,12 +131,12 @@ export default function Home() {
           )}
 
           {displayNews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {newsWithAds}
             </div>
           ) : (
             <div className="text-center py-10">
-              <p>මෙම කාණ්ඩයේ පුවත් නොමැත</p>
+              <p>இந்தப் பிரிவில் எந்தச் செய்தியும் இல்லை.</p>
             </div>
           )}
         </div>

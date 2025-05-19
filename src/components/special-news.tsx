@@ -42,7 +42,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-accent-teal rounded-lg shadow-lg p-6 h-full flex flex-col">
+      <div className="bg-gray-100 shadow-accent-teal rounded-lg shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div
@@ -52,13 +52,13 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
               letterSpacing: "1px",
             }}
           >
-            முக்கிய செய்திகள்
+            முக்கிய செய்திகள்
           </div>
         </div>
 
         {/* News Grid */}
         <div className="flex-grow">
-          <div className="grid gap-6 md:grid-cols-2 h-full">
+          <div className="grid gap-6 md:grid-cols-2 h-full pb-4">
             {specialNews.map((item) => {
               // Parse categories similar to NewsCard
               // let parsedCategories: string[] = [];
@@ -76,7 +76,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                   key={item._id}
                   className="cursor-pointer h-full flex flex-col"
                 >
-                  <div className="rounded-lg overflow-hidden shadow-md bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
+                  <div className="rounded-lg overflow-hidden shadow-md mx-2 bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
                     {/* Image container with category badge */}
                     <div className="relative w-full pt-[56.25%]">
                       {" "}
@@ -103,7 +103,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                       <h3 className="text-lg font-bold font-muktaMalar">
                         {item.headline1}
                       </h3>
-                      <div className="text-sm text-gray-400 mt-2">
+                      <div className="text-sm text-gray-400 mt-2 ">
                         by {item.author} •{" "}
                         {new Date(item.createdTime).toLocaleDateString(
                           "si-LK",

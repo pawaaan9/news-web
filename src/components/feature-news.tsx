@@ -51,7 +51,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-acccent-orange rounded-lg shadow-lg p-6 h-full flex flex-col">
+      <div className="bg-white shadow-acccent-orange rounded-lg shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div
@@ -61,7 +61,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
               letterSpacing: "1px",
             }}
           >
-            சிறப்பு செய்திகள்
+            சிறப்பு செய்தி
           </div>
         </div>
 

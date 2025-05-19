@@ -10,11 +10,12 @@ const footerLinks = [
   { name: "User Guidelines", href: "/user-guidelines" },
   { name: "Cookie Settings", href: "/cookie-settings" },
   { name: "Data Protection", href: "/data-protection" },
+  { name: "Disclaimer", href: "/disclaimer" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative py-12 z-10">
+    <footer className="relative py-4 z-10 font-rubik">
       {/* Gradient Background */}
       <div
         className="absolute inset-0 bg-gradient-to-r from-[#ff3131] to-[#ff914d] opacity-90"
