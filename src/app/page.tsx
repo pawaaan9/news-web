@@ -74,10 +74,10 @@ export default function Home() {
       // Add the news group
       newsWithAds.push(...newsGroup);
       
-      // Add an ad if we have a full group of 4 and it's not the end
-      if (newsGroup.length === 4 && i !== displayNews.length - 1) {
+      // Add an ad if we have a full group of 4
+      if (newsGroup.length === 4) {
         newsWithAds.push(
-          <div key={`ad-${i}`} className="col-span-full flex justify-center py-6">
+          <div key={`ad-${i}`} className="col-span-1">
             <AdCard position="Medium Rectangle" />
           </div>
         );

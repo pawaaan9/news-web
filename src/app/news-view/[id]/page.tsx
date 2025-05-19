@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import NavBar from "../../../components/navbar";
-import AdCard from "../../../components/ad-card";
+import LargeAdCard from "../../../components/large-ad-card";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getContentById } from "@/api/content.api";
@@ -106,7 +106,7 @@ export default function NewsView() {
         </div>
 
         {/* Article Header */}
-        <div className="mb-6">
+        <div>
           <div className="flex flex-wrap gap-2 mb-2">
             {Array.isArray(article.category) ? (
               article.category.map(
@@ -155,9 +155,15 @@ export default function NewsView() {
           </div>
         )}
 
+        {/* First Advertisement */}
+        <div className="my-8 flex justify-center">
+          <LargeAdCard />
+        </div>
+
         <h2 className="text-xl text-gray-700 mb-1 font-bold font-muktaMalar">
           {article.headline2}
         </h2>
+        
         {article.headline3 && (
           <h3 className="text-lg text-gray-600 mb-4 font-muktaMalar">
             {article.headline3}
@@ -203,9 +209,9 @@ export default function NewsView() {
           </div>
         )}
 
-        {/* Advertisement */}
-        <div className="my-8">
-          <AdCard position="Article Bottom" />
+        {/* Second Advertisement */}
+        <div className="my-8 flex justify-center">
+          <LargeAdCard />
         </div>
       </div>
 
