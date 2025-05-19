@@ -108,6 +108,20 @@ export default function Home() {
       {/* Main Content */}
       <div className="bg-gray-100 py-6">
         <div className="max-w-4xl mx-auto px-4 py-8 lg:bg-white bg-gray-100 rounded-lg lg:shadow">
+          {selectedCategory && (
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold font-muktaMalar mb-2">
+                {selectedCategory}
+              </h1>
+              <div 
+                className="h-1 w-full" 
+                style={{
+                  background: "linear-gradient(to right, #ff3131, #ff914d)"
+                }}
+              ></div>
+            </div>
+          )}
+
           {!selectedCategory && (
             <div className="flex flex-col lg:flex-row gap-6 mb-8">
               <div className="lg:w-1/3">

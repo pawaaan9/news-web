@@ -45,10 +45,15 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
       <div className="bg-white shadow-accent-teal lg:border lg:border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800 font-dmSans">
-            Special News
-          </h2>
-          <hr className="mt-2 border-charcoal" />
+          <div
+            className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-dmSans text-white shadow"
+            style={{
+              background: "linear-gradient(90deg, #0d9488 0%, #14b8a6 100%)",
+              letterSpacing: "1px",
+            }}
+          >
+            சிறப்பு செய்தி
+          </div>
         </div>
 
         {/* News Grid */}
@@ -85,13 +90,13 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                         priority
                       />
                       {/* Category badge in top-right corner */}
-                      <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
+                      {/* <div className="absolute top-2 right-2 bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded">
                         {parsedCategories.map((cat, index) => (
                           <span key={index} className="mr-1">
                             {cat}
                           </span>
                         ))}
-                      </div>
+                      </div> */}
                     </div>
 
                     <div className="p-4">
