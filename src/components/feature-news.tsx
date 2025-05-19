@@ -51,13 +51,14 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white border border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
+      <div className="bg-white shadow-acccent-orange lg:border lg:border-charcoal rounded-lg shadow p-6 h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
-          <div className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-dmSans text-white shadow"
+          <div
+            className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-dmSans text-white shadow"
             style={{
-              background: 'linear-gradient(90deg, #ff3131 0%, #ff914d 100%)',
-              letterSpacing: '1px',
+              background: "linear-gradient(90deg, #ff3131 0%, #ff914d 100%)",
+              letterSpacing: "1px",
             }}
           >
             சிறப்பு செய்திகள்

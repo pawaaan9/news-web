@@ -5,10 +5,11 @@ import Image from "next/image";
 import NavBar from "../../../components/navbar";
 import LargeAdCard from "../../../components/large-ad-card";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { getContentById } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import Footer from "../../../components/footer";
+import AdCard from "@/components/ad-card";
 
 interface Article {
   headline1: string;
@@ -26,7 +27,7 @@ interface Article {
 
 export default function NewsView() {
   const params = useParams();
-  const router = useRouter();
+
   const id = params.id as string;
 
   const [article, setArticle] = useState<Article | null>(null);
@@ -79,7 +80,7 @@ export default function NewsView() {
   }
 
   return (
-    <main className="font-dmSans bg-gray-100 ">
+    <main className="font-dmSans bg-gray-100 mt-[120px] lg:mt-[160px] py-6">
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
       <div className="max-w-4xl mx-auto px-4 py-8 bg-white my-4 rounded-lg shadow">
         {/* Breadcrumbs */}
@@ -143,9 +144,11 @@ export default function NewsView() {
           </div>
         </div>
 
+        <hr className="border-b border-gray-200 mb-4" />
+
         {/* Featured Image */}
         {article.headlineImage && (
-          <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden ">
+          <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden my-6">
             <Image
               src={article.headlineImage}
               alt={article.headline1}
@@ -155,9 +158,10 @@ export default function NewsView() {
             />
           </div>
         )}
+        <hr className="border-b border-gray-200 mb-4" />
 
         {/* First Advertisement */}
-        <div className="my-8 flex justify-center">
+        <div className="my-8 flex justify-center lg:hidden">
           <LargeAdCard />
         </div>
 
@@ -179,7 +183,6 @@ export default function NewsView() {
         {/* Keywords */}
         {article.keywords && article.keywords.length > 0 && (
           <div className="mb-6">
-            <h3 className="font-semibold mb-2">Keywords</h3>
             <div className="flex flex-wrap gap-2">
               {Array.isArray(article.keywords) ? (
                 Array.isArray(article.keywords[0]) ? (
@@ -216,7 +219,7 @@ export default function NewsView() {
         )}
 
         {/* Advertisement */}
-        <div className="my-8">
+        <div className="my-8 flex lg:hidden">
           <AdCard position="Medium Rectangle" />
         </div>
       </div>

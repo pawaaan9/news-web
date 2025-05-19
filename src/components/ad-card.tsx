@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getAllAdvertisements, AdvertisementData } from "@/api/advertisement.api";
+import {
+  getAllAdvertisements,
+  AdvertisementData,
+} from "@/api/advertisement.api";
 
 interface AdCardProps {
   position: "Medium Rectangle" | "Large Rectangle";
@@ -18,22 +21,24 @@ export default function AdCard({ position }: AdCardProps) {
       try {
         const response = await getAllAdvertisements();
         let ads = response.data;
-        
+
         // Filter by position
-        ads = ads.filter(ad => ad.position === position);
-        
+        ads = ads.filter((ad) => ad.position === position);
+
         // Filter active ads (published and not expired)
         const now = new Date();
-        const activeAds = ads.filter(ad => 
-          ad.status === 'published' &&
-          new Date(ad.startDatetime) <= now && 
-          new Date(ad.endDatetime) >= now
+        const activeAds = ads.filter(
+          (ad) =>
+            ad.status === "published" &&
+            new Date(ad.startDatetime) <= now &&
+            new Date(ad.endDatetime) >= now
         );
 
         if (activeAds.length > 0) {
           // Select a random ad from available ones
-          const randomAd = activeAds[Math.floor(Math.random() * activeAds.length)];
-          if (typeof randomAd.adImage === 'string') {
+          const randomAd =
+            activeAds[Math.floor(Math.random() * activeAds.length)];
+          if (typeof randomAd.adImage === "string") {
             setAd(randomAd);
           }
         }
@@ -59,9 +64,14 @@ export default function AdCard({ position }: AdCardProps) {
     );
   }
 
-  if (!ad || typeof ad.adImage !== 'string') return null;
+  if (!ad || typeof ad.adImage !== "string") return null;
 
-  const adSize = position === "Large Rectangle" ? "w-[336px] h-[280px]" : "w-[300px] h-[250px]";
+  const adSize =
+    position === "Large Rectangle"
+      ? { width: 336, height: 280, aspect: "pt-[83.33%]" } // 280/336 = 0.8333
+      : { width: 300, height: 250, aspect: "pt-[83.33%]" }; // 250/300 = 0.8333
+
+  // Use adSize.aspect for the padding-top
 
   return (
     <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
@@ -75,17 +85,24 @@ export default function AdCard({ position }: AdCardProps) {
             // If the ad has a profile, prevent default and navigate to profile page
             if (ad.email || ad.phoneNo || ad.whatsappNo || ad.fbProfile) {
               e.preventDefault();
-              window.open(`/ad-profile/${ad._id}`, '_blank');
+              window.open(`/ad-profile/${ad._id}`, "_blank");
             }
           }}
         >
-          <div className="relative w-full pt-[56.25%]">
+          <div
+            className={`relative ${adSize.aspect}`}
+            style={{
+              width: adSize.width,
+              minHeight: adSize.height,
+              margin: "0 auto",
+            }}
+          >
             <Image
               src={ad.adImage}
               alt={ad.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes={`${adSize.width}px`}
             />
           </div>
           <div className="p-4 flex flex-col flex-grow">

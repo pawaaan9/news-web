@@ -15,9 +15,9 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="relative py-12">
+    <footer className="relative py-12 z-10">
       {/* Gradient Background */}
-      <div 
+      <div
         className="absolute inset-0 bg-gradient-to-r from-[#ff3131] to-[#ff914d] opacity-90"
         style={{ zIndex: -1 }}
       />
@@ -64,9 +64,9 @@ export default function Footer() {
           {/* Copyright */}
           <div className="text-center text-white/90">
             <p className="text-sm">
-              Copyrights © {new Date().getFullYear()} TamilMedia. All rights reserved | Made with{" "}
-              <span className="text-white">❤</span> in Sri Lanka for உலக
-              தமிழர்களுக்கு!
+              Copyrights © {new Date().getFullYear()} TamilMedia. All rights
+              reserved | Made with <span className="text-white">❤</span> in Sri
+              Lanka for உலக தமிழர்களுக்கு!
             </p>
           </div>
         </div>
