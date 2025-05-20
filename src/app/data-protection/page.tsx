@@ -3,7 +3,7 @@ import PageLayout from "@/components/page-layout";
 export default function DataProtectionPage() {
   return (
     <PageLayout title="Data Protection">
-      <div className="space-y-6">
+      <div className="space-y-6 font-rubik">
         <p>
           At TamilMedia.lk, we respect your privacy. Since our site does not
           require registration or login, you can read all our news articles

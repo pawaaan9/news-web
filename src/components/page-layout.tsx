@@ -41,7 +41,7 @@ export default function PageLayout({ children, title }: PageLayoutProps) {
             
             {/* Content Section */}
             <div className="px-8 py-12">
-              <div className="prose prose-lg max-w-none prose-headings:font-muktaMalar prose-headings:text-gray-800 prose-p:text-gray-600 prose-a:text-[#ff3131] prose-a:no-underline hover:prose-a:underline">
+              <div className="prose prose-lg max-w-none prose-headings:font-muktaMalar prose-headings:text-gray-800 prose-p:text-gray-600 prose-p:font-rubik prose-a:text-[#ff3131] prose-a:no-underline hover:prose-a:underline prose-li:font-rubik prose-strong:font-rubik">
                 {children}
               </div>
             </div>
