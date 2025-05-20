@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -18,11 +18,36 @@ import Image from "next/image";
 import { logout } from "../../api/auth.api"; // Make sure path is correct
 
 const menuItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: IconLayout },
-  { href: "/admin/content", label: "Content", icon: IconFile },
-  { href: "/admin/accounts", label: "Accounts", icon: IconUsersGroup },
-  { href: "/admin/advertisements", label: "Advertisements", icon: IconBadgeAd },
-  { href: "/admin/keywords", label: "Keywords", icon: IconKeyboard },
+  {
+    href: "/admin/dashboard",
+    label: "Dashboard",
+    icon: IconLayout,
+    roles: [6, 7, 8],
+  },
+  {
+    href: "/admin/content",
+    label: "Content",
+    icon: IconFile,
+    roles: [0, 1, 3, 4, 5, 6, 7, 8],
+  },
+  {
+    href: "/admin/accounts",
+    label: "Accounts",
+    icon: IconUsersGroup,
+    roles: [7, 8],
+  },
+  {
+    href: "/admin/advertisements",
+    label: "Advertisements",
+    icon: IconBadgeAd,
+    roles: [1],
+  },
+  {
+    href: "/admin/keywords",
+    label: "Keywords",
+    icon: IconKeyboard,
+    roles: [6, 7, 8, 5],
+  },
 ];
 
 const AdminLayout: React.FC<{
@@ -30,8 +55,17 @@ const AdminLayout: React.FC<{
   pageTitle: string;
 }> = ({ children, pageTitle }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userRole");
+      const roleNo = stored ? Number(stored) : null;
+      setUserRoleNo(roleNo);
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,12 +74,19 @@ const AdminLayout: React.FC<{
   const handleLogout = async () => {
     try {
       await logout();
-      localStorage.removeItem("token"); // Adjust if you're using cookies instead
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRoleNo");
       router.push("/admin/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
+
+  const filteredMenuItems = menuItems.filter(
+    (item) =>
+      userRoleNo === null ||
+      (Array.isArray(item.roles) && item.roles.includes(userRoleNo))
+  );
 
   return (
     <div className="flex h-screen font-dmSans">
@@ -59,7 +100,7 @@ const AdminLayout: React.FC<{
             className="space-y-2 list-none p-0 m-0"
             style={{ listStyleType: "none" }}
           >
-            {menuItems.map((item, index) => (
+            {filteredMenuItems.map((item, index) => (
               <li key={index}>
                 <Link
                   href={item.href}

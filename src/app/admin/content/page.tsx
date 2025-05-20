@@ -38,6 +38,7 @@ const ContentPage = () => {
   const [contentToDelete, setContentToDelete] = useState<string | null>(null);
   const [scheduledContent, setScheduledContent] = useState<ContentData[]>([]);
   const [isProcessingScheduled, setIsProcessingScheduled] = useState(false);
+  const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -64,6 +65,15 @@ const ContentPage = () => {
     };
 
     fetchContent();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userRole");
+      const roleNo = stored ? Number(stored) : null;
+      setUserRoleNo(roleNo);
+      console.log("User role number:", roleNo);
+    }
   }, []);
 
   useEffect(() => {
@@ -127,13 +137,15 @@ const ContentPage = () => {
   return (
     <AdminLayout pageTitle="CONTENT">
       <div className="bg-white p-4 rounded-lg">
-        <Button
-          className="bg-primary text-white hover:bg-primary/80 mb-6"
-          onClick={() => router.push("/admin/content/create-content")}
-        >
-          <IconPlus size={20} />
-          Create Content
-        </Button>
+        {[0, 2, 3, 4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+          <Button
+            className="bg-primary text-white hover:bg-primary/80 mb-6"
+            onClick={() => router.push("/admin/content/create-content")}
+          >
+            <IconPlus size={20} />
+            Create Content
+          </Button>
+        )}
 
         <PageTitle title="Content" />
 
@@ -229,20 +241,24 @@ const ContentPage = () => {
                             );
                           }}
                         />
-                        <IconPencilMinus
-                          size={22}
-                          className="text-primary cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              `/admin/content/edit-content/${content._id}`
-                            )
-                          }
-                        />
-                        <IconTrash
-                          size={22}
-                          className="text-red-700 cursor-pointer"
-                          onClick={() => handleDelete(content._id)}
-                        />
+                        {[2, 3, 4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+                          <IconPencilMinus
+                            size={22}
+                            className="text-primary cursor-pointer"
+                            onClick={() =>
+                              router.push(
+                                `/admin/content/edit-content/${content._id}`
+                              )
+                            }
+                          />
+                        )}
+                        {[2, 6, 7, 8].includes(userRoleNo ?? -1) && (
+                          <IconTrash
+                            size={22}
+                            className="text-red-700 cursor-pointer"
+                            onClick={() => handleDelete(content._id)}
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}

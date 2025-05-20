@@ -3,6 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaYoutube,
+  FaXTwitter,
+} from "react-icons/fa6";
 
 const footerLinks = [
   { name: "About", href: "/about" },
@@ -33,6 +40,56 @@ export default function Footer() {
               height={40}
               className="h-12 w-auto filter drop-shadow-lg"
             />
+          </div>
+
+          {/* Social Media Links */}
+          {/* Social Media Links */}
+          <div className="flex gap-5 mb-8">
+            <Link
+              href="#"
+              aria-label="Facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow hover:scale-105 transition-transform"
+            >
+              <FaFacebookF className="text-black" size={20} />
+            </Link>
+            <Link
+              href="#"
+              aria-label="Instagram"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow hover:scale-105 transition-transform"
+            >
+              <FaInstagram className="text-black" size={20} />
+            </Link>
+            <Link
+              href="#"
+              aria-label="Tiktok"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow hover:scale-105 transition-transform"
+            >
+              <FaTiktok className="text-black" size={20} />
+            </Link>
+            <Link
+              href="#"
+              aria-label="YouTube"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow hover:scale-105 transition-transform"
+            >
+              <FaYoutube className="text-black" size={20} />
+            </Link>
+            <Link
+              href="#"
+              aria-label="X"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow hover:scale-105 transition-transform"
+            >
+              <FaXTwitter className="text-black" size={20} />
+            </Link>
           </div>
 
           {/* Links - Desktop */}

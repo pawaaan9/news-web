@@ -1,4 +1,5 @@
 import axiosInstance from "./axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 interface LoginData {
   email: string;
@@ -39,10 +40,18 @@ export const login = async (data: LoginData) => {
 
   if (token) {
     localStorage.setItem("token", token);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const decoded: any = jwtDecode(token);
+
+    if (decoded.userRole) {
+      localStorage.setItem("userRole", decoded.userRole);
+    } else {
+      console.warn("userRoleNo not found in decoded token");
+    }
   } else {
     console.warn("⚠️ Token not found in response");
   }
-
   return response.data;
 };
 

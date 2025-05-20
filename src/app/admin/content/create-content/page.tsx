@@ -50,7 +50,18 @@ const CreateContent = () => {
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
   const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
+  const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
+  const [isShownOnHome, setIsShownOnHome] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userRole");
+      const roleNo = stored ? Number(stored) : null;
+      setUserRoleNo(roleNo);
+      console.log("User role number:", roleNo);
+    }
+  }, []);
 
   // Handler for category checkbox
   const handleCategoryChange = (categoryName: string, checked: boolean) => {
@@ -184,6 +195,8 @@ const CreateContent = () => {
       formData.append("author", author);
       formData.append("isFeatured", String(isFeatured));
       formData.append("isSpecial", String(isSpecial));
+      formData.append("isShownOnHome", String(isShownOnHome));
+      formData.append("isBreaking", String(isBreaking));
 
       // Add scheduling information if scheduled
       if (publishOption === "schedule") {
@@ -558,6 +571,20 @@ const CreateContent = () => {
           </div>
 
           <div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isShownOnHome}
+                onChange={(e) => setIsShownOnHome(e.target.checked)}
+                className="form-checkbox text-primary focus:ring-primary/80"
+              />
+              <span className="text-charcoal">
+                This content will show on home feed.
+              </span>
+            </label>
+          </div>
+
+          <div>
             <LabelText text="Once you've finished writing your news article:" />
             <LabelText text="- Click Preview to see how it will appear to readers." />
             <LabelText text="- Click Save as Draft if you're not ready to publish yet, your progress will be saved." />
@@ -565,64 +592,66 @@ const CreateContent = () => {
             <LabelText text="- Click Schedule to publish at a specific date and time." />
           </div>
 
-          <div>
-            <InputText text="Publishing Options" />
-            <div className="flex flex-col gap-4 mt-2">
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="publishOption"
-                    value="now"
-                    checked={publishOption === "now"}
-                    onChange={() => setPublishOption("now")}
-                    className="form-radio text-primary focus:ring-primary/80"
-                  />
-                  <span className="text-charcoal">Publish Now</span>
-                </label>
-
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="publishOption"
-                    value="schedule"
-                    checked={publishOption === "schedule"}
-                    onChange={() => setPublishOption("schedule")}
-                    className="form-radio text-primary focus:ring-primary/80"
-                  />
-                  <span className="text-charcoal">Schedule for Later</span>
-                </label>
-              </div>
-
-              {publishOption === "schedule" && (
-                <div className="flex gap-4">
-                  <div>
-                    <label className="block text-sm text-charcoal/60 mb-1">
-                      Date
-                    </label>
-                    <Input
-                      type="date"
-                      value={scheduledDate}
-                      onChange={(e) => setScheduledDate(e.target.value)}
-                      min={format(new Date(), "yyyy-MM-dd")}
-                      className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+          {[4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+            <div>
+              <InputText text="Publishing Options" />
+              <div className="flex flex-col gap-4 mt-2">
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="publishOption"
+                      value="now"
+                      checked={publishOption === "now"}
+                      onChange={() => setPublishOption("now")}
+                      className="form-radio text-primary focus:ring-primary/80"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-charcoal/60 mb-1">
-                      Time
-                    </label>
-                    <Input
-                      type="time"
-                      value={scheduledTime}
-                      onChange={(e) => setScheduledTime(e.target.value)}
-                      className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                    <span className="text-charcoal">Publish Now</span>
+                  </label>
+
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="publishOption"
+                      value="schedule"
+                      checked={publishOption === "schedule"}
+                      onChange={() => setPublishOption("schedule")}
+                      className="form-radio text-primary focus:ring-primary/80"
                     />
-                  </div>
+                    <span className="text-charcoal">Schedule for Later</span>
+                  </label>
                 </div>
-              )}
+
+                {publishOption === "schedule" && (
+                  <div className="flex gap-4">
+                    <div>
+                      <label className="block text-sm text-charcoal/60 mb-1">
+                        Date
+                      </label>
+                      <Input
+                        type="date"
+                        value={scheduledDate}
+                        onChange={(e) => setScheduledDate(e.target.value)}
+                        min={format(new Date(), "yyyy-MM-dd")}
+                        className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-charcoal/60 mb-1">
+                        Time
+                      </label>
+                      <Input
+                        type="time"
+                        value={scheduledTime}
+                        onChange={(e) => setScheduledTime(e.target.value)}
+                        className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex flex-col lg:flex-row gap-4 mt-4">
             <Button
