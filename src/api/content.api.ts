@@ -13,6 +13,7 @@ export interface ContentData {
   author: string;
   createdTime: string;
   category: string;
+  provinces: string[];
   status: string;
   isFeatured: boolean;
   isSpecial: boolean;

@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { provinces } from "@/data/status";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
@@ -48,6 +49,7 @@ const CreateContent = () => {
   const [publishOption, setPublishOption] = useState<"now" | "schedule">("now");
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
+  const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
   const router = useRouter();
 
   // Handler for category checkbox
@@ -176,6 +178,7 @@ const CreateContent = () => {
       formData.append("url", url);
       formData.append("category", JSON.stringify(selectedCategories));
       formData.append("keywords", JSON.stringify(selectedKeywords));
+      formData.append("provinces", JSON.stringify(selectedProvinces));
       formData.append("status", status);
       formData.append("content", content);
       formData.append("author", author);
@@ -434,6 +437,49 @@ const CreateContent = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          <div>
+            <InputText text="Select Province(s)" />
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <label className="flex items-center space-x-2 cursor-pointer text-[14px]">
+                <input
+                  type="checkbox"
+                  checked={selectedProvinces.length === provinces.length}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedProvinces(provinces);
+                    } else {
+                      setSelectedProvinces([]);
+                    }
+                  }}
+                  className="form-checkbox text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">Select All</span>
+              </label>
+              {provinces.map((province) => (
+                <label
+                  key={province}
+                  className="flex items-center space-x-2 cursor-pointer text-[14px]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedProvinces.includes(province)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedProvinces([...selectedProvinces, province]);
+                      } else {
+                        setSelectedProvinces(
+                          selectedProvinces.filter((p) => p !== province)
+                        );
+                      }
+                    }}
+                    className="form-checkbox text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">{province}</span>
+                </label>
+              ))}
             </div>
           </div>
 

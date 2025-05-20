@@ -20,6 +20,7 @@ import axios from "axios";
 import { use } from "react";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
+import { provinces } from "@/data/status";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 
 interface ImageUploadResponse {
@@ -41,6 +42,7 @@ interface ContentResponse {
     isSpecial: boolean;
     category: Array<{ name: string; subCategory?: string }>;
     keywords: string[];
+    provinces: string[];
   };
 }
 
@@ -62,6 +64,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -98,6 +101,12 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
           setSelectedKeywords(data.keywords[0]);
         } else {
           setSelectedKeywords(data.keywords || []);
+        }
+
+        if (Array.isArray(data.provinces)) {
+          setSelectedProvinces(data.provinces);
+        } else {
+          setSelectedProvinces([]);
         }
       } catch (error) {
         console.error("Error fetching content:", error);
@@ -186,6 +195,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       updatePayload.append("url", url);
       updatePayload.append("category", JSON.stringify(selectedCategories));
       updatePayload.append("keywords", JSON.stringify(selectedKeywords));
+      updatePayload.append("provinces", JSON.stringify(selectedProvinces));
       updatePayload.append("status", status);
       updatePayload.append("content", content);
       updatePayload.append("author", author);
@@ -413,6 +423,52 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+
+            <div>
+              <InputText text="Select Province(s)" />
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="flex items-center space-x-2 cursor-pointer text-[14px]">
+                  <input
+                    type="checkbox"
+                    checked={selectedProvinces.length === provinces.length}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedProvinces(provinces);
+                      } else {
+                        setSelectedProvinces([]);
+                      }
+                    }}
+                    className="form-checkbox text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">Select All</span>
+                </label>
+                {provinces.map((province) => (
+                  <label
+                    key={province}
+                    className="flex items-center space-x-2 cursor-pointer text-[14px]"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedProvinces.includes(province)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedProvinces([
+                            ...selectedProvinces,
+                            province,
+                          ]);
+                        } else {
+                          setSelectedProvinces(
+                            selectedProvinces.filter((p) => p !== province)
+                          );
+                        }
+                      }}
+                      className="form-checkbox text-primary focus:ring-primary/80"
+                    />
+                    <span className="text-charcoal">{province}</span>
+                  </label>
+                ))}
               </div>
             </div>
 

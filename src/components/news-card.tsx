@@ -1,6 +1,6 @@
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import preloadImage from "@/assets/images/preloading-image.png";
+import preloadImage from "@/assets/images/tamilmedia.lk-preload-image.png";
 import React from "react";
 
 interface NewsCardProps {

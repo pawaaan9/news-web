@@ -46,9 +46,7 @@ export default function NavBar({
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 text-white font-dmSans">
-      <div className="bg-charcoal">
-        <CountryAndDate />
-      </div>
+      <CountryAndDate />
 
       <div
         style={{
@@ -103,7 +101,7 @@ export default function NavBar({
               }`}
             >
               <Home size={16} />
-              Home
+              முகப்பு
             </Link>
             {mainNavItems.map((item) => (
               <div

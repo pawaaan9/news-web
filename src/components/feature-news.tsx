@@ -41,17 +41,17 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
   if (!featuredNews) return <p>No featured news available.</p>;
 
   // Parse categories
-  let parsedCategories: string[] = [];
-  try {
-    parsedCategories = JSON.parse(featuredNews.category);
-  } catch (error) {
-    console.error("Failed to parse category:", error);
-    parsedCategories = ["Unknown"];
-  }
+  // let parsedCategories: string[] = [];
+  // try {
+  //   parsedCategories = JSON.parse(featuredNews.category);
+  // } catch (error) {
+  //   console.error("Failed to parse category:", error);
+  //   parsedCategories = ["Unknown"];
+  // }
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-acccent-orange rounded-lg shadow-lg p-6 h-full flex flex-col">
+      <div className="bg-white shadow-acccent-orange rounded-lg shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div
@@ -61,7 +61,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
               letterSpacing: "1px",
             }}
           >
-            சிறப்பு செய்திகள்
+            சிறப்பு செய்தி
           </div>
         </div>
 

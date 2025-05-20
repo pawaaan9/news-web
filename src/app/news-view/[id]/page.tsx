@@ -6,12 +6,14 @@ import NavBar from "../../../components/navbar";
 import LargeAdCard from "../../../components/large-ad-card";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { getContentById } from "@/api/content.api";
+import { getContent, getContentById } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import Footer from "../../../components/footer";
 import AdCard from "@/components/ad-card";
+import NewsCard from "@/components/news-card";
 
 interface Article {
+  _id: string;
   headline1: string;
   headline2: string;
   headline3?: string;
@@ -32,6 +34,7 @@ export default function NewsView() {
 
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [otherNews, setOtherNews] = useState<Article[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -52,6 +55,25 @@ export default function NewsView() {
       fetchArticle();
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchOtherNews = async () => {
+      try {
+        const allNews = await getContent();
+        // Exclude the current article
+        const filtered = (allNews.data as Article[]).filter(
+          (item: Article) => item._id !== id
+        );
+        setOtherNews(filtered);
+      } catch (err) {
+        console.error("Failed to load other news:", err);
+      }
+    };
+
+    if (article) {
+      fetchOtherNews();
+    }
+  }, [article, id]);
 
   if (loading) {
     return (
@@ -82,33 +104,32 @@ export default function NewsView() {
   return (
     <main className="font-dmSans bg-gray-100 mt-[120px] lg:mt-[160px] py-6">
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
-      <div className="max-w-4xl mx-auto px-4 py-8 bg-white my-4 rounded-lg shadow">
-        {/* Breadcrumbs */}
-        <div className="text-xs mb-3">
-          <Link href="/" className="text-[#ff3131] hover:underline">
-            Home
-          </Link>{" "}
-          &gt;
-          <Link
-            href={`/category/${
-              Array.isArray(article.category)
-                ? article.category[0]?.name
-                : article.category
-            }`}
-            className="text-[#ff3131] hover:underline ml-1"
-          >
-            {Array.isArray(article.category)
-              ? article.category[0]?.name
-              : article.category}
-          </Link>
-          &gt;
-          <span className="text-gray-700 ml-1 font-muktaMalar">
-            {article.headline1.substring(0, 20)}...
-          </span>
-        </div>
-
+      <div className="max-w-4xl mx-auto   my-4 rounded-lg ">
         {/* Article Header */}
-        <div className="mb-3">
+        <div className="bg-white rounded-lg shadow p-4 mb-6 mx-4 lg:mx-0">
+          {/* Breadcrumbs */}
+          <div className="text-xs mb-4">
+            <Link href="/" className="text-blue-500 hover:underline">
+              Home
+            </Link>{" "}
+            &gt;
+            <Link
+              href={`/?category=${
+                Array.isArray(article.category)
+                  ? article.category[0]?.name
+                  : article.category
+              }`}
+              className="text-blue-500 hover:underline ml-1"
+            >
+              {Array.isArray(article.category)
+                ? article.category[0]?.name
+                : article.category}
+            </Link>
+            &gt;
+            <span className="text-gray-700 ml-1 font-muktaMalar">
+              {article.headline1.substring(0, 20)}...
+            </span>
+          </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {Array.isArray(article.category) ? (
               article.category.map(
@@ -136,7 +157,7 @@ export default function NewsView() {
           <h1 className="text-2xl lg:text-[32px] font-bold mb-2 font-muktaMalar">
             {article.headline1}
           </h1>
-          <div className="flex items-center text-sm text-gray-600 mb-3 font-rubik">
+          <div className="flex items-center text-sm text-gray-600 mb-2">
             by<span className="font-medium ml-1">{article.author} </span> •{" "}
             {formatDistanceToNow(new Date(article.createdTime), {
               addSuffix: true,
@@ -144,45 +165,43 @@ export default function NewsView() {
           </div>
         </div>
 
-        <hr className="border-b border-gray-200 mb-3" />
+        <div className="bg-white rounded-lg shadow mb-6 mx-4 lg:mx-0">
+          {/* Featured Image */}
+          {article.headlineImage && (
+            <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden shadow-md">
+              <Image
+                src={article.headlineImage}
+                alt={article.headline1}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
 
-        {/* Featured Image */}
-        {article.headlineImage && (
-          <div className="relative w-full aspect-[16/9] mb-4 rounded-lg overflow-hidden border-2 border-[#ff3131]/20">
-            <Image
-              src={article.headlineImage}
-              alt={article.headline1}
-              fill
-              className="object-cover"
-              priority
-            />
+          {/* First Advertisement */}
+          <div className="my-8 flex justify-center lg:hidden">
+            <LargeAdCard />
           </div>
-        )}
-        <hr className="border-b border-gray-200 mb-3" />
 
-        {/* First Advertisement */}
-        <div className="mb-3">
-          <LargeAdCard />
+          <h2 className="text-xl text-gray-700 mb-1 font-bold font-muktaMalar px-4">
+            {article.headline2}
+          </h2>
+
+          {article.headline3 && (
+            <h3 className="text-lg text-gray-600 mb-4 font-muktaMalar px-4">
+              {article.headline3}
+            </h3>
+          )}
+
+          {/* Article Content */}
+          <div className="prose max-w-none mb-8 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl px-4 py-4">
+            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+          </div>
         </div>
 
-        <h2 className="text-xl text-gray-700 mb-1 font-bold font-muktaMalar">
-          {article.headline2}
-        </h2>
-
-        {article.headline3 && (
-          <h3 className="text-lg text-gray-600 mb-4 font-muktaMalar">
-            {article.headline3}
-          </h3>
-        )}
-
-        {/* Article Content */}
-        <div className="prose max-w-none mb-8 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl">
-          <div dangerouslySetInnerHTML={{ __html: article.content }} />
-        </div>
-
-        {/* Keywords */}
         {article.keywords && article.keywords.length > 0 && (
-          <div className="mb-6">
+          <div className="bg-white rounded-lg shadow p-4 mb-6 mx-4 lg:mx-0">
             <div className="flex flex-wrap gap-2">
               {Array.isArray(article.keywords) ? (
                 Array.isArray(article.keywords[0]) ? (
@@ -222,7 +241,30 @@ export default function NewsView() {
         <div className="my-8 flex lg:hidden">
           <AdCard position="Medium Rectangle" />
         </div>
+
+        {otherNews.length > 0 && (
+          <div className="bg-white rounded-lg shadow p-4 mb-6 mx-4 lg:mx-0">
+            <h2 className="text-2xl font-bold mb-8 font-muktaMalar">
+              மற்ற செய்திகள்
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {otherNews.map((news) => (
+                <NewsCard
+                  key={news._id}
+                  id={news._id}
+                  image={news.headlineImage || ""}
+                  title={news.headline1 || ""}
+                  author={news.author}
+                  date={formatDistanceToNow(new Date(news.createdTime), {
+                    addSuffix: true,
+                  })}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
       <Footer />
     </main>
   );
