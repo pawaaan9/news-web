@@ -3,7 +3,7 @@ import PageLayout from '@/components/page-layout';
 export default function DisclaimerPage() {
   return (
     <PageLayout title="Disclaimer">
-      <div className="space-y-6">
+      <div className="space-y-6 font-rubik">
         <p>
           Welcome to TamilMedia.lk! We want to be clear and honest with you about the information we share on our site.
         </p>

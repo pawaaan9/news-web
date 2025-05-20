@@ -84,18 +84,18 @@ export default function NewsView() {
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
       <div className="max-w-4xl mx-auto px-4 py-8 bg-white my-4 rounded-lg shadow">
         {/* Breadcrumbs */}
-        <div className="text-xs mb-4">
-          <Link href="/" className="text-blue-500 hover:underline">
+        <div className="text-xs mb-3">
+          <Link href="/" className="text-[#ff3131] hover:underline">
             Home
           </Link>{" "}
           &gt;
           <Link
-            href={`/?category=${
+            href={`/category/${
               Array.isArray(article.category)
                 ? article.category[0]?.name
                 : article.category
             }`}
-            className="text-blue-500 hover:underline ml-1"
+            className="text-[#ff3131] hover:underline ml-1"
           >
             {Array.isArray(article.category)
               ? article.category[0]?.name
@@ -108,7 +108,7 @@ export default function NewsView() {
         </div>
 
         {/* Article Header */}
-        <div>
+        <div className="mb-3">
           <div className="flex flex-wrap gap-2 mb-2">
             {Array.isArray(article.category) ? (
               article.category.map(
@@ -136,7 +136,7 @@ export default function NewsView() {
           <h1 className="text-2xl lg:text-[32px] font-bold mb-2 font-muktaMalar">
             {article.headline1}
           </h1>
-          <div className="flex items-center text-sm text-gray-600 mb-4">
+          <div className="flex items-center text-sm text-gray-600 mb-3 font-rubik">
             by<span className="font-medium ml-1">{article.author} </span> •{" "}
             {formatDistanceToNow(new Date(article.createdTime), {
               addSuffix: true,
@@ -144,11 +144,11 @@ export default function NewsView() {
           </div>
         </div>
 
-        <hr className="border-b border-gray-200 mb-4" />
+        <hr className="border-b border-gray-200 mb-3" />
 
         {/* Featured Image */}
         {article.headlineImage && (
-          <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden my-6">
+          <div className="relative w-full aspect-[16/9] mb-4 rounded-lg overflow-hidden border-2 border-[#ff3131]/20">
             <Image
               src={article.headlineImage}
               alt={article.headline1}
@@ -158,10 +158,10 @@ export default function NewsView() {
             />
           </div>
         )}
-        <hr className="border-b border-gray-200 mb-4" />
+        <hr className="border-b border-gray-200 mb-3" />
 
         {/* First Advertisement */}
-        <div className="my-8 flex justify-center lg:hidden">
+        <div className="mb-3">
           <LargeAdCard />
         </div>
 
