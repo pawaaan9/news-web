@@ -4,7 +4,8 @@ import preloadImage from "@/assets/images/tamilmedia.lk-preload-image.png";
 import React from "react";
 
 interface NewsCardProps {
-  id: string;
+  // id: string;
+  url: string;
   image: string | StaticImageData;
   // category: string | string[]; // Accept both
   title: string;
@@ -13,7 +14,8 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({
-  id,
+  // id,
+  url,
   image,
   // category,
   title,
@@ -36,7 +38,7 @@ export default function NewsCard({
   // }
 
   return (
-    <Link href={`/news-view/${id}`} passHref>
+    <Link href={`/news-view/${url}`} passHref>
       <div className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
         <div className="relative w-full pt-[56.25%]">
           {/* 16:9 aspect ratio */}

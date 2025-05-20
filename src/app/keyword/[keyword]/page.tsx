@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 
 interface Article {
   _id: string;
+  url: string;
   headline1: string;
   headlineImage: string;
   author: string;
@@ -82,7 +83,8 @@ export default function KeywordNewsPage() {
   const newsCards = newsItems.map((item) => (
     <NewsCard
       key={item._id}
-      id={item._id}
+      // id={item._id}
+      url={item.url}
       image={item.headlineImage}
       title={item.headline1}
       author={item.author}

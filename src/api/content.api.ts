@@ -55,6 +55,12 @@ export const getContentById = async (id: string) => {
   }
 };
 
+// Get content by URL
+export const getContentByUrl = async (url: string) => {
+  const response = await axiosInstance.get(`/content/url/${url}`);
+  return response.data;
+};
+
 export const updateContent = async (id: string, formData: FormData) => {
   try {
     const response = await axios.put(`${API_URL}/content/${id}`, formData, {
@@ -81,12 +87,6 @@ export const changeContentStatus = async (
   const response = await axiosInstance.patch(`/content/${id}/status`, {
     status,
   });
-  return response.data;
-};
-
-// Get content by URL
-export const getContentByUrl = async (url: string): Promise<ContentData> => {
-  const response = await axiosInstance.get<ContentData>(`/content/url/${url}`);
   return response.data;
 };
 

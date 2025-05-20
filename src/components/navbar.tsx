@@ -13,6 +13,7 @@ interface NavBarProps {
   selectedCategory: string | null;
   isStaticPage?: boolean;
   onSearch?: (query: string) => void;
+  showSearchBar?: boolean;
 }
 
 export default function NavBar({
@@ -20,6 +21,7 @@ export default function NavBar({
   selectedCategory,
   isStaticPage = false,
   onSearch,
+  showSearchBar = false,
 }: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -233,36 +235,40 @@ export default function NavBar({
             </div>
           </div>
 
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              onChange={(e) => onSearch?.(e.target.value)}
-              className="bg-white/10 border border-white/20 rounded-full px-4 py-1 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40 transition-colors"
-            />
-            <Search
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70"
-              size={16}
-            />
-          </div>
+          {showSearchBar && (
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                onChange={(e) => onSearch?.(e.target.value)}
+                className="bg-white/10 border border-white/20 rounded-full px-4 py-1 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40 transition-colors"
+              />
+              <Search
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70"
+                size={16}
+              />
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden bg-charcoal text-white flex flex-col h-[calc(100vh-120px)]">
             {/* Search bar at top */}
-            <div className="relative p-4">
-              <input
-                type="text"
-                placeholder="Search..."
-                onChange={(e) => onSearch?.(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40"
-              />
-              <Search
-                className="absolute right-7 top-1/2 transform -translate-y-1/2 text-white/70"
-                size={16}
-              />
-            </div>
+            {showSearchBar && (
+              <div className="relative p-4">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  onChange={(e) => onSearch?.(e.target.value)}
+                  className="w-full bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40"
+                />
+                <Search
+                  className="absolute right-7 top-1/2 transform -translate-y-1/2 text-white/70"
+                  size={16}
+                />
+              </div>
+            )}
 
             {/* Scrollable menu items */}
             <div className="flex-1 overflow-y-auto pb-4">

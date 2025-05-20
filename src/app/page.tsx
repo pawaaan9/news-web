@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import NavBar from "../components/navbar";
 import NewsCard from "../components/news-card";
@@ -12,7 +13,8 @@ import FeatureNews from "@/components/feature-news";
 import TopAdvertisement from "@/components/top-advertisement";
 import { useSearchParams } from "next/navigation";
 
-export default function Home() {
+// Move your main logic here
+function HomeContent() {
   const [newsItems, setNewsItems] = useState<ContentData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -89,7 +91,7 @@ export default function Home() {
     newsGroup.push(
       <NewsCard
         key={displayNews[i]._id}
-        id={displayNews[i]._id}
+        url={displayNews[i].url}
         image={displayNews[i].headlineImage}
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
@@ -124,6 +126,7 @@ export default function Home() {
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
         onSearch={handleSearch}
+        // showSearchBar={true}
       />
 
       {/* Top Advertisement Section - Full Width Container */}
@@ -134,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <div className="bg-gray-100 py-6">
+      <div className="bg-gray-100 pt-6">
         <div className="max-w-4xl mx-auto px-4 py-8 lg:bg-white bg-gray-100 rounded-lg lg:shadow">
           {selectedCategory && (
             <div className="mb-8">
@@ -174,5 +177,14 @@ export default function Home() {
       </div>
       <Footer />
     </main>
+  );
+}
+
+// Wrap HomeContent in Suspense
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

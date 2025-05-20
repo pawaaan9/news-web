@@ -71,7 +71,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
               return (
                 <Link
-                  href={`/news-view/${item._id}`}
+                  href={`/news-view/${item.url}`}
                   passHref
                   key={item._id}
                   className="cursor-pointer h-full flex flex-col"
