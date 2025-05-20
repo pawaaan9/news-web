@@ -10,10 +10,24 @@ import { getContent, ContentData } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import FeatureNews from "@/components/feature-news";
 import TopAdvertisement from "@/components/top-advertisement";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   const [newsItems, setNewsItems] = useState<ContentData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -39,17 +53,33 @@ export default function Home() {
     return !item.isSpecial && !item.isFeatured && !isFeatured && !isSpecial;
   });
 
-  // Filter news based on selected category
-  const displayNews = selectedCategory
-    ? newsItems.filter((item) => {
-        const categories = Array.isArray(item.category) ? item.category : [];
-        return categories.some(
-          (cat: { name: string; subCategory?: string }) =>
-            cat.name === selectedCategory ||
-            cat.subCategory === selectedCategory
-        );
-      })
-    : regularNews;
+  // Filter news based on selected category and search query
+  const displayNews = newsItems.filter((item) => {
+    // Category filter
+    let categoryMatch = true;
+    if (selectedCategory) {
+      const categories = Array.isArray(item.category) ? item.category : [];
+      categoryMatch = categories.some(
+        (cat: { name: string; subCategory?: string }) =>
+          cat.name === selectedCategory || cat.subCategory === selectedCategory
+      );
+    } else {
+      // If no category selected, only show regular news
+      categoryMatch = regularNews.some((n) => n._id === item._id);
+    }
+
+    // Search filter
+    let searchMatch = true;
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      searchMatch =
+        (!!item.headline1 && item.headline1.toLowerCase().includes(q)) ||
+        (!!item.headline2 && item.headline2.toLowerCase().includes(q)) ||
+        (!!item.author && item.author.toLowerCase().includes(q));
+    }
+
+    return categoryMatch && searchMatch;
+  });
 
   // Create groups of 4 news items followed by an ad
   const newsWithAds = [];
@@ -93,6 +123,7 @@ export default function Home() {
       <NavBar
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
+        onSearch={handleSearch}
       />
 
       {/* Top Advertisement Section - Full Width Container */}
@@ -119,7 +150,7 @@ export default function Home() {
             </div>
           )}
 
-          {!selectedCategory && (
+          {!selectedCategory && !searchQuery && (
             <div className="flex flex-col lg:flex-row gap-6 mb-8">
               <div className="lg:w-1/3">
                 <FeatureNews shouldFetch={true} />

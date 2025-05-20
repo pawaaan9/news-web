@@ -44,7 +44,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
     <div className="h-full">
       <div className="bg-gray-100 shadow-accent-teal rounded-lg shadow-sm  h-full flex flex-col">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 lg:flex lg:justify-center">
           <div
             className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-muktaMalar text-white shadow"
             style={{
@@ -100,7 +100,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-lg font-bold font-muktaMalar">
+                      <h3 className="text-lg font-bold font-muktaMalar leading-5">
                         {item.headline1}
                       </h3>
                       <div className="text-sm text-gray-400 mt-2 ">

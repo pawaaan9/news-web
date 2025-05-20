@@ -96,7 +96,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
               </div>
 
               <div className="p-4">
-                <h3 className="text-lg font-bold font-muktaMalar">
+                <h3 className="text-lg font-bold font-muktaMalar leading-5">
                   {featuredNews.headline1}
                 </h3>
                 <div className="text-sm text-gray-400 mt-2">

@@ -66,7 +66,7 @@ export default function Footer() {
             <p className="text-sm">
               Copyrights © {new Date().getFullYear()} TamilMedia. All rights
               reserved | Made with <span className="text-white">❤</span> in Sri
-              Lanka for உலக தமிழர்களுக்கு!
+              Lanka for தமிழ் தாயகச் செய்தியின் நம்பகமான குரல்!
             </p>
           </div>
         </div>

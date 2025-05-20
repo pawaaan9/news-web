@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import Footer from "../../../components/footer";
 import AdCard from "@/components/ad-card";
 import NewsCard from "@/components/news-card";
+import { useRouter } from "next/navigation";
 
 interface Article {
   _id: string;
@@ -36,6 +37,11 @@ export default function NewsView() {
   const [loading, setLoading] = useState(true);
   const [otherNews, setOtherNews] = useState<Article[]>([]);
   const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleCategoryClick = (categoryName: string) => {
+    router.push(`/?category=${encodeURIComponent(categoryName)}`);
+  };
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -106,26 +112,27 @@ export default function NewsView() {
       <NavBar onCategorySelect={() => {}} selectedCategory={null} />
       <div className="max-w-4xl mx-auto   my-4 rounded-lg ">
         {/* Article Header */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6 mx-4 lg:mx-0">
+        <div className="bg-white rounded-lg shadow p-4 mb-3 mx-4 lg:mx-0">
           {/* Breadcrumbs */}
           <div className="text-xs mb-4">
-            <Link href="/" className="text-blue-500 hover:underline">
+            <Link href="/" className="text-[#ff3131] hover:underline font-bold">
               Home
-            </Link>{" "}
-            &gt;
-            <Link
-              href={`/?category=${
-                Array.isArray(article.category)
-                  ? article.category[0]?.name
-                  : article.category
-              }`}
-              className="text-blue-500 hover:underline ml-1"
-            >
-              {Array.isArray(article.category)
-                ? article.category[0]?.name
-                : article.category}
             </Link>
-            &gt;
+            <span className="mx-1 text-[#ff3131]">&gt;</span>
+            <span
+              onClick={() =>
+                typeof article.category[0] === "object"
+                  ? handleCategoryClick(article.category[0].name)
+                  : handleCategoryClick(article.category[0] as string)
+              }
+              className="text-[#ff3131] hover:underline font-bold cursor-pointer"
+            >
+              {typeof article.category[0] === "object"
+                ? article.category[0].name
+                : (article.category[0] as string)}
+            </span>
+
+            <span className="mx-1 text-gray-400">&gt;</span>
             <span className="text-gray-700 ml-1 font-muktaMalar">
               {article.headline1.substring(0, 20)}...
             </span>
@@ -157,18 +164,22 @@ export default function NewsView() {
           <h1 className="text-2xl lg:text-[32px] font-bold mb-2 font-muktaMalar">
             {article.headline1}
           </h1>
-          <div className="flex items-center text-sm text-gray-600 mb-2">
-            by<span className="font-medium ml-1">{article.author} </span> •{" "}
-            {formatDistanceToNow(new Date(article.createdTime), {
-              addSuffix: true,
-            })}
+          <div className="flex items-center text-sm text-gray-600 mb-2 font-rubik">
+            <span>by</span>
+            <span className="font-medium ml-1">{article.author}</span>
+            <span className="mx-2">•</span>
+            <span>
+              {formatDistanceToNow(new Date(article.createdTime), {
+                addSuffix: true,
+              })}
+            </span>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow mb-6 mx-4 lg:mx-0">
+        <div className="bg-white rounded-lg shadow mx-4 lg:mx-0">
           {/* Featured Image */}
           {article.headlineImage && (
-            <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden shadow-md">
+            <div className="relative w-full aspect-[16/9] mb-6 rounded-lg overflow-hidden shadow-md border border-acccent-orange">
               <Image
                 src={article.headlineImage}
                 alt={article.headline1}
@@ -195,7 +206,7 @@ export default function NewsView() {
           )}
 
           {/* Article Content */}
-          <div className="prose max-w-none mb-8 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl px-4 py-4">
+          <div className="prose max-w-none mb-3 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl px-4 py-4">
             <div dangerouslySetInnerHTML={{ __html: article.content }} />
           </div>
         </div>

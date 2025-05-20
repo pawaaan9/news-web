@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search, ChevronDown, ChevronUp, Home } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
@@ -12,15 +12,26 @@ interface NavBarProps {
   onCategorySelect: (category: string | null) => void;
   selectedCategory: string | null;
   isStaticPage?: boolean;
+  onSearch?: (query: string) => void;
 }
 
 export default function NavBar({
   onCategorySelect,
   selectedCategory,
   isStaticPage = false,
+  onSearch,
 }: NavBarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [showCountryBar, setShowCountryBar] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowCountryBar(window.scrollY < 10);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Split categories into main and additional items
   const mainNavItems = categories.slice(0, 6);
@@ -46,7 +57,11 @@ export default function NavBar({
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 text-white font-dmSans">
-      <CountryAndDate />
+      {showCountryBar && (
+        <div className="w-full bg-charcoal z-40">
+          <CountryAndDate />
+        </div>
+      )}
 
       <div
         style={{
@@ -222,6 +237,7 @@ export default function NavBar({
             <input
               type="text"
               placeholder="Search..."
+              onChange={(e) => onSearch?.(e.target.value)}
               className="bg-white/10 border border-white/20 rounded-full px-4 py-1 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40 transition-colors"
             />
             <Search
@@ -239,6 +255,7 @@ export default function NavBar({
               <input
                 type="text"
                 placeholder="Search..."
+                onChange={(e) => onSearch?.(e.target.value)}
                 className="w-full bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/70 focus:outline-none focus:border-white/40"
               />
               <Search
