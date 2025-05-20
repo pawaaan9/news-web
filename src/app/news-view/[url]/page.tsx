@@ -6,7 +6,7 @@ import NavBar from "../../../components/navbar";
 import LargeAdCard from "../../../components/large-ad-card";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { getContent, getContentById } from "@/api/content.api";
+import { getContent, getContentByUrl } from "@/api/content.api";
 import { formatDistanceToNow } from "date-fns";
 import Footer from "../../../components/footer";
 import AdCard from "@/components/ad-card";
@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 
 interface Article {
   _id: string;
+  url: string;
   headline1: string;
   headline2: string;
   headline3?: string;
@@ -31,7 +32,7 @@ interface Article {
 export default function NewsView() {
   const params = useParams();
 
-  const id = params.id as string;
+  const url = params.url as string;
 
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,7 +48,7 @@ export default function NewsView() {
     const fetchArticle = async () => {
       try {
         setLoading(true);
-        const response = (await getContentById(id)) as { data: Article };
+        const response = (await getContentByUrl(url)) as { data: Article };
         setArticle(response.data);
       } catch (err) {
         setError("Failed to load article");
@@ -57,10 +58,10 @@ export default function NewsView() {
       }
     };
 
-    if (id) {
+    if (url) {
       fetchArticle();
     }
-  }, [id]);
+  }, [url]);
 
   useEffect(() => {
     const fetchOtherNews = async () => {
@@ -68,7 +69,7 @@ export default function NewsView() {
         const allNews = await getContent();
         // Exclude the current article
         const filtered = (allNews.data as Article[]).filter(
-          (item: Article) => item._id !== id
+          (item: Article) => item.url !== url
         );
         setOtherNews(filtered);
       } catch (err) {
@@ -79,7 +80,7 @@ export default function NewsView() {
     if (article) {
       fetchOtherNews();
     }
-  }, [article, id]);
+  }, [article, url]);
 
   if (loading) {
     return (
@@ -262,7 +263,7 @@ export default function NewsView() {
               {otherNews.map((news) => (
                 <NewsCard
                   key={news._id}
-                  id={news._id}
+                  url={news.url}
                   image={news.headlineImage || ""}
                   title={news.headline1 || ""}
                   author={news.author}

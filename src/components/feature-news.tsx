@@ -68,7 +68,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
         {/* Featured News Item */}
         <div className="flex-grow">
           <Link
-            href={`/news-view/${featuredNews._id}`}
+            href={`/news-view/${featuredNews.url}`}
             passHref
             className="cursor-pointer h-full flex flex-col"
           >
