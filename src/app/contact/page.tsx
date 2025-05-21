@@ -1,4 +1,27 @@
 import PageLayout from "@/components/page-layout";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Us | TamilMedia.lk",
+  description:
+    "Get in touch with TamilMedia.lk. Contact us for questions, suggestions, or feedback. We value your input and are here to help.",
+  keywords: [
+    "Contact TamilMedia",
+    "TamilMedia.lk contact",
+    "Sri Lanka Tamil news contact",
+    "Tamil news support",
+    "TamilMedia email",
+    "TamilMedia phone",
+  ],
+  openGraph: {
+    title: "Contact Us | TamilMedia.lk",
+    description:
+      "Get in touch with TamilMedia.lk. Contact us for questions, suggestions, or feedback.",
+    url: "https://tamilmedia.lk/contact",
+    siteName: "TamilMedia.lk",
+    type: "website",
+  },
+};
 
 export default function ContactPage() {
   return (

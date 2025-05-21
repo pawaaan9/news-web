@@ -96,6 +96,7 @@ function HomeContent() {
         image={displayNews[i].headlineImage}
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
+        category={displayNews[i].category}
         date={formatDistanceToNow(new Date(displayNews[i].createdTime), {
           addSuffix: true,
         })}

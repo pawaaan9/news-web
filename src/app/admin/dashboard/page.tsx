@@ -7,7 +7,7 @@ import { IconCirclePlus, IconNews } from "@tabler/icons-react";
 import withAuth from "@/hoc/with-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { getLogo, uploadLogo } from "@/api/logo.api";
+import { getContentStatus, getLogo, uploadLogo } from "@/api/logo.api";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -17,6 +17,10 @@ const DashboardPage = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [currentLogo, setCurrentLogo] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [totalNews, setTotalNews] = useState(0);
+  const [totalPublished, setTotalPublished] = useState(0);
+  const [newsToday, setNewsToday] = useState(0);
+  const [totalDrafts, setTotalDrafts] = useState(0);
 
   useEffect(() => {
     const fetchLogo = async () => {
@@ -32,6 +36,22 @@ const DashboardPage = () => {
       }
     };
     fetchLogo();
+
+    const fetchStats = async () => {
+      try {
+        const res = await getContentStatus();
+        console.log(res);
+        if (res && res.data) {
+          setTotalNews(res.data.totalNews);
+          setTotalPublished(res.data.totalPublished);
+          setNewsToday(res.data.newsToday);
+          setTotalDrafts(res.data.totalDrafts);
+        }
+      } catch {
+        // Optionally handle error
+      }
+    };
+    fetchStats();
   }, []);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,10 +82,11 @@ const DashboardPage = () => {
   return (
     <AdminLayout pageTitle="Dashboard">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 ">
-        <StatCard title="Total news articles" value={600} />
-        <StatCard title="Total publishers" value={12} />
-        <StatCard title="Total categories" value={8} />
-        <StatCard title="News published today" value={100} />
+        <StatCard title="Total news articles" value={totalNews} />
+        <StatCard title="Total published" value={totalPublished} />
+
+        <StatCard title="Total drafts" value={totalDrafts} />
+        <StatCard title="News published today" value={newsToday} />
       </div>
       <hr className="my-4 text-gray-400" />
       <div className="mb-8 flex flex-col items-center">

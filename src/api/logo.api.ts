@@ -9,7 +9,16 @@ export interface LogoApiResponse {
     _id: string;
     url: string;
     uploadedAt: string;
-    [key: string]: any;
+  };
+}
+
+export interface ContentStatusResponse {
+  status: string;
+  data: {
+    totalNews: number;
+    totalPublished: number;
+    newsToday: number;
+    totalDrafts: number;
   };
 }
 
@@ -33,5 +42,12 @@ export const uploadLogo = async (logoFile: File) => {
 // Get the current logo
 export const getLogo = async (): Promise<LogoApiResponse> => {
   const response = await axiosInstance.get<LogoApiResponse>("/logo/logo");
+  return response.data;
+};
+
+export const getContentStatus = async (): Promise<ContentStatusResponse> => {
+  const response = await axiosInstance.get<ContentStatusResponse>(
+    "logo/content-status"
+  );
   return response.data;
 };

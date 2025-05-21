@@ -7,7 +7,7 @@ interface NewsCardProps {
   // id: string;
   url: string;
   image: string | StaticImageData;
-  // category: string | string[]; // Accept both
+  category?: string | string[];
   title: string;
   author: string;
   date: string;
@@ -17,7 +17,7 @@ export default function NewsCard({
   // id,
   url,
   image,
-  // category,
+  category,
   title,
   author,
   date,
@@ -26,16 +26,27 @@ export default function NewsCard({
 
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // // Handle category as array or comma-separated string
-  // let parsedCategories: string[] = [];
-  // if (Array.isArray(category)) {
-  //   parsedCategories = category;
-  // } else if (typeof category === "string") {
-  //   parsedCategories = category
-  //     .split(",")
-  //     .map((c) => c.trim())
-  //     .filter(Boolean);
-  // }
+  let parsedCategories: string[] = [];
+  if (Array.isArray(category)) {
+    // If array of objects (with name), extract the name
+    if (
+      category.length > 0 &&
+      typeof category[0] === "object" &&
+      category[0] !== null
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parsedCategories = (category as any[])
+        .map((c) => c.name || "")
+        .filter(Boolean);
+    } else {
+      parsedCategories = category as string[];
+    }
+  } else if (typeof category === "string") {
+    parsedCategories = category
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
+  }
 
   return (
     <Link href={`/news/${url}`} passHref>
@@ -60,13 +71,18 @@ export default function NewsCard({
             priority
             onLoadingComplete={() => setIsLoading(false)}
           />
-          {/* <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
-            {parsedCategories.map((cat, index) => (
-              <span key={index} className="mr-1">
-                {cat}
-              </span>
-            ))}
-          </div> */}
+          {parsedCategories.length > 0 && (
+            <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
+              {parsedCategories.map((cat, idx) => (
+                <span
+                  key={idx}
+                  className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
