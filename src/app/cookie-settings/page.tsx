@@ -1,4 +1,26 @@
 import PageLayout from "@/components/page-layout";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cookie Settings | TamilMedia.lk",
+  description:
+    "Learn how TamilMedia.lk uses cookies to enhance your experience. Manage your cookie preferences and understand our privacy practices.",
+  keywords: [
+    "Cookie settings",
+    "TamilMedia.lk cookies",
+    "Privacy",
+    "Cookie preferences",
+    "Sri Lanka Tamil news cookies",
+  ],
+  openGraph: {
+    title: "Cookie Settings | TamilMedia.lk",
+    description:
+      "Learn how TamilMedia.lk uses cookies to enhance your experience. Manage your cookie preferences and understand our privacy practices.",
+    url: "https://tamilmedia.lk/cookie-settings",
+    siteName: "TamilMedia.lk",
+    type: "website",
+  },
+};
 
 export default function CookieSettingsPage() {
   return (

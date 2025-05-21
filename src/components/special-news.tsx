@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 interface SpecialNewsProps {
   shouldFetch: boolean;
@@ -46,7 +47,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
         {/* Header */}
         <div className="mb-6 lg:flex lg:justify-center">
           <div
-            className="inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-muktaMalar text-white shadow"
+            className="inline-block px-6 py-2 lg:rounded-b-xl lg:rounded-t-none rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-muktaMalar text-white shadow"
             style={{
               background: "linear-gradient(90deg, #0d9488 0%, #14b8a6 100%)",
               letterSpacing: "1px",
@@ -71,7 +72,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
               return (
                 <Link
-                  href={`/news-view/${item.url}`}
+                  href={`/news/${item.url}`}
                   passHref
                   key={item._id}
                   className="cursor-pointer h-full flex flex-col"
@@ -103,16 +104,12 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                       <h3 className="text-lg font-bold font-muktaMalar leading-5">
                         {item.headline1}
                       </h3>
-                      <div className="text-sm text-gray-400 mt-2 ">
-                        by {item.author} •{" "}
-                        {new Date(item.createdTime).toLocaleDateString(
-                          "si-LK",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )}
+                      <div className="text-sm text-gray-400 mt-2 flex justify-between">
+                        <div>by {item.author} </div>
+
+                        {formatDistanceToNow(new Date(item.createdTime), {
+                          addSuffix: true,
+                        })}
                       </div>
                     </div>
                   </div>

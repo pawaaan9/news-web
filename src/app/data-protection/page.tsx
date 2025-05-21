@@ -1,4 +1,27 @@
 import PageLayout from "@/components/page-layout";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Data Protection | TamilMedia.lk",
+  description:
+    "Learn how TamilMedia.lk protects your privacy. We do not collect personal data and are committed to providing a safe news experience.",
+  keywords: [
+    "Data protection",
+    "TamilMedia.lk privacy",
+    "No personal data collection",
+    "Sri Lanka Tamil news privacy",
+    "User privacy",
+    "Safe news website",
+  ],
+  openGraph: {
+    title: "Data Protection | TamilMedia.lk",
+    description:
+      "Learn how TamilMedia.lk protects your privacy. We do not collect personal data and are committed to providing a safe news experience.",
+    url: "https://tamilmedia.lk/data-protection",
+    siteName: "TamilMedia.lk",
+    type: "website",
+  },
+};
 
 export default function DataProtectionPage() {
   return (

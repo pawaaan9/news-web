@@ -168,7 +168,7 @@ export default function NewsView() {
           <div className="flex items-center text-sm text-gray-600 mb-2 font-rubik">
             <span>by</span>
             <span className="font-medium ml-1">{article.author}</span>
-            <span className="mx-2">•</span>
+            <span className="mx-2">|</span>
             <span>
               {formatDistanceToNow(new Date(article.createdTime), {
                 addSuffix: true,

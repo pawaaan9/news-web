@@ -74,10 +74,11 @@ function HomeContent() {
     let searchMatch = true;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
-      searchMatch =
-        (!!item.headline1 && item.headline1.toLowerCase().includes(q)) ||
-        (!!item.headline2 && item.headline2.toLowerCase().includes(q)) ||
-        (!!item.author && item.author.toLowerCase().includes(q));
+      const headlineMatch = item.headline1?.toLowerCase().includes(q);
+      const keywordsMatch = Array.isArray(item.keywords)
+        ? item.keywords.some((kw) => kw.toLowerCase().includes(q))
+        : false;
+      searchMatch = headlineMatch || keywordsMatch;
     }
 
     return categoryMatch && searchMatch;
@@ -95,6 +96,7 @@ function HomeContent() {
         image={displayNews[i].headlineImage}
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
+        category={displayNews[i].category}
         date={formatDistanceToNow(new Date(displayNews[i].createdTime), {
           addSuffix: true,
         })}
@@ -126,7 +128,7 @@ function HomeContent() {
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
         onSearch={handleSearch}
-        // showSearchBar={true}
+        showSearchBar={true}
       />
 
       {/* Top Advertisement Section - Full Width Container */}

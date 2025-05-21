@@ -1,4 +1,27 @@
+import type { Metadata } from "next";
 import PageLayout from "@/components/page-layout";
+
+export const metadata: Metadata = {
+  title: "User Guidelines | TamilMedia.lk",
+  description:
+    "Read the user guidelines for TamilMedia.lk. Learn how to use our Tamil news website safely, respectfully, and responsibly.",
+  keywords: [
+    "User guidelines",
+    "TamilMedia.lk rules",
+    "Tamil news website usage",
+    "Safe browsing",
+    "Copyright",
+    "Report issues",
+  ],
+  openGraph: {
+    title: "User Guidelines | TamilMedia.lk",
+    description:
+      "Read the user guidelines for TamilMedia.lk. Learn how to use our Tamil news website safely, respectfully, and responsibly.",
+    url: "https://tamilmedia.lk/user-guidelines",
+    siteName: "TamilMedia.lk",
+    type: "website",
+  },
+};
 
 export default function UserGuidelinesPage() {
   return (
