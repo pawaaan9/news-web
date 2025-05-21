@@ -137,7 +137,7 @@ const ContentPage = () => {
   return (
     <AdminLayout pageTitle="CONTENT">
       <div className="bg-white p-4 rounded-lg">
-        {[0, 2, 3, 4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+        {[0, 2, 3, 4, 6, 7, 8, 9].includes(userRoleNo ?? -1) && (
           <Button
             className="bg-primary text-white hover:bg-primary/80 mb-6"
             onClick={() => router.push("/admin/content/create-content")}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 interface FeatureNewsProps {
   shouldFetch: boolean;
@@ -68,7 +69,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
         {/* Featured News Item */}
         <div className="flex-grow">
           <Link
-            href={`/news-view/${featuredNews.url}`}
+            href={`/news/${featuredNews.url}`}
             passHref
             className="cursor-pointer h-full flex flex-col"
           >
@@ -99,16 +100,12 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                 <h3 className="text-lg font-bold font-muktaMalar leading-5">
                   {featuredNews.headline1}
                 </h3>
-                <div className="text-sm text-gray-400 mt-2">
-                  by {featuredNews.author} •{" "}
-                  {new Date(featuredNews.createdTime).toLocaleDateString(
-                    "si-LK",
-                    {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    }
-                  )}
+                <div className="text-sm text-gray-400 mt-2 flex justify-between">
+                  <div>by {featuredNews.author} </div>
+
+                  {formatDistanceToNow(new Date(featuredNews.createdTime), {
+                    addSuffix: true,
+                  })}
                 </div>
               </div>
             </div>

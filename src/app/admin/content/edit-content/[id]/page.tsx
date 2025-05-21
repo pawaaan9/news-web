@@ -40,6 +40,7 @@ interface ContentResponse {
     author: string;
     isFeatured: boolean;
     isSpecial: boolean;
+    isBreaking: boolean;
     category: Array<{ name: string; subCategory?: string }>;
     keywords: string[];
     provinces: string[];
@@ -60,6 +61,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
   const [currentHeadlineImage, setCurrentHeadlineImage] = useState<string>("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [isSpecial, setIsSpecial] = useState(false);
+  const [isBreaking, setIsBreaking] = useState(false);
   const [seoTitle, setSeoTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState<string>("");
@@ -84,6 +86,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         setAuthor(data.author);
         setIsFeatured(data.isFeatured);
         setIsSpecial(data.isSpecial);
+        setIsBreaking(data.isBreaking);
 
         if (Array.isArray(data.category)) {
           const parsedCategories = data.category.map(
@@ -201,6 +204,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       updatePayload.append("author", author);
       updatePayload.append("isFeatured", String(isFeatured));
       updatePayload.append("isSpecial", String(isSpecial));
+      updatePayload.append("isBreaking", String(isBreaking));
       updatePayload.append("image", headlineImage as File);
 
       await updateContent(params.id, updatePayload);
@@ -491,6 +495,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                     onChange={() => {
                       setIsFeatured(true);
                       setIsSpecial(false);
+                      setIsBreaking(false);
                     }}
                     className="form-radio text-primary focus:ring-primary/80"
                   />
@@ -506,10 +511,27 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                     onChange={() => {
                       setIsSpecial(true);
                       setIsFeatured(false);
+                      setIsBreaking(false);
                     }}
                     className="form-radio text-primary focus:ring-primary/80"
                   />
                   <span className="text-charcoal">Special</span>
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="specialOption"
+                    value="breaking"
+                    checked={isBreaking}
+                    onChange={() => {
+                      setIsBreaking(true);
+                      setIsFeatured(false);
+                      setIsSpecial(false);
+                    }}
+                    className="form-radio text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">Breaking</span>
                 </label>
               </div>
               <p className="text-sm text-charcoal/60 mt-1">

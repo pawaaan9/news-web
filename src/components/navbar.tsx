@@ -7,6 +7,7 @@ import CountryAndDate from "./country-date-navbar";
 import Image from "next/image";
 import { categories } from "@/data/categories";
 import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
+import { getLogo } from "@/api/logo.api";
 
 interface NavBarProps {
   onCategorySelect: (category: string | null) => void;
@@ -26,6 +27,23 @@ export default function NavBar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showCountryBar, setShowCountryBar] = useState(true);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const res = await getLogo();
+        if (res && res.data && typeof res.data.url === "string") {
+          setLogoUrl(res.data.url);
+        } else {
+          setLogoUrl(null);
+        }
+      } catch {
+        setLogoUrl(null);
+      }
+    };
+    fetchLogo();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,11 +105,12 @@ export default function NavBar({
               onClick={() => onCategorySelect(null)}
             >
               <Image
-                src={logoTamil}
+                src={logoUrl ?? logoTamil}
                 alt="Website Logo"
                 width={120}
                 height={40}
                 className="h-12 w-auto"
+                priority
               />
             </Link>
           </div>
