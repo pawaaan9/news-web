@@ -257,7 +257,7 @@ export default function NewsView() {
         {otherNews.length > 0 && (
           <div className="bg-white rounded-lg shadow p-4 mb-6 mx-4 lg:mx-0">
             <h2 className="text-2xl font-bold mb-8 font-muktaMalar">
-              மற்ற செய்திகள்
+              ஏனைய செய்திகள்
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {otherNews.map((news) => (

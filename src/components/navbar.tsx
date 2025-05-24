@@ -6,7 +6,7 @@ import { Menu, X, Search, ChevronDown, ChevronUp, Home } from "lucide-react";
 import CountryAndDate from "./country-date-navbar";
 import Image from "next/image";
 import { categories } from "@/data/categories";
-import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
+import logoTamil from "@/assets/images/Logo-web-final.png";
 import { getLogo } from "@/api/logo.api";
 
 interface NavBarProps {

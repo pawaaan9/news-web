@@ -86,14 +86,28 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   priority
                 />
-                {/* Category badge in top-right corner */}
-                {/* <div className="absolute top-2 right-2 bg-zinc-200 text-xs px-2 py-0.5 rounded">
-                  {parsedCategories.map((cat, index) => (
-                    <span key={index} className="mr-1">
-                      {cat}
-                    </span>
-                  ))}
-                </div> */}
+                {/* Category badge in top-left corner */}
+                {featuredNews.category && (
+                  <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
+                    {Array.isArray(featuredNews.category) ? (
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      featuredNews.category.map((cat: any, idx: number) => (
+                        <span
+                          key={idx}
+                          className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded"
+                        >
+                          {cat.subCategory
+                            ? `${cat.name} (${cat.subCategory})`
+                            : cat.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded">
+                        {featuredNews.category}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="p-4">

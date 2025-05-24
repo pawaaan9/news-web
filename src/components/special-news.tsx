@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -43,7 +44,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-gray-100 shadow-accent-teal rounded-lg shadow-sm  h-full flex flex-col">
+      <div className="bg-white shadow-accent-teal rounded-lg shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6 lg:flex lg:justify-center">
           <div
@@ -78,9 +79,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                   className="cursor-pointer h-full flex flex-col"
                 >
                   <div className="rounded-lg overflow-hidden shadow-md mx-2 bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
-                    {/* Image container with category badge */}
                     <div className="relative w-full pt-[56.25%]">
-                      {" "}
                       {/* 16:9 aspect ratio */}
                       <Image
                         src={item.headlineImage}
@@ -90,14 +89,27 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                       />
-                      {/* Category badge in top-right corner */}
-                      {/* <div className="absolute top-2 right-2 bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded">
-                        {parsedCategories.map((cat, index) => (
-                          <span key={index} className="mr-1">
-                            {cat}
-                          </span>
-                        ))}
-                      </div> */}
+                      {/* Category badge in top-left corner */}
+                      {item.category && (
+                        <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
+                          {Array.isArray(item.category) ? (
+                            item.category.map((cat: any, idx: number) => (
+                              <span
+                                key={idx}
+                                className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded"
+                              >
+                                {cat.subCategory
+                                  ? `${cat.name} (${cat.subCategory})`
+                                  : cat.name}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded">
+                              {item.category}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div className="p-4">

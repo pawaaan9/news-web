@@ -57,6 +57,7 @@ function HomeContent() {
 
   // Filter news based on selected category and search query
   const displayNews = newsItems.filter((item) => {
+    if (item.status !== "Published") return false;
     // Category filter
     let categoryMatch = true;
     if (selectedCategory) {

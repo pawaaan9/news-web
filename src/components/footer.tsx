@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import logoTamil from "@/assets/images/tamilmedia.lk-weblogo-light.png";
+import footerLogo from "@/assets/images/footer-logo.png";
 import {
   FaFacebookF,
   FaInstagram,
@@ -10,8 +10,6 @@ import {
   FaYoutube,
   FaXTwitter,
 } from "react-icons/fa6";
-import { useEffect, useState } from "react";
-import { getLogo } from "@/api/logo.api";
 
 const footerLinks = [
   { name: "About", href: "/about" },
@@ -23,24 +21,6 @@ const footerLinks = [
 ];
 
 export default function Footer() {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const res = await getLogo();
-        if (res && res.data && typeof res.data.url === "string") {
-          setLogoUrl(res.data.url);
-        } else {
-          setLogoUrl(null);
-        }
-      } catch {
-        setLogoUrl(null);
-      }
-    };
-    fetchLogo();
-  }, []);
-
   return (
     <footer className="relative py-4 z-10 font-rubik">
       {/* Gradient Background */}
@@ -52,13 +32,17 @@ export default function Footer() {
       <div className="container mx-auto px-4 relative">
         <div className="flex flex-col items-center">
           {/* Logo */}
-          <div className="mb-8 p-4 bg-white/10 rounded-lg backdrop-blur-sm border-2 border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl">
+          <div
+            className="mb-8 bg-white rounded-lg border-2 border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 px-3 py-1 flex items-center justify-center"
+            style={{ minHeight: 40, width: 140, maxWidth: "100%" }}
+          >
             <Image
-              src={logoUrl ?? logoTamil}
+              src={footerLogo}
               alt="TamilMedia Logo"
               width={120}
-              height={40}
-              className="h-12 w-auto filter drop-shadow-lg"
+              height={32}
+              className="w-auto filter drop-shadow-lg"
+              priority
             />
           </div>
 
