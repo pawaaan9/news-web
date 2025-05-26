@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function CookieSettingsPage() {
   return (
     <PageLayout title="Cookie Settings">
-      <div className="space-y-6">
+      <div className="space-y-6 font-rubik">
         <p>
           At TamilMedia.lk, we use cookies to make your experience better and
           faster. Cookies help us understand how you use our site and improve

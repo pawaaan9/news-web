@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default function UserGuidelinesPage() {
   return (
     <PageLayout title="User Guidelines">
-      <div className="space-y-6">
+      <div className="space-y-6 font-rubik">
         <p>
           Welcome to TamilMedia.lk! We&apos;re happy to have you here. To ensure
           a smooth and enjoyable experience, please keep these simple guidelines

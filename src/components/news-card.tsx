@@ -74,12 +74,14 @@ export default function NewsCard({
           {parsedCategories.length > 0 && (
             <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
               {parsedCategories.map((cat, idx) => (
-                <span
+                <Link
                   key={idx}
-                  className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded"
+                  href={`/?category=${encodeURIComponent(cat)}`}
+                  className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded hover:underline"
+                  onClick={(e) => e.stopPropagation()} // Prevents navigating to the news page when clicking the badge
                 >
                   {cat}
-                </span>
+                </Link>
               ))}
             </div>
           )}

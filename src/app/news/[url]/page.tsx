@@ -12,6 +12,7 @@ import Footer from "../../../components/footer";
 import AdCard from "@/components/ad-card";
 import NewsCard from "@/components/news-card";
 import { useRouter } from "next/navigation";
+import RelatedNewsCard from "@/modules/shared/related-news-card";
 
 interface Article {
   _id: string;
@@ -38,11 +39,34 @@ export default function NewsView() {
   const [loading, setLoading] = useState(true);
   const [otherNews, setOtherNews] = useState<Article[]>([]);
   const [error, setError] = useState("");
+  let beforeContent = "";
+  let afterContent = "";
+  if (article && article.content) {
+    [beforeContent, afterContent] = splitContentAtParagraph(article.content, 2);
+  }
   const router = useRouter();
 
   const handleCategoryClick = (categoryName: string) => {
     router.push(`/?category=${encodeURIComponent(categoryName)}`);
   };
+
+  const relatedNews = otherNews.slice(0, 2);
+
+  function splitContentAtParagraph(html: string, afterParagraph = 2) {
+    const parts = html.split(/(<\/p>)/i);
+    let before = "";
+    let after = "";
+    let count = 0;
+    for (let i = 0; i < parts.length; i++) {
+      before += parts[i];
+      if (parts[i].toLowerCase() === "</p>") count++;
+      if (count === afterParagraph) {
+        after = parts.slice(i + 1).join("");
+        break;
+      }
+    }
+    return [before, after];
+  }
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -208,7 +232,32 @@ export default function NewsView() {
 
           {/* Article Content */}
           <div className="prose max-w-none mb-3 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl px-4 py-4">
-            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+            {/* First part of content */}
+            <div dangerouslySetInnerHTML={{ __html: beforeContent }} />
+
+            {relatedNews.length > 0 && (
+              <div className="my-4 p-4 bg-gray-50 rounded-lg ">
+                <h3 className="text-lg font-bold mb-4 text-accent-teal">
+                  தொடர்புடைய செய்திகள்
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {relatedNews.map((news) => (
+                    <RelatedNewsCard
+                      key={news._id}
+                      url={news.url}
+                      image={news.headlineImage || ""}
+                      title={news.headline1 || ""}
+                      date={formatDistanceToNow(new Date(news.createdTime), {
+                        addSuffix: true,
+                      })}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Second part of content */}
+            <div dangerouslySetInnerHTML={{ __html: afterContent }} />
           </div>
         </div>
 
@@ -267,6 +316,16 @@ export default function NewsView() {
                   image={news.headlineImage || ""}
                   title={news.headline1 || ""}
                   author={news.author}
+                  // Convert category to string[] if it's an array of objects
+                  category={
+                    Array.isArray(news.category)
+                      ? news.category.map((c) =>
+                          c.subCategory
+                            ? `${c.name} (${c.subCategory})`
+                            : c.name
+                        )
+                      : news.category
+                  }
                   date={formatDistanceToNow(new Date(news.createdTime), {
                     addSuffix: true,
                   })}

@@ -25,8 +25,8 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <PageLayout title="Reach Out to Us">
-      <div className="space-y-6">
+    <PageLayout title="Reach Out to Us ">
+      <div className="space-y-6 font-rubik">
         <p>
           We&apos;d love to hear from you! Whether you have questions,
           suggestions, or just want to say hello, feel free to get in touch with
