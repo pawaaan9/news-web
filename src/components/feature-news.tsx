@@ -90,7 +90,6 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                 {featuredNews.category && (
                   <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
                     {Array.isArray(featuredNews.category) ? (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       featuredNews.category.map((cat: any, idx: number) => (
                         <span
                           key={idx}

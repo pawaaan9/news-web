@@ -46,8 +46,12 @@ export default function NewsView() {
   }
   const router = useRouter();
 
-  const handleCategoryClick = (categoryName: string) => {
-    router.push(`/?category=${encodeURIComponent(categoryName)}`);
+  const handleCategoryClick = (categoryName: string | null) => {
+    if (categoryName) {
+      router.push(`/?category=${encodeURIComponent(categoryName)}`);
+    } else {
+      router.push('/');
+    }
   };
 
   const relatedNews = otherNews.slice(0, 2);
@@ -134,7 +138,7 @@ export default function NewsView() {
 
   return (
     <main className="font-dmSans bg-gray-100 mt-[120px] lg:mt-[160px] py-6">
-      <NavBar onCategorySelect={() => {}} selectedCategory={null} />
+      <NavBar onCategorySelect={handleCategoryClick} selectedCategory={null} />
       <div className="max-w-4xl mx-auto   my-4 rounded-lg ">
         {/* Article Header */}
         <div className="bg-white rounded-lg shadow p-4 mb-3 mx-4 lg:mx-0">

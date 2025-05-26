@@ -182,7 +182,6 @@ const EditAdvertisement = () => {
           : "Advertisement updated successfully!"
       );
       router.push("/admin/advertisements");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message || "Failed to update advertisement."

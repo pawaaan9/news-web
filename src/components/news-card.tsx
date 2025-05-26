@@ -34,7 +34,6 @@ export default function NewsCard({
       typeof category[0] === "object" &&
       category[0] !== null
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       parsedCategories = (category as any[])
         .map((c) => c.name || "")
         .filter(Boolean);

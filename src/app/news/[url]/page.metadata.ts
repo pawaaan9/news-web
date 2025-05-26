@@ -41,7 +41,6 @@ export async function generateMetadata({
       keywords = article.keywords.split(",").map((k: string) => k.trim());
     }
     if (Array.isArray(article.category)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       keywords.push(...article.category.map((c: any) => c.name));
     } else if (typeof article.category === "string") {
       keywords.push(article.category);

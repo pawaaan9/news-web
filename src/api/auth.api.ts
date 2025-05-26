@@ -41,7 +41,6 @@ export const login = async (data: LoginData) => {
   if (token) {
     localStorage.setItem("token", token);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const decoded: any = jwtDecode(token);
 
     if (decoded.userRole) {
