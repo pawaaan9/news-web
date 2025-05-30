@@ -51,3 +51,26 @@ export const getContentStatus = async (): Promise<ContentStatusResponse> => {
   );
   return response.data;
 };
+
+export const uploadFooterLogo = async (logoFile: File) => {
+  const formData = new FormData();
+  formData.append("footer-logo", logoFile);
+
+  const response = await axios.post<LogoApiResponse>(
+    `${API_URL}/logo/upload-footer-logo`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
+export const getFooterLogo = async (): Promise<LogoApiResponse> => {
+  const response = await axiosInstance.get<LogoApiResponse>(
+    "/logo/footer-logo"
+  );
+  return response.data;
+};

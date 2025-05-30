@@ -7,16 +7,30 @@ import { IconCirclePlus, IconNews } from "@tabler/icons-react";
 import withAuth from "@/hoc/with-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { getContentStatus, getLogo, uploadLogo } from "@/api/logo.api";
+import {
+  getContentStatus,
+  getFooterLogo,
+  getLogo,
+  uploadFooterLogo,
+  uploadLogo,
+} from "@/api/logo.api";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 
 const DashboardPage = () => {
   const router = useRouter();
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [footerLogoFile, setFooterLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [currentLogo, setCurrentLogo] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [footerLogoPreview, setFooterLogoPreview] = useState<string | null>(
+    null
+  );
+  const [currentFooterLogo, setCurrentFooterLogo] = useState<string | null>(
+    null
+  );
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const footerLogoInputRef = useRef<HTMLInputElement>(null);
   const [totalNews, setTotalNews] = useState(0);
   const [totalPublished, setTotalPublished] = useState(0);
   const [newsToday, setNewsToday] = useState(0);
@@ -36,6 +50,20 @@ const DashboardPage = () => {
       }
     };
     fetchLogo();
+
+    const fetchFooterLogo = async () => {
+      try {
+        const res = await getFooterLogo();
+        if (res && res.data && typeof res.data.url === "string") {
+          setCurrentFooterLogo(res.data.url);
+        } else {
+          setCurrentFooterLogo(null);
+        }
+      } catch {
+        setCurrentFooterLogo(null);
+      }
+    };
+    fetchFooterLogo();
 
     const fetchStats = async () => {
       try {
@@ -62,6 +90,14 @@ const DashboardPage = () => {
     }
   };
 
+  const handleFooterLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFooterLogoFile(file);
+      setFooterLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleLogoUpload = async () => {
     try {
       if (!logoFile) return;
@@ -69,6 +105,23 @@ const DashboardPage = () => {
       if (res && res.data && typeof res.data.url === "string") {
         setCurrentLogo(res.data.url);
         setLogoFile(null);
+        setFooterLogoPreview(null);
+        toast.success("Logo uploaded successfully!");
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch {
+      toast.error("Logo upload failed!");
+    }
+  };
+
+  const handleFooterLogoUpload = async () => {
+    try {
+      if (!footerLogoFile) return;
+      const res = await uploadFooterLogo(footerLogoFile);
+      if (res && res.data && typeof res.data.url === "string") {
+        setCurrentFooterLogo(res.data.url);
+        setFooterLogoFile(null);
         setLogoPreview(null);
         toast.success("Logo uploaded successfully!");
       } else {
@@ -115,14 +168,14 @@ const DashboardPage = () => {
           type="file"
           accept="image/*"
           className="hidden"
-          ref={fileInputRef}
+          ref={logoInputRef}
           onChange={handleLogoChange}
         />
         <div className="flex gap-2">
           <Button
             className="bg-primary text-white"
             size="sm"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => logoInputRef.current?.click()}
           >
             Choose Logo
           </Button>
@@ -133,6 +186,54 @@ const DashboardPage = () => {
             disabled={!logoFile}
           >
             Upload Logo
+          </Button>
+        </div>
+      </div>
+
+      <div className="mb-8 flex flex-col items-center">
+        <h2 className="text-[24px] font-bold text-charcoal mb-4 text-center">
+          Change footer logo
+        </h2>
+        {currentFooterLogo && (
+          <Image
+            src={currentFooterLogo}
+            alt="Current Logo"
+            className="h-20 mb-2 rounded shadow"
+            width={200}
+            height={80}
+          />
+        )}
+        {footerLogoPreview && (
+          <Image
+            src={footerLogoPreview}
+            alt="Logo Preview"
+            className="h-20 mb-2 rounded shadow"
+            width={200}
+            height={80}
+          />
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={footerLogoInputRef}
+          onChange={handleFooterLogoChange}
+        />
+        <div className="flex gap-2">
+          <Button
+            className="bg-primary text-white"
+            size="sm"
+            onClick={() => footerLogoInputRef.current?.click()}
+          >
+            Choose Logo
+          </Button>
+          <Button
+            className="bg-accent-teal text-white"
+            size="sm"
+            onClick={handleFooterLogoUpload}
+            disabled={!footerLogoFile}
+          >
+            Upload Footer Logo
           </Button>
         </div>
       </div>

@@ -10,6 +10,8 @@ import {
   FaYoutube,
   FaXTwitter,
 } from "react-icons/fa6";
+import { useEffect, useState } from "react";
+import { getFooterLogo } from "@/api/logo.api";
 
 const footerLinks = [
   { name: "About", href: "/about" },
@@ -21,6 +23,24 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const res = await getFooterLogo();
+        if (res && res.data && typeof res.data.url === "string") {
+          setLogoUrl(res.data.url);
+        } else {
+          setLogoUrl(null);
+        }
+      } catch {
+        setLogoUrl(null);
+      }
+    };
+    fetchLogo();
+  }, []);
+
   return (
     <footer className="relative py-4 z-10 font-rubik">
       {/* Gradient Background */}
@@ -37,7 +57,7 @@ export default function Footer() {
             style={{ minHeight: 40, width: 140, maxWidth: "100%" }}
           >
             <Image
-              src={footerLogo}
+              src={logoUrl ?? footerLogo}
               alt="TamilMedia Logo"
               width={120}
               height={32}
