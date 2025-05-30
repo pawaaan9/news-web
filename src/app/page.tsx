@@ -173,7 +173,7 @@ function HomeContent() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p>இந்தப் பிரிவில் எந்தச் செய்தியும் இல்லை.</p>
+              <span className="inline-block w-8 h-8 border-4 border-accent-orange border-t-transparent rounded-full animate-spin"></span>
             </div>
           )}
         </div>

@@ -38,7 +38,10 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
   }, [shouldFetch]);
 
   if (!shouldFetch) return null;
-  if (loading) return <p>Loading featured news...</p>;
+  if (loading)
+    return (
+      <span className="inline-block w-8 h-8 border-4 border-accent-orange border-t-transparent rounded-full animate-spin"></span>
+    );
   if (!featuredNews) return <p>No featured news available.</p>;
 
   // Parse categories

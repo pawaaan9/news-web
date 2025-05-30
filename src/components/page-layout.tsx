@@ -36,7 +36,7 @@ export default function PageLayout({ children, title }: PageLayoutProps) {
 
               {/* Title Section */}
               <div className="relative px-8 py-12 text-center">
-                <h1 className="text-4xl font-bold font-muktaMalar mb-4 text-gray-800">
+                <h1 className="text-4xl font-bold  mb-4 text-gray-800 font-rubik">
                   {title}
                 </h1>
                 <div className="w-24 h-1 bg-gradient-to-r from-[#ff3131] to-[#ff914d] mx-auto"></div>

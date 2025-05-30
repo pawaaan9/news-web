@@ -38,7 +38,10 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
   }, [shouldFetch]);
 
   if (!shouldFetch) return null;
-  if (loading) return <p>Loading special news...</p>;
+  if (loading)
+    return (
+      <span className="inline-block w-8 h-8 border-4 border-accent-orange border-t-transparent rounded-full animate-spin"></span>
+    );
   if (specialNews.length === 0) return <p>No special news available.</p>;
 
   return (

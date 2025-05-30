@@ -50,11 +50,28 @@ export default function NewsView() {
     if (categoryName) {
       router.push(`/?category=${encodeURIComponent(categoryName)}`);
     } else {
-      router.push('/');
+      router.push("/");
     }
   };
 
-  const relatedNews = otherNews.slice(0, 2);
+  // Find related news by matching category
+  const relatedNews = otherNews
+    .filter((news) => {
+      if (!article || !article.category || !news.category) return false;
+
+      // Convert both categories to arrays of strings for comparison
+      const articleCategories = Array.isArray(article.category)
+        ? article.category.map((c) => (typeof c === "object" ? c.name : c))
+        : [article.category];
+
+      const newsCategories = Array.isArray(news.category)
+        ? news.category.map((c) => (typeof c === "object" ? c.name : c))
+        : [news.category];
+
+      // Check if any category matches
+      return articleCategories.some((cat) => newsCategories.includes(cat));
+    })
+    .slice(0, 2);
 
   function splitContentAtParagraph(html: string, afterParagraph = 2) {
     const parts = html.split(/(<\/p>)/i);
@@ -241,7 +258,7 @@ export default function NewsView() {
 
             {relatedNews.length > 0 && (
               <div className="my-4 p-4 bg-gray-50 rounded-lg ">
-                <h3 className="text-lg font-bold mb-4 text-accent-teal">
+                <h3 className="text-lg font-bold mb-4 text-[#ff3131] font-muktaMalar">
                   தொடர்புடைய செய்திகள்
                 </h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
