@@ -27,9 +27,14 @@ interface ContentResponse {
 }
 
 // Get all content
-export const getContent = async (): Promise<ContentResponse> => {
-  const response = await axiosInstance.get<ContentResponse>("/content");
-  return response.data;
+export const getContent = async (page: number = 1, limit: number = 10): Promise<ContentResponse> => {
+  try {
+    const response = await axiosInstance.get<ContentResponse>(`/content?page=${page}&limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    throw error;
+  }
 };
 
 // Submit content (Create or Update)

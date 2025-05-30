@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LabelText } from "@/modules/shared/label-text";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { format } from "date-fns";
 // import { categories } from "@/data/categories";
 import { contentstatus } from "@/data/status";
@@ -40,32 +40,57 @@ const ContentPage = () => {
   const [isProcessingScheduled, setIsProcessingScheduled] = useState(false);
   const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastContentRef = useCallback((node: HTMLTableRowElement) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setCurrentPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoading, hasMore]);
+
+  const fetchContent = async (page: number) => {
+    try {
+      setIsLoading(true);
+      const response = await getContent(page);
+      if (
+        typeof response === "object" &&
+        response !== null &&
+        "status" in response &&
+        response.status === "success" &&
+        "data" in response &&
+        Array.isArray((response as { data: ContentData[] }).data)
+      ) {
+        const newContent = (response as { data: ContentData[] }).data;
+        if (page === 1) {
+          setContentData(newContent);
+          setFilteredContent(newContent);
+        } else {
+          setContentData(prev => [...prev, ...newContent]);
+          setFilteredContent(prev => [...prev, ...newContent]);
+        }
+        setHasMore(newContent.length === 10); // Assuming 10 items per page
+      } else {
+        setContentData([]);
+        setFilteredContent([]);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching content:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const response = await getContent();
-        if (
-          typeof response === "object" &&
-          response !== null &&
-          "status" in response &&
-          response.status === "success" &&
-          "data" in response &&
-          Array.isArray((response as { data: ContentData[] }).data)
-        ) {
-          setContentData((response as { data: ContentData[] }).data);
-          setFilteredContent((response as { data: ContentData[] }).data);
-        } else {
-          setContentData([]);
-          setFilteredContent([]);
-        }
-      } catch (error) {
-        console.error("Error fetching content:", error);
-      }
-    };
-
-    fetchContent();
-  }, []);
+    fetchContent(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -343,16 +368,16 @@ const ContentPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(filteredContent) &&
-                filteredContent.length > 0 ? (
-                  filteredContent.map((content) => (
+                {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
+                  filteredContent.map((content, index) => (
                     <tr
                       key={content._id}
+                      ref={index === filteredContent.length - 1 ? lastContentRef : null}
                       className={`border-t border-gray-200 text-sm text-gray-700 ${
                         content.isSpecial
-                          ? "bg-yellow-100" // Highlight for special news
+                          ? "bg-yellow-100"
                           : content.isFeatured
-                          ? "bg-blue-100" // Highlight for featured news
+                          ? "bg-blue-100"
                           : ""
                       }`}
                     >
@@ -431,6 +456,11 @@ const ContentPage = () => {
                 )}
               </tbody>
             </table>
+            {isLoading && (
+              <div className="flex justify-center items-center py-4">
+                <IconLoader2 size={24} className="animate-spin text-primary" />
+              </div>
+            )}
           </div>
         </div>
 
