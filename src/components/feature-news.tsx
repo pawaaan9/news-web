@@ -61,7 +61,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-acccent-orange rounded-lg shadow-sm  h-full flex flex-col">
+      <div className="bg-white shadow-acccent-orange rounded-xl shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div
