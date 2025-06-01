@@ -97,7 +97,7 @@ export default function Footer() {
               <FaTiktok className="text-black" size={20} />
             </Link>
             <Link
-              href="youtube.com@tamilmedia.online"
+              href="https://www.youtube.com/@tamilmediaonline"
               aria-label="YouTube"
               target="_blank"
               rel="noopener noreferrer"
