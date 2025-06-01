@@ -192,7 +192,8 @@ export default function NewsView() {
                 ) => (
                   <span
                     key={index}
-                    className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded"
+                    onClick={() => handleCategoryClick(cat.name)}
+                    className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded cursor-pointer "
                   >
                     {cat.subCategory
                       ? `${cat.name} (${cat.subCategory})`
@@ -201,7 +202,10 @@ export default function NewsView() {
                 )
               )
             ) : (
-              <span className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded">
+              <span 
+                onClick={() => handleCategoryClick(article.category as string)}
+                className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded cursor-pointer hover:underline"
+              >
                 {article.category}
               </span>
             )}

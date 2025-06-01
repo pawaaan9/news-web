@@ -70,7 +70,7 @@ export default function Footer() {
           {/* Social Media Links */}
           <div className="flex gap-5 mb-8">
             <Link
-              href="#"
+              href="https://www.facebook.com/tamilmedia.live"
               aria-label="Facebook"
               target="_blank"
               rel="noopener noreferrer"
@@ -88,7 +88,7 @@ export default function Footer() {
               <FaInstagram className="text-black" size={20} />
             </Link>
             <Link
-              href="#"
+              href="https://www.tiktok.com/@tamilmedia.lk"
               aria-label="Tiktok"
               target="_blank"
               rel="noopener noreferrer"
@@ -97,7 +97,7 @@ export default function Footer() {
               <FaTiktok className="text-black" size={20} />
             </Link>
             <Link
-              href="#"
+              href="youtube.com@tamilmedia.online"
               aria-label="YouTube"
               target="_blank"
               rel="noopener noreferrer"
@@ -106,7 +106,7 @@ export default function Footer() {
               <FaYoutube className="text-black" size={20} />
             </Link>
             <Link
-              href="#"
+              href="https://x.com/tamilmedia_x"
               aria-label="X"
               target="_blank"
               rel="noopener noreferrer"

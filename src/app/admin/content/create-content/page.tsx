@@ -53,6 +53,9 @@ const CreateContent = () => {
   const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
   const [isShownOnHome, setIsShownOnHome] = useState(true);
   const router = useRouter();
+  const [isDraftSaved, setIsDraftSaved] = useState(false);
+  const [isPreviewViewed, setIsPreviewViewed] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -162,7 +165,7 @@ const CreateContent = () => {
     fetchData();
   }, []);
 
-  const handleSubmit = async (status: "Draft" | "Published") => {
+  const handleDraftSave = async () => {
     if (!selectedCategories) {
       alert("Category is required.");
       return;
@@ -170,11 +173,6 @@ const CreateContent = () => {
 
     if (!headlineImage) {
       alert("Headline image is required.");
-      return;
-    }
-
-    if (publishOption === "schedule" && (!scheduledDate || !scheduledTime)) {
-      alert("Please select both date and time for scheduling.");
       return;
     }
 
@@ -190,7 +188,7 @@ const CreateContent = () => {
       formData.append("category", JSON.stringify(selectedCategories));
       formData.append("keywords", JSON.stringify(selectedKeywords));
       formData.append("provinces", JSON.stringify(selectedProvinces));
-      formData.append("status", status);
+      formData.append("status", "Draft");
       formData.append("content", content);
       formData.append("author", author);
       formData.append("isFeatured", String(isFeatured));
@@ -198,36 +196,116 @@ const CreateContent = () => {
       formData.append("isShownOnHome", String(isShownOnHome));
       formData.append("isBreaking", String(isBreaking));
 
-      // Add scheduling information if scheduled
-      if (publishOption === "schedule") {
-        const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
-        formData.append(
-          "scheduledPublishDate",
-          scheduledDateTime.toISOString()
-        );
-      }
+      await submitContent(formData);
+      toast.success("Content saved as draft!");
+      setIsDraftSaved(true);
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      toast.error("Failed to save draft. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+  // Timer effect
+  useEffect(() => {
+    if (!isDraftSaved) return; // Only start timer after draft is saved
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push("/admin/content");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isDraftSaved, router]);
+
+  // Format time for display
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const handlePreview = () => {
+    const previewContent = {
+      headline1,
+      headline2,
+      headline3,
+      content,
+      headlineImage: headlineImage ? URL.createObjectURL(headlineImage) : "",
+      author,
+      category: selectedCategories,
+      keywords: selectedKeywords,
+      isFeatured,
+      isSpecial,
+    };
+    sessionStorage.setItem("previewContent", JSON.stringify(previewContent));
+    // Set preview viewed state when preview button is clicked
+    setIsPreviewViewed(true);
+    // Open preview in new tab
+    window.open("/admin/content/preview", "_blank");
+    // Redirect to content list
+    router.push("/admin/content");
+  };
+
+  const handlePublish = async () => {
+    if (!selectedCategories) {
+      alert("Category is required.");
+      return;
+    }
+
+    if (!headlineImage) {
+      alert("Headline image is required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", headlineImage as File);
+      formData.append("headline1", headline1);
+      formData.append("headline2", headline2);
+      formData.append("headline3", headline3);
+      formData.append("seoTitle", seoTitle);
+      formData.append("url", url);
+      formData.append("category", JSON.stringify(selectedCategories));
+      formData.append("keywords", JSON.stringify(selectedKeywords));
+      formData.append("provinces", JSON.stringify(selectedProvinces));
+      formData.append("status", "Published");
+      formData.append("content", content);
+      formData.append("author", author);
+      formData.append("isFeatured", String(isFeatured));
+      formData.append("isSpecial", String(isSpecial));
+      formData.append("isShownOnHome", String(isShownOnHome));
+      formData.append("isBreaking", String(isBreaking));
+
+      // Log the form data for debugging
       for (const [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
 
-      await submitContent(formData);
-      toast.success(
-        status === "Draft"
-          ? "Content saved as draft!"
-          : "Content updated and published successfully!"
-      );
-      router.push("/admin/content");
-    } catch (error: unknown) {
-      console.error("Error submitting content:", error);
-      if (error && typeof error === "object" && "response" in error) {
-        const axiosError = error as {
-          response?: { data: unknown; status: number; headers: unknown };
-        };
-        console.error("Error response data:", axiosError.response?.data);
-        console.error("Error response status:", axiosError.response?.status);
-        console.error("Error response headers:", axiosError.response?.headers);
+      const response = await axios.post<{ status: string; message?: string }>(`${API_URL}/content`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.data.status === 'success') {
+        toast.success("Content published successfully!");
+        router.push("/admin/content");
+      } else {
+        throw new Error(response.data.message || 'Failed to publish content');
       }
+    } catch (error: any) {
+      console.error("Error publishing content:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to publish content. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -236,6 +314,16 @@ const CreateContent = () => {
   return (
     <AdminLayout pageTitle="CONTENT">
       <div className="bg-white p-4 rounded-lg ">
+        
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center justify-between">
+            <p className="text-yellow-800 font-medium">
+              Time remaining: {formatTime(timeLeft)}
+            </p>
+            <p className="text-yellow-600 text-sm">
+              You will be redirected when time expires
+            </p>
+          </div>
+        
         <PageTitle title="Create content" />
         <div className="flex flex-col gap-4 mt-4">
           <div>
@@ -507,6 +595,22 @@ const CreateContent = () => {
                 <input
                   type="radio"
                   name="specialOption"
+                  value="none"
+                  checked={!isFeatured && !isSpecial && !isBreaking}
+                  onChange={() => {
+                    setIsFeatured(false);
+                    setIsSpecial(false);
+                    setIsBreaking(false);
+                  }}
+                  className="form-radio text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">None</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="specialOption"
                   value="featured"
                   checked={isFeatured}
                   onChange={() => {
@@ -552,7 +656,7 @@ const CreateContent = () => {
               </label>
             </div>
             <p className="text-sm text-charcoal/60 mt-1">
-              Only one option can be selected at a time.
+              Select one option or None to clear selection.
             </p>
           </div>
 
@@ -654,56 +758,37 @@ const CreateContent = () => {
           )}
 
           <div className="flex flex-col lg:flex-row gap-4 mt-4">
-            <Button
-              className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer"
-              onClick={() => {
-                // Prepare preview data
-                const previewContent = {
-                  headline1,
-                  headline2,
-                  headline3,
-                  content,
-                  headlineImage: headlineImage
-                    ? URL.createObjectURL(headlineImage)
-                    : "",
-                  author,
-                  category: selectedCategories,
-                  keywords: selectedKeywords,
-                  isFeatured,
-                  isSpecial,
-                };
-                sessionStorage.setItem(
-                  "previewContent",
-                  JSON.stringify(previewContent)
-                );
-                router.push("/admin/content/preview");
-              }}
-            >
-              <IconEye size={20} />
-              Preview
-            </Button>
-            <Button
-              className="bg-white text-primary border-primary border hover:bg-primary/10 cursor-pointer"
-              variant="outline"
-              onClick={() => handleSubmit("Draft")}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <IconLoader2 size={20} className="animate-spin mr-2" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <IconNote size={20} />
-                  Save as Draft
-                </>
-              )}
-            </Button>
-            {publishOption === "now" ? (
+            {!isDraftSaved ? (
+              <Button
+                className="bg-white text-primary border-primary border hover:bg-primary/10 cursor-pointer"
+                variant="outline"
+                onClick={handleDraftSave}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <IconNote size={20} />
+                    Save as Draft
+                  </>
+                )}
+              </Button>
+            ) : !isPreviewViewed ? (
+              <Button
+                className="bg-accent-teal text-white hover:bg-accent-teal/80 cursor-pointer"
+                onClick={handlePreview}
+              >
+                <IconEye size={20} />
+                Preview
+              </Button>
+            ) : (
               <Button
                 className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
-                onClick={() => handleSubmit("Published")}
+                onClick={handlePublish}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -715,24 +800,6 @@ const CreateContent = () => {
                   <>
                     <IconBrowserShare size={20} />
                     Publish
-                  </>
-                )}
-              </Button>
-            ) : (
-              <Button
-                className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
-                onClick={() => handleSubmit("Draft")}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <IconLoader2 size={20} className="animate-spin mr-2" />
-                    Scheduling...
-                  </>
-                ) : (
-                  <>
-                    <IconBrowserShare size={20} />
-                    Schedule
                   </>
                 )}
               </Button>

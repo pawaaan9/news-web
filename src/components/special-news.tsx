@@ -5,6 +5,7 @@ import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
 
 interface SpecialNewsProps {
   shouldFetch: boolean;
@@ -13,6 +14,11 @@ interface SpecialNewsProps {
 export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
   const [specialNews, setSpecialNews] = useState<ContentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const handleCategoryClick = (categoryName: string) => {
+    router.push(`/?category=${encodeURIComponent(categoryName)}`);
+  };
 
   useEffect(() => {
     const fetchSpecialNews = async () => {
@@ -74,23 +80,23 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
               // }
 
               return (
-                <Link
-                  href={`/news/${item.url}`}
-                  passHref
+                <div
                   key={item._id}
                   className="cursor-pointer h-full flex flex-col"
                 >
                   <div className="rounded-lg overflow-hidden shadow-md mx-2 bg-white relative hover:shadow-lg transition-shadow duration-300 flex-grow">
                     <div className="relative w-full pt-[56.25%]">
                       {/* 16:9 aspect ratio */}
-                      <Image
-                        src={item.headlineImage}
-                        alt={item.headline1}
-                        fill
-                        className="object-cover absolute inset-0 w-full h-full"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority
-                      />
+                      <Link href={`/news/${item.url}`} passHref>
+                        <Image
+                          src={item.headlineImage}
+                          alt={item.headline1}
+                          fill
+                          className="object-cover absolute inset-0 w-full h-full"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority
+                        />
+                      </Link>
                       {/* Category badge in top-left corner */}
                       {item.category && (
                         <div className="absolute top-2 left-2 flex flex-wrap gap-1 z-20">
@@ -98,7 +104,11 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                             item.category.map((cat: any, idx: number) => (
                               <span
                                 key={idx}
-                                className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCategoryClick(cat.name);
+                                }}
+                                className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded cursor-pointer hover:underline"
                               >
                                 {cat.subCategory
                                   ? `${cat.name} (${cat.subCategory})`
@@ -106,7 +116,13 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                               </span>
                             ))
                           ) : (
-                            <span className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded">
+                            <span 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCategoryClick(item.category as string);
+                              }}
+                              className="bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-0.5 rounded cursor-pointer hover:underline"
+                            >
                               {item.category}
                             </span>
                           )}
@@ -114,20 +130,22 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                       )}
                     </div>
 
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold font-muktaMalar leading-5">
-                        {item.headline1}
-                      </h3>
-                      <div className="text-sm text-gray-400 mt-2 flex justify-between">
-                        <div>by {item.author} </div>
+                    <Link href={`/news/${item.url}`} passHref>
+                      <div className="p-4">
+                        <h3 className="text-lg font-bold font-muktaMalar leading-5">
+                          {item.headline1}
+                        </h3>
+                        <div className="text-sm text-gray-400 mt-2 flex justify-between">
+                          <div>by {item.author} </div>
 
-                        {formatDistanceToNow(new Date(item.createdTime), {
-                          addSuffix: true,
-                        })}
+                          {formatDistanceToNow(new Date(item.createdTime), {
+                            addSuffix: true,
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>

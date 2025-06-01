@@ -490,6 +490,22 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                   <input
                     type="radio"
                     name="specialOption"
+                    value="none"
+                    checked={!isFeatured && !isSpecial && !isBreaking}
+                    onChange={() => {
+                      setIsFeatured(false);
+                      setIsSpecial(false);
+                      setIsBreaking(false);
+                    }}
+                    className="form-radio text-primary focus:ring-primary/80"
+                  />
+                  <span className="text-charcoal">None</span>
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="specialOption"
                     value="featured"
                     checked={isFeatured}
                     onChange={() => {
@@ -535,7 +551,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                 </label>
               </div>
               <p className="text-sm text-charcoal/60 mt-1">
-                Only one option can be selected at a time.
+                Select one option or None to clear selection.
               </p>
             </div>
 
