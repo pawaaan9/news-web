@@ -44,6 +44,8 @@ interface ContentResponse {
     category: Array<{ name: string; subCategory?: string }>;
     keywords: string[];
     provinces: string[];
+    isShownOnHome?: boolean;
+    scheduledPublishDate?: string;
   };
 }
 
@@ -67,7 +69,20 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
   const [author, setAuthor] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProvinces, setSelectedProvinces] = useState<string[]>([]);
+  const [isShownOnHome, setIsShownOnHome] = useState(true);
+  const [publishOption, setPublishOption] = useState<"now" | "schedule">("now");
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userRole");
+      const roleNo = stored ? Number(stored) : null;
+      setUserRoleNo(roleNo);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -87,6 +102,15 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
         setIsFeatured(data.isFeatured);
         setIsSpecial(data.isSpecial);
         setIsBreaking(data.isBreaking);
+        setIsShownOnHome(data.isShownOnHome ?? true);
+
+        // Set scheduling information if it exists
+        if (data.scheduledPublishDate) {
+          setPublishOption("schedule");
+          const scheduledDate = new Date(data.scheduledPublishDate);
+          setScheduledDate(format(scheduledDate, "yyyy-MM-dd"));
+          setScheduledTime(format(scheduledDate, "HH:mm"));
+        }
 
         if (Array.isArray(data.category)) {
           const parsedCategories = data.category.map(
@@ -205,7 +229,16 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       updatePayload.append("isFeatured", String(isFeatured));
       updatePayload.append("isSpecial", String(isSpecial));
       updatePayload.append("isBreaking", String(isBreaking));
-      updatePayload.append("image", headlineImage as File);
+      updatePayload.append("isShownOnHome", String(isShownOnHome));
+      if (headlineImage) {
+        updatePayload.append("image", headlineImage);
+      }
+
+      // Add scheduling information if schedule option is selected
+      if (publishOption === "schedule" && scheduledDate && scheduledTime) {
+        const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
+        updatePayload.append("scheduledPublishDate", scheduledDateTime.toISOString());
+      }
 
       await updateContent(params.id, updatePayload);
       toast.success(
@@ -216,7 +249,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       router.push("/admin/content");
     } catch (error) {
       console.error("Error updating content:", error);
-      // toast.error(error?.response?.data?.message || "Failed to update ");
+      toast.error("Failed to update content. Please try again.");
     }
   };
 
@@ -584,6 +617,81 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
               <LabelText text="- Click Save as Draft if you're not ready to publish yet, your progress will be saved." />
               <LabelText text="- Click Publish to make this article live immediately." />
             </div>
+
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isShownOnHome}
+                  onChange={(e) => setIsShownOnHome(e.target.checked)}
+                  className="form-checkbox text-primary focus:ring-primary/80"
+                />
+                <span className="text-charcoal">
+                  This content will show on home feed.
+                </span>
+              </label>
+            </div>
+
+            {[4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+              <div>
+                <InputText text="Publishing Options" />
+                <div className="flex flex-col gap-4 mt-2">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="publishOption"
+                        value="now"
+                        checked={publishOption === "now"}
+                        onChange={() => setPublishOption("now")}
+                        className="form-radio text-primary focus:ring-primary/80"
+                      />
+                      <span className="text-charcoal">Publish Now</span>
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="publishOption"
+                        value="schedule"
+                        checked={publishOption === "schedule"}
+                        onChange={() => setPublishOption("schedule")}
+                        className="form-radio text-primary focus:ring-primary/80"
+                      />
+                      <span className="text-charcoal">Schedule for Later</span>
+                    </label>
+                  </div>
+
+                  {publishOption === "schedule" && (
+                    <div className="flex gap-4">
+                      <div>
+                        <label className="block text-sm text-charcoal/60 mb-1">
+                          Date
+                        </label>
+                        <Input
+                          type="date"
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                          min={format(new Date(), "yyyy-MM-dd")}
+                          className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-charcoal/60 mb-1">
+                          Time
+                        </label>
+                        <Input
+                          type="time"
+                          value={scheduledTime}
+                          onChange={(e) => setScheduledTime(e.target.value)}
+                          className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-col lg:flex-row gap-4 mt-4">
               <Button
