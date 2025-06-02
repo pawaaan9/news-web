@@ -271,7 +271,7 @@ export default function NavBar({
                     : "hover:bg-gradient-to-r hover:from-[#ff3131] hover:to-[#ff914d] hover:text-white"
                 }`}
               >
-                Other
+                ஏனையவை
                 <ChevronDown
                   size={16}
                   className="ml-1 transition-transform duration-200 group-hover:rotate-180"
@@ -389,7 +389,7 @@ export default function NavBar({
                 }`}
               >
                 <Home size={16} />
-                Home
+                முகப்பு
               </Link>
 
               {categories.map((item) => (

@@ -229,7 +229,7 @@ const CreateContent = () => {
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
   const handlePreview = () => {
@@ -290,21 +290,28 @@ const CreateContent = () => {
         console.log(`${key}:`, value);
       }
 
-      const response = await axios.post<{ status: string; message?: string }>(`${API_URL}/content`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post<{ status: string; message?: string }>(
+        `${API_URL}/content`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      if (response.data.status === 'success') {
+      if (response.data.status === "success") {
         toast.success("Content published successfully!");
         router.push("/admin/content");
       } else {
-        throw new Error(response.data.message || 'Failed to publish content');
+        throw new Error(response.data.message || "Failed to publish content");
       }
     } catch (error: any) {
       console.error("Error publishing content:", error);
-      const errorMessage = error.response?.data?.message || error.message || "Failed to publish content. Please try again.";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to publish content. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -314,16 +321,15 @@ const CreateContent = () => {
   return (
     <AdminLayout pageTitle="CONTENT">
       <div className="bg-white p-4 rounded-lg ">
-        
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center justify-between">
-            <p className="text-yellow-800 font-medium">
-              Time remaining: {formatTime(timeLeft)}
-            </p>
-            <p className="text-yellow-600 text-sm">
-              You will be redirected when time expires
-            </p>
-          </div>
-        
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center justify-between">
+          <p className="text-yellow-800 font-medium">
+            Time remaining: {formatTime(timeLeft)}
+          </p>
+          <p className="text-yellow-600 text-sm">
+            You will be redirected when time expires
+          </p>
+        </div>
+
         <PageTitle title="Create content" />
         <div className="flex flex-col gap-4 mt-4">
           <div>

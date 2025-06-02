@@ -52,7 +52,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
   return (
     <div className="h-full">
-      <div className="bg-white shadow-accent-teal rounded-lg shadow-sm  h-full flex flex-col">
+      <div className="bg-white shadow-accent-teal rounded-xl shadow-sm  h-full flex flex-col">
         {/* Header */}
         <div className="mb-6 lg:flex lg:justify-center">
           <div
