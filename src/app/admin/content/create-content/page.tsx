@@ -196,6 +196,12 @@ const CreateContent = () => {
       formData.append("isShownOnHome", String(isShownOnHome));
       formData.append("isBreaking", String(isBreaking));
 
+      // Add scheduling information if schedule option is selected
+      if (publishOption === "schedule" && scheduledDate && scheduledTime) {
+        const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
+        formData.append("scheduledPublishDate", scheduledDateTime.toISOString());
+      }
+
       await submitContent(formData);
       toast.success("Content saved as draft!");
       setIsDraftSaved(true);
