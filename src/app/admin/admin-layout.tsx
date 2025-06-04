@@ -40,7 +40,7 @@ const menuItems = [
     href: "/admin/advertisements",
     label: "Advertisements",
     icon: IconBadgeAd,
-    roles: [1],
+    roles: [1, 7, 8],
   },
   {
     href: "/admin/keywords",
