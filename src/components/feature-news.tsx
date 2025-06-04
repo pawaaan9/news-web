@@ -112,7 +112,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                         </span>
                       ))
                     ) : (
-                      <span 
+                      <span
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCategoryClick(featuredNews.category as string);
@@ -128,7 +128,7 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
 
               <Link href={`/news/${featuredNews.url}`} passHref>
                 <div className="p-4">
-                  <h3 className="text-lg font-bold font-muktaMalar leading-5">
+                  <h3 className="text-lg font-bold font-muktaMalar leading-5 line-clamp-2">
                     {featuredNews.headline1}
                   </h3>
                   <div className="text-sm text-gray-400 mt-2 flex justify-between">

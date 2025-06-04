@@ -44,16 +44,19 @@ const ContentPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
-  const lastContentRef = useCallback((node: HTMLTableRowElement) => {
-    if (isLoading) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setCurrentPage(prevPage => prevPage + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [isLoading, hasMore]);
+  const lastContentRef = useCallback(
+    (node: HTMLTableRowElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
 
   const fetchContent = async (page: number) => {
     try {
@@ -72,8 +75,8 @@ const ContentPage = () => {
           setContentData(newContent);
           setFilteredContent(newContent);
         } else {
-          setContentData(prev => [...prev, ...newContent]);
-          setFilteredContent(prev => [...prev, ...newContent]);
+          setContentData((prev) => [...prev, ...newContent]);
+          setFilteredContent((prev) => [...prev, ...newContent]);
         }
         setHasMore(newContent.length === 10); // Assuming 10 items per page
       } else {
@@ -368,13 +371,20 @@ const ContentPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(filteredContent) && filteredContent.length > 0 ? (
+                {Array.isArray(filteredContent) &&
+                filteredContent.length > 0 ? (
                   filteredContent.map((content, index) => (
                     <tr
                       key={content._id}
-                      ref={index === filteredContent.length - 1 ? lastContentRef : null}
+                      ref={
+                        index === filteredContent.length - 1
+                          ? lastContentRef
+                          : null
+                      }
                       className={`border-t border-gray-200 text-sm text-gray-700 ${
-                        content.isSpecial
+                        content.isBreaking
+                          ? "bg-red-100"
+                          : content.isSpecial
                           ? "bg-yellow-100"
                           : content.isFeatured
                           ? "bg-blue-100"
@@ -391,6 +401,11 @@ const ContentPage = () => {
                         {content.isFeatured && (
                           <span className="ml-2 text-blue-600 font-bold">
                             (Featured)
+                          </span>
+                        )}
+                        {content.isBreaking && (
+                          <span className="ml-2 text-zinc-800-600 font-bold">
+                            (Breaking)
                           </span>
                         )}
                       </td>

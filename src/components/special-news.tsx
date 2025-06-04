@@ -116,7 +116,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                               </span>
                             ))
                           ) : (
-                            <span 
+                            <span
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleCategoryClick(item.category as string);
@@ -132,7 +132,7 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
 
                     <Link href={`/news/${item.url}`} passHref>
                       <div className="p-4">
-                        <h3 className="text-lg font-bold font-muktaMalar leading-5">
+                        <h3 className="text-lg font-bold font-muktaMalar leading-5 line-clamp-2">
                           {item.headline1}
                         </h3>
                         <div className="text-sm text-gray-400 mt-2 flex justify-between">

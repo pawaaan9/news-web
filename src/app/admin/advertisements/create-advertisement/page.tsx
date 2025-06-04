@@ -103,9 +103,10 @@ const CreateAdvertisement = () => {
       !selectedPosition ||
       !selectedCountry ||
       !startDate ||
-      !endDate
+      !endDate ||
+      !photo
     ) {
-      toast.error("Please fill in all required fields.");
+      toast.error("Please fill in all required fields including the advertisement image.");
       return;
     }
 
@@ -113,7 +114,7 @@ const CreateAdvertisement = () => {
       const advertisementData = {
         title,
         description,
-        adImage: photo as File, // Pass the file object
+        adImage: photo, // Pass the file object
         position: selectedPosition,
         country: selectedCountry,
         isWebsiteHave: hasWebsite === "yes",
@@ -134,9 +135,9 @@ const CreateAdvertisement = () => {
           : "Advertisement published successfully!"
       );
       router.push("/admin/advertisements");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating advertisement:", error);
-      toast.error("Failed to create advertisement.");
+      toast.error(error.message || "Failed to create advertisement.");
     }
   };
 

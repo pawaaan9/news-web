@@ -87,7 +87,7 @@ export default function NewsCard({
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
-          <h2 className="text-lg font-semibold mb-2 leading-5 font-muktaMalar ">
+          <h2 className="text-lg font-semibold mb-2 leading-5 font-muktaMalar line-clamp-2">
             {title}
           </h2>
 

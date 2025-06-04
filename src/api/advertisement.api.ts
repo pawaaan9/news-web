@@ -43,14 +43,24 @@ export const createAdvertisement = async (advertisement: AdvertisementData) => {
   // Add image file if provided
   if (advertisement.adImage instanceof File) {
     formData.append("image", advertisement.adImage);
+  } else {
+    // If no image is provided, return an error
+    throw new Error("Advertisement image is required");
   }
 
-  const response = await axios.post(`${API_URL}/advertisement`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}/advertisement`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Failed to create advertisement");
+    }
+    throw error;
+  }
 };
 
 // Get all advertisements

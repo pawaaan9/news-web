@@ -27,6 +27,9 @@ export default function LargeRectangleAd({
           sizes="336px"
           priority
         />
+        <div className="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-1 border border-white rounded">
+          Ad
+        </div>
       </div>
     </a>
   );
