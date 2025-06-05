@@ -202,7 +202,7 @@ export default function NewsView() {
                 )
               )
             ) : (
-              <span 
+              <span
                 onClick={() => handleCategoryClick(article.category as string)}
                 className="inline-block bg-gradient-to-r from-[#ff3131] to-[#ff914d] text-white text-xs px-2 py-1 rounded cursor-pointer hover:underline"
               >
@@ -240,11 +240,6 @@ export default function NewsView() {
             </div>
           )}
 
-          {/* First Advertisement */}
-          <div className="my-8 flex justify-center lg:hidden">
-            <LargeAdCard />
-          </div>
-
           <h2 className="text-xl text-gray-700 mb-1 font-bold font-muktaMalar px-4">
             {article.headline2}
           </h2>
@@ -259,6 +254,11 @@ export default function NewsView() {
           <div className="prose max-w-none mb-3 font-muktaMalar prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl px-4 py-4">
             {/* First part of content */}
             <div dangerouslySetInnerHTML={{ __html: beforeContent }} />
+
+            {/* First Advertisement */}
+            <div className="my-8 flex justify-center lg:hidden">
+              <LargeAdCard />
+            </div>
 
             {relatedNews.length > 0 && (
               <div className="my-4 p-4 bg-gray-50 rounded-lg ">

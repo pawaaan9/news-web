@@ -39,7 +39,6 @@ const ProfilePage = () => {
   const handleSavePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword === confirmPassword) {
-      console.log("New Password:", newPassword);
       const email = user?.email;
       if (!email) {
         console.error("Email not found");
@@ -65,7 +64,6 @@ const ProfilePage = () => {
           theme: "light",
           transition: Bounce,
         });
-        console.log(result);
       } catch (error) {
         console.error("❌ Reset failed:", error);
         toast.error("Failed to Reset Password", {

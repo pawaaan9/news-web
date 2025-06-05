@@ -279,9 +279,9 @@ function HomeContent() {
 
       {/* Main Content */}
       <div className="bg-gray-100 mt-6">
-        <div className="max-w-[1400px] mx-auto px-4 py-8 relative">
+        <div className="max-w-[1400px] mx-auto px-4 pb-8 relative">
           {/* Side Ads - Desktop Only */}
-          <div className="hidden lg:block absolute -left-34 top-0 h-full">
+          <div className="hidden lg:block absolute left-0 top-0 h-full">
             {halfPageAd && (
               <div className="sticky top-[160px]">
                 <HalfPageAd
@@ -303,13 +303,18 @@ function HomeContent() {
               </div>
             )}
           </div>
+          {!selectedCategory && !searchQuery && (
+            <div className="max-w-[1040px] mx-auto">
+              <BreakingNews shouldFetch={true} />
+            </div>
+          )}
 
           {/* Main Content with Side Margins for Ads */}
-          <div className="lg:mx-[160px]">
+          <div className=" max-w-[1040px] mx-auto">
             <div className="lg:bg-white bg-gray-100 rounded-lg lg:shadow">
               {selectedCategory && (
                 <div className="mb-8">
-                  <h1 className="text-3xl font-bold font-muktaMalar mb-2">
+                  <h1 className="text-3xl font-bold font-muktaMalar p-4 lg:p-8">
                     {selectedCategory}
                   </h1>
                   <div
@@ -322,23 +327,22 @@ function HomeContent() {
               )}
 
               {!selectedCategory && !searchQuery && (
-                <div>
-                  <div className="mb-6">
-                    <BreakingNews shouldFetch={true} />
-                  </div>
-                  <div className="flex flex-col lg:flex-row gap-6 mb-8">
-                    <div className="lg:w-1/3">
-                      <FeatureNews shouldFetch={true} />
+                <>
+                  <div className=" lg:p-4">
+                    <div className="flex flex-col lg:flex-row gap-6 mb-8">
+                      <div className="lg:w-1/3">
+                        <FeatureNews shouldFetch={true} />
+                      </div>
+                      <div className="lg:w-2/3">
+                        <SpecialNews shouldFetch={true} />
+                      </div>
                     </div>
-                    <div className="lg:w-2/3">
-                      <SpecialNews shouldFetch={true} />
-                    </div>
                   </div>
-                </div>
+                </>
               )}
 
               {displayNews.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:px-4 pb-4">
                   {newsWithAds}
                 </div>
               ) : (
@@ -352,14 +356,27 @@ function HomeContent() {
       </div>
       <Footer />
 
+      {showSkyscraper && skyscraperAd && <div className="h-[80px] w-full" />}
+
       {/* Skyscraper Ad - Bottom of Page */}
       {showSkyscraper && skyscraperAd && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-50">
-          <div className="max-w-[1400px] mx-auto px-4 py-2 relative">
+          <div className="max-w-[1040px] mx-auto px-4 py-2 relative">
+            <SkyscraperAd
+              imageUrl={getImageUrl(skyscraperAd)}
+              linkUrl={getLinkUrl(skyscraperAd)}
+              alt={skyscraperAd.title}
+            />
             <button
               onClick={() => setShowSkyscraper(false)}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+              className="absolute right-2 top-2 z-20 text-gray-500 hover:text-gray-700 bg-white/80 rounded-full p-1 pointer-events-auto flex items-center justify-center"
               aria-label="Close advertisement"
+              style={{
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                width: "40px",
+                height: "40px",
+                background: "rgba(255,255,255,0.95)",
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -368,6 +385,7 @@ function HomeContent() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
+                <circle cx="12" cy="12" r="20" fill="#fff" opacity="0.7" />
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -376,11 +394,6 @@ function HomeContent() {
                 />
               </svg>
             </button>
-            <SkyscraperAd
-              imageUrl={getImageUrl(skyscraperAd)}
-              linkUrl={getLinkUrl(skyscraperAd)}
-              alt={skyscraperAd.title}
-            />
           </div>
         </div>
       )}

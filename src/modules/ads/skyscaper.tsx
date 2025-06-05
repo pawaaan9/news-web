@@ -16,7 +16,7 @@ export default function SkyscraperAd({
       href={linkUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="lg:block w-full h-[100px] rounded-lg overflow-hidden shadow-md bg-white mx-auto mb-6 hidden"
+      className="block w-full h-[100px] rounded-lg overflow-hidden bg-gray-100 mx-auto mb-6"
     >
       <div className="relative w-full h-[100px]">
         <Image

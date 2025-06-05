@@ -68,7 +68,6 @@ const DashboardPage = () => {
     const fetchStats = async () => {
       try {
         const res = await getContentStatus();
-        console.log(res);
         if (res && res.data) {
           setTotalNews(res.data.totalNews);
           setTotalPublished(res.data.totalPublished);

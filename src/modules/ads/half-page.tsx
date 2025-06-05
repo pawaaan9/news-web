@@ -16,9 +16,9 @@ export default function HalfPageAd({
       href={linkUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="lg:block w-[300px] h-[600px] rounded-lg overflow-hidden shadow-md bg-white mx-auto mb-6 hidden"
+      className="lg:block w-[160px] h-[600px] rounded-lg overflow-hidden bg-gray-100 mx-auto mb-6 hidden"
     >
-      <div className="relative w-[300px] h-[600px]">
+      <div className="relative w-[160px] h-[600px]">
         <Image
           src={imageUrl}
           alt={alt}

@@ -62,7 +62,6 @@ const CreateContent = () => {
       const stored = localStorage.getItem("userRole");
       const roleNo = stored ? Number(stored) : null;
       setUserRoleNo(roleNo);
-      console.log("User role number:", roleNo);
     }
   }, []);
 
@@ -115,10 +114,6 @@ const CreateContent = () => {
         Array.isArray(response.data.urls) &&
         response.data.urls.length > 0
       ) {
-        console.log(
-          "Rich text image upload successful:",
-          response.data.urls[0]
-        );
         return response.data.urls[0];
       } else {
         console.error("Invalid response format:", response.data);
@@ -156,7 +151,6 @@ const CreateContent = () => {
       try {
         const result = await getProfile();
         setAuthor(result.data.user.username);
-        console.log("Author fetched:", result.data.user.username);
       } catch (err) {
         console.error("Failed to fetch profile", err);
       }
@@ -199,7 +193,10 @@ const CreateContent = () => {
       // Add scheduling information if schedule option is selected
       if (publishOption === "schedule" && scheduledDate && scheduledTime) {
         const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
-        formData.append("scheduledPublishDate", scheduledDateTime.toISOString());
+        formData.append(
+          "scheduledPublishDate",
+          scheduledDateTime.toISOString()
+        );
       }
 
       await submitContent(formData);

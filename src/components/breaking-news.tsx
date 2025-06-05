@@ -54,26 +54,27 @@ export default function BreakingNews({ shouldFetch }: BreakingNewsProps) {
 
   return (
     <div className="w-full mb-8">
-      <div className="bg-white rounded-xl shadow-md flex flex-col lg:flex-row overflow-hidden h-full lg:h-[260px]">
+      <div className="bg-white rounded-xl shadow-sm shadow-red-500 flex flex-col lg:flex-row overflow-hidden h-full lg:h-[260px]">
+        <div className="mb-6">
+          <div
+            className="lg:hidden inline-block px-6 py-2 rounded-tl-xl rounded-br-xl font-bold text-lg md:text-2xl font-rubik bg-red-500 text-white shadow"
+            style={{
+              letterSpacing: "1px",
+            }}
+          >
+            BREAKING
+          </div>
+        </div>
         {/* Image */}
         <div className="relative w-full h-[220px] lg:w-[400px] lg:h-auto flex-shrink-0">
           {/* Badge on top of image for mobile only */}
-          <div className="absolute top-3 left-3 z-10 block lg:hidden">
-            <span
-              className="inline-block px-6 py-2 rounded-lg font-bold text-lg md:text-2xl font-rubik bg-red-500 text-white shadow"
-              style={{
-                letterSpacing: "1px",
-              }}
-            >
-              BREAKING
-            </span>
-          </div>
+
           <Link href={`/news/${breakingNews.url}`}>
             <Image
               src={breakingNews.headlineImage}
               alt={breakingNews.headline1}
               fill
-              className="object-cover"
+              className="object-cover rounded-md"
               priority
             />
           </Link>
@@ -93,16 +94,16 @@ export default function BreakingNews({ shouldFetch }: BreakingNewsProps) {
           </div>
           {/* Headline */}
           <Link href={`/news/${breakingNews.url}`}>
-            <h2 className="text-2xl lg:text-3xl font-bold font-muktaMalar mb-2 leading-tight  px-6 pt-4 lg:pt-0">
+            <h2 className="text-2xl lg:text-3xl font-bold font-muktaMalar mb-2 leading-tight  px-4 pt-4 lg:pt-0">
               {breakingNews.headline1}
             </h2>
           </Link>
           {/* Content */}
-          <div className="text-base lg:text-lg text-gray-700 mb-4 line-clamp-2 px-6 cursor-pointer">
+          <div className="text-base lg:text-lg text-gray-700 mb-4 line-clamp-2 px-4 cursor-pointer">
             {stripHtml(breakingNews.content || "").result.slice(0, 160)}...
           </div>
           {/* Author & Time */}
-          <div className="flex justify-between text-sm text-gray-400 px-6 cursor-pointer">
+          <div className="flex justify-between text-sm text-gray-400 px-4 cursor-pointer">
             <span>by {breakingNews.author}</span>
             <span>
               {formatDistanceToNow(new Date(breakingNews.createdTime), {

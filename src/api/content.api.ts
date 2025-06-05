@@ -28,12 +28,17 @@ interface ContentResponse {
 }
 
 // Get all content
-export const getContent = async (page: number = 1, limit: number = 10): Promise<ContentResponse> => {
+export const getContent = async (
+  page: number = 1,
+  limit: number = 10
+): Promise<ContentResponse> => {
   try {
-    const response = await axiosInstance.get<ContentResponse>(`/content?page=${page}&limit=${limit}`);
+    const response = await axiosInstance.get<ContentResponse>(
+      `/content?page=${page}&limit=${limit}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching content:', error);
+    console.error("Error fetching content:", error);
     throw error;
   }
 };
@@ -82,7 +87,6 @@ export const updateContent = async (id: string, formData: FormData) => {
 
 export const deleteContent = async (id: string) => {
   const response = await axiosInstance.delete(`/content/${id}`);
-  console.log("Content deleted successfully:", response.data);
   return response.data;
 };
 

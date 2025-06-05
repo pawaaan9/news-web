@@ -15,8 +15,7 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       setError(null); // Clear previous errors
-      const response = await login({ email, password }); // Call the login API
-      console.log("Login successful:", response);
+      const response = await login({ email, password });
 
       // Redirect to dashboard after successful login
       router.push("/admin/dashboard");

@@ -108,12 +108,9 @@ const AdvertisementPage = () => {
     setEndDate(null);
   };
 
-  const handlePreview = (id: string) => {
-    console.log("Preview advertisement ID:", id);
-  };
+  const handlePreview = (id: string) => {};
 
   const handleEdit = (id: string) => {
-    console.log("Edit advertisement ID:", id);
     router.push(`/admin/advertisements/edit-advertisement/${id}`);
   };
 

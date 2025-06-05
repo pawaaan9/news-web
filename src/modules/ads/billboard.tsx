@@ -16,7 +16,7 @@ export default function BillboardAd({
       href={linkUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="lg:block w-[970px] h-[250px] rounded-lg overflow-hidden shadow-md bg-white mx-auto mb-6 hidden"
+      className="lg:block w-[970px] h-[250px] rounded-lg overflow-hidden  bg-gray-100 mx-auto mb-6 hidden"
     >
       <div className="relative w-[970px] h-[250px]">
         <Image

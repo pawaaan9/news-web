@@ -16,7 +16,7 @@ export default function LargeRectangleAd({
       href={linkUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="block w-[336px] h-[280px] rounded-lg overflow-hidden shadow-md bg-white mx-auto mb-6 lg:hidden"
+      className="block w-[336px] h-[280px] rounded-lg overflow-hidden bg-gray-100 mx-auto mb-6 lg:hidden"
     >
       <div className="relative w-[336px] h-[280px]">
         <Image

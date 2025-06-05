@@ -22,13 +22,13 @@ const menuItems = [
     href: "/admin/dashboard",
     label: "Dashboard",
     icon: IconLayout,
-    roles: [6, 7, 8],
+    roles: [7, 8],
   },
   {
     href: "/admin/content",
     label: "Content",
     icon: IconFile,
-    roles: [0, 1, 3, 4, 5, 6, 7, 8],
+    roles: [0, 2, 3, 4, 5, 6, 7, 8],
   },
   {
     href: "/admin/accounts",
@@ -46,7 +46,7 @@ const menuItems = [
     href: "/admin/keywords",
     label: "Keywords",
     icon: IconKeyboard,
-    roles: [6, 7, 8, 5],
+    roles: [7, 8, 5],
   },
 ];
 
@@ -62,8 +62,9 @@ const AdminLayout: React.FC<{
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("userRole");
-      const roleNo = stored ? Number(stored) : null;
+      const roleNo = stored && !isNaN(Number(stored)) ? Number(stored) : 0;
       setUserRoleNo(roleNo);
+      console.log("User Role No:", roleNo);
     }
   }, []);
 
@@ -75,7 +76,7 @@ const AdminLayout: React.FC<{
     try {
       await logout();
       localStorage.removeItem("token");
-      localStorage.removeItem("userRoleNo");
+      localStorage.removeItem("userRole");
       router.push("/admin/login");
     } catch (error) {
       console.error("Logout failed:", error);
