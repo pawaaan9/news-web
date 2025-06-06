@@ -59,8 +59,8 @@ export default function NewsCard({
   };
 
   return (
-    <div 
-      className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
+    <div
+      className="bg-white text-charcoal rounded-lg overflow-hidden shadow-md border border-gray-200 mx-auto md:mx-0 font-notoSans cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col h-full w-full"
       onClick={handleCardClick}
     >
       <div className="relative w-full pt-[56.25%]">

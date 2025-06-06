@@ -12,6 +12,7 @@ export interface ContentData {
   headlineImage: string;
   author: string;
   createdTime: string;
+  modifiedTime: string;
   category: string;
   provinces: string[];
   status: string;

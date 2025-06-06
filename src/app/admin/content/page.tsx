@@ -367,6 +367,7 @@ const ContentPage = () => {
                   <th className="p-4">Author</th>
                   <th className="p-4">Status</th>
                   <th className="p-4">Created Date</th>
+                  <th className="p-4">Publish Time</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -428,6 +429,19 @@ const ContentPage = () => {
                               "yyyy-MM-dd HH:mm"
                             )
                           : "N/A"}
+                      </td>
+                      <td className="p-4">
+                        {content.scheduledPublishDate
+                          ? format(
+                              new Date(content.scheduledPublishDate),
+                              "yyyy-MM-dd HH:mm"
+                            )
+                          : content.modifiedTime
+                          ? format(
+                              new Date(content.modifiedTime),
+                              "yyyy-MM-dd HH:mm"
+                            )
+                          : "-"}
                       </td>
                       <td className="p-4 text-right flex justify-end gap-2">
                         <IconEye

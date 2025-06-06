@@ -230,6 +230,7 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       updatePayload.append("isSpecial", String(isSpecial));
       updatePayload.append("isBreaking", String(isBreaking));
       updatePayload.append("isShownOnHome", String(isShownOnHome));
+      updatePayload.append("modifiedTime", new Date().toISOString());
       if (headlineImage) {
         updatePayload.append("image", headlineImage);
       }
@@ -237,7 +238,10 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
       // Add scheduling information if schedule option is selected
       if (publishOption === "schedule" && scheduledDate && scheduledTime) {
         const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
-        updatePayload.append("scheduledPublishDate", scheduledDateTime.toISOString());
+        updatePayload.append(
+          "scheduledPublishDate",
+          scheduledDateTime.toISOString()
+        );
       }
 
       await updateContent(params.id, updatePayload);

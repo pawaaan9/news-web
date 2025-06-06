@@ -144,7 +144,8 @@ function HomeContent() {
   // Filter news based on selected category and search query
   const displayNews = newsItems.filter((item) => {
     if (item.status !== "Published") return false;
-    if (item.isShownOnHome === false) return false;
+    if (!selectedCategory && item.isShownOnHome === false) return false;
+    if (item.isBreaking === true) return false;
     // Category filter
     let categoryMatch = true;
     if (selectedCategory) {
@@ -186,9 +187,18 @@ function HomeContent() {
         title={displayNews[i].headline1 || ""}
         author={displayNews[i].author}
         category={displayNews[i].category}
-        date={formatDistanceToNow(new Date(displayNews[i].createdTime), {
-          addSuffix: true,
-        })}
+        date={
+          displayNews[i].scheduledPublishDate
+            ? formatDistanceToNow(
+                new Date(displayNews[i].scheduledPublishDate!),
+                { addSuffix: true }
+              )
+            : displayNews[i].modifiedTime
+            ? formatDistanceToNow(new Date(displayNews[i].modifiedTime), {
+                addSuffix: true,
+              })
+            : ""
+        }
       />
     );
 
