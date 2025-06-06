@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"; // import router
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { login } from "@/api/auth.api";
+import { jwtDecode } from "jwt-decode";
+import { menuItems } from "@/data/admin-menu";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -17,8 +19,25 @@ const LoginPage = () => {
       setError(null); // Clear previous errors
       const response = await login({ email, password });
 
-      // Redirect to dashboard after successful login
-      router.push("/admin/dashboard");
+      // Save token and userRole to localStorage
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      // Decode token to get userRole or userRoleNo
+      const decoded: any = jwtDecode(token);
+      const userRoleNo =
+        typeof decoded.userRoleNo !== "undefined"
+          ? Number(decoded.userRoleNo)
+          : typeof decoded.userRole !== "undefined"
+          ? Number(decoded.userRole)
+          : 0;
+      localStorage.setItem("userRole", String(userRoleNo));
+
+      // Find first accessible menu item
+      const firstMenu = menuItems.find(
+        (item) => Array.isArray(item.roles) && item.roles.includes(userRoleNo)
+      );
+      router.push(firstMenu ? firstMenu.href : "/admin/content");
     } catch (err: unknown) {
       console.error("Login failed:", err);
 

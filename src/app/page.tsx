@@ -24,6 +24,7 @@ import {
   AdvertisementData,
   getAllAdvertisements,
 } from "@/api/advertisement.api";
+import { useCountry } from "@/contexts/country-context";
 
 // Move your main logic here
 function HomeContent() {
@@ -33,6 +34,7 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   const [searchQuery, setSearchQuery] = useState("");
+  const { selectedCountry } = useCountry();
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -70,34 +72,33 @@ function HomeContent() {
     fetchAds();
   }, []);
 
+  // Filter advertisements based on selected country
+  const filteredAds = advertisements.filter(
+    (ad) => ad.country === selectedCountry.code && ad.status === "published"
+  );
+
   // Get published ads for each position
-  const billboardAd = advertisements.find(
-    (ad) => ad.position === "Billboard" && ad.status === "published"
+  const billboardAd = filteredAds.find((ad) => ad.position === "Billboard");
+  const largeLeaderboardAd = filteredAds.find(
+    (ad) => ad.position === "Large Leaderboard"
   );
-  const largeLeaderboardAd = advertisements.find(
-    (ad) => ad.position === "Large Leaderboard" && ad.status === "published"
+  const largeMobileBannerAd = filteredAds.find(
+    (ad) => ad.position === "Large Mobile Banner"
   );
-  const largeMobileBannerAd = advertisements.find(
-    (ad) => ad.position === "Large Mobile Banner" && ad.status === "published"
+  const mobileBannerAd = filteredAds.find(
+    (ad) => ad.position === "Mobile Banner"
   );
-  const mobileBannerAd = advertisements.find(
-    (ad) => ad.position === "Mobile Banner" && ad.status === "published"
+  const mediumRectangleAd = filteredAds.find(
+    (ad) => ad.position === "Medium Rectangle"
   );
-  const mediumRectangleAd = advertisements.find(
-    (ad) => ad.position === "Medium Rectangle" && ad.status === "published"
+  const largeRectangleAd = filteredAds.find(
+    (ad) => ad.position === "Large Rectangle"
   );
-  const largeRectangleAd = advertisements.find(
-    (ad) => ad.position === "Large Rectangle" && ad.status === "published"
+  const halfPageAd = filteredAds.find((ad) => ad.position === "Half Page");
+  const wideSkyscraperAd = filteredAds.find(
+    (ad) => ad.position === "Wide Skyscraper"
   );
-  const halfPageAd = advertisements.find(
-    (ad) => ad.position === "Half Page" && ad.status === "published"
-  );
-  const wideSkyscraperAd = advertisements.find(
-    (ad) => ad.position === "Wide Skyscraper" && ad.status === "published"
-  );
-  const skyscraperAd = advertisements.find(
-    (ad) => ad.position === "Skyscraper" && ad.status === "published"
-  );
+  const skyscraperAd = filteredAds.find((ad) => ad.position === "Skyscraper");
 
   // State for skyscraper ad visibility
   const [showSkyscraper, setShowSkyscraper] = useState(false);
@@ -143,6 +144,7 @@ function HomeContent() {
   // Filter news based on selected category and search query
   const displayNews = newsItems.filter((item) => {
     if (item.status !== "Published") return false;
+    if (item.isShownOnHome === false) return false;
     // Category filter
     let categoryMatch = true;
     if (selectedCategory) {
@@ -279,7 +281,7 @@ function HomeContent() {
 
       {/* Main Content */}
       <div className="bg-gray-100 mt-6">
-        <div className="max-w-[1250px] mx-auto px-4 pb-8 relative">
+        <div className="max-w-[1250px] mx-auto px-4 pb-8 relative pt-[60px] lg:pt-0">
           {/* Side Ads - Desktop Only */}
           <div className="hidden lg:block absolute left-0 top-0 h-full pb-10">
             {halfPageAd && (

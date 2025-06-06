@@ -18,6 +18,7 @@ export interface ContentData {
   isFeatured: boolean;
   isSpecial: boolean;
   isBreaking: boolean;
+  isShownOnHome: boolean;
   content: string;
   scheduledPublishDate?: string;
   keywords?: string[];

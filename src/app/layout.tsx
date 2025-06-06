@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { CountryProvider } from "@/contexts/country-context";
 import Script from "next/script";
 
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "Tamilmedia",
-  description:
-    "Latest Tamil news and articles from Sri Lanka and around the world.",
+  title: "Tamil Media",
+  description: "Tamil Media News Portal",
   keywords: [
     "Tamil news",
     "Sri Lanka news",
@@ -52,9 +55,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
@@ -86,7 +89,11 @@ export default function RootLayout({
         <meta property="og:url" content="https://tamilmedia.lk/" />
         <meta property="og:type" content="website" />
       </head>
-      <body className={` antialiased font-rubik`}>{children}</body>
+      <body className={inter.className}>
+        <CountryProvider>
+          {children}
+        </CountryProvider>
+      </body>
     </html>
   );
 }

@@ -38,20 +38,20 @@ const advertisementPositions = [
   { name: "Skyscraper", size: "120×600" },
 ];
 
-// Sample data for countries
-const countries = [
-  "Sri Lanka",
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Australia",
-  "Germany",
-  "France",
-  "Japan",
-  "India",
-  "Brazil",
-  "South Africa",
-  "All Countries",
+interface Country {
+  name: string;
+  code: string;
+}
+
+const countries: Country[] = [
+  { name: "இலங்கை", code: "LK" }, // Sri Lanka
+  { name: "இந்தியா", code: "IN" }, // India
+  { name: "கனடா", code: "CA" }, // Canada
+  { name: "அமெரிக்கா", code: "US" }, // USA
+  { name: "பிரித்தானியா", code: "GB" }, // UK
+  { name: "சுவிஸ்", code: "CH" }, // Switzerland
+  { name: "ஜேர்மனி", code: "DE" }, // Germany
+  { name: "அவுஸ்திரேலியா", code: "AU" }, // Australia
 ];
 
 const CreateAdvertisement = () => {
@@ -61,7 +61,7 @@ const CreateAdvertisement = () => {
   const [photo, setPhoto] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState("00:00");
@@ -114,9 +114,10 @@ const CreateAdvertisement = () => {
       const advertisementData = {
         title,
         description,
-        adImage: photo, // Pass the file object
+        adImage: photo,
         position: selectedPosition,
-        country: selectedCountry,
+        country: selectedCountry.code,
+        countryName: selectedCountry.name,
         isWebsiteHave: hasWebsite === "yes",
         adUrl: hasWebsite === "yes" ? adUrl : undefined,
         email: hasWebsite === "no" ? email : undefined,
@@ -232,17 +233,20 @@ const CreateAdvertisement = () => {
             <LabelText text="Target Country (Required)" />
             <select
               id="country"
-              value={selectedCountry || ""}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              value={selectedCountry?.code || ""}
+              onChange={(e) => {
+                const country = countries.find(c => c.code === e.target.value);
+                setSelectedCountry(country || null);
+              }}
               className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
               required
             >
               <option value="" disabled>
                 Select target country
               </option>
-              {countries.map((country, index) => (
-                <option key={index} value={country}>
-                  {country}
+              {countries.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
                 </option>
               ))}
             </select>

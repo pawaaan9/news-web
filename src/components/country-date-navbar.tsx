@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { ChevronDown } from "lucide-react";
+import { useCountry } from "@/contexts/country-context";
 
 interface Country {
   name: string;
@@ -21,7 +22,7 @@ const countries: Country[] = [
 ];
 
 export default function CountryAndDate() {
-  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
+  const { selectedCountry, setSelectedCountry } = useCountry();
   const [currentDate, setCurrentDate] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
