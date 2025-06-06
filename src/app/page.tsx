@@ -228,7 +228,7 @@ function HomeContent() {
   }
 
   return (
-    <main className="bg-gray-100">
+    <main className="bg-gray-100 min-h-screen">
       <NavBar
         onCategorySelect={setSelectedCategory}
         selectedCategory={selectedCategory}
@@ -279,9 +279,9 @@ function HomeContent() {
 
       {/* Main Content */}
       <div className="bg-gray-100 mt-6">
-        <div className="max-w-[1400px] mx-auto px-4 pb-8 relative">
+        <div className="max-w-[1250px] mx-auto px-4 pb-8 relative">
           {/* Side Ads - Desktop Only */}
-          <div className="hidden lg:block absolute left-0 top-0 h-full">
+          <div className="hidden lg:block absolute left-0 top-0 h-full pb-10">
             {halfPageAd && (
               <div className="sticky top-[160px]">
                 <HalfPageAd
@@ -292,7 +292,7 @@ function HomeContent() {
               </div>
             )}
           </div>
-          <div className="hidden lg:block absolute right-0 top-0 h-full">
+          <div className="hidden lg:block absolute right-0 top-0 h-full pb-10">
             {wideSkyscraperAd && (
               <div className="sticky top-[160px]">
                 <WideSkyscraperAd
@@ -304,13 +304,13 @@ function HomeContent() {
             )}
           </div>
           {!selectedCategory && !searchQuery && (
-            <div className="max-w-[1040px] mx-auto">
+            <div className="xl:max-w-[900px] max-w-[700px] mx-auto">
               <BreakingNews shouldFetch={true} />
             </div>
           )}
 
           {/* Main Content with Side Margins for Ads */}
-          <div className=" max-w-[1040px] mx-auto">
+          <div className=" xl:max-w-[900px] max-w-[700px] mx-auto">
             <div className="lg:bg-white bg-gray-100 rounded-lg lg:shadow">
               {selectedCategory && (
                 <div className="mb-8">

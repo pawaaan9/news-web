@@ -46,14 +46,17 @@ export async function generateMetadata({
       keywords.push(article.category);
     }
 
+    const articleUrl = `https://tamilmedia.lk/news/${article.url}`;
+    const description = article.headline3 || article.headline2 || article.headline1;
+
     return {
       title: `${article.headline1} | TamilMedia.lk`,
-      description: article.headline3 || article.headline2,
+      description,
       keywords,
       openGraph: {
         title: article.headline1,
-        description: article.headline2 || article.headline1,
-        url: `https://tamilmedia.lk/news/${article.url}`,
+        description,
+        url: articleUrl,
         siteName: "TamilMedia.lk",
         images: article.headlineImage
           ? [
@@ -66,6 +69,19 @@ export async function generateMetadata({
             ]
           : [],
         type: "article",
+        locale: "ta_IN",
+        authors: [article.author],
+        publishedTime: article.createdTime,
+        modifiedTime: article.createdTime,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: article.headline1,
+        description,
+        images: article.headlineImage ? [article.headlineImage] : [],
+      },
+      alternates: {
+        canonical: articleUrl,
       },
     };
   } catch {
