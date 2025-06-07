@@ -736,12 +736,14 @@ const EditContent = (props: { params: Promise<{ id: string }> }) => {
                 <IconNote size={20} />
                 Save as Draft
               </Button>
-              <Button
-                className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
-                onClick={() => handleSubmit("Published")}
-              >
-                <IconBrowserShare size={20} /> Publish
-              </Button>
+              {[4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+                <Button
+                  className="bg-primary text-white hover:bg-primary/80 cursor-pointer"
+                  onClick={() => handleSubmit("Published")}
+                >
+                  <IconBrowserShare size={20} /> Publish
+                </Button>
+              )}
             </div>
           </div>
         )}

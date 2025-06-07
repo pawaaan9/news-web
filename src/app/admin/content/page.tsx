@@ -26,6 +26,7 @@ import {
 } from "@/api/content.api";
 import withAuth from "@/hoc/with-auth";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { getProfile } from "@/api/auth.api";
 
 const ContentPage = () => {
   // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -39,6 +40,7 @@ const ContentPage = () => {
   const [scheduledContent, setScheduledContent] = useState<ContentData[]>([]);
   const [isProcessingScheduled, setIsProcessingScheduled] = useState(false);
   const [userRoleNo, setUserRoleNo] = useState<number | null>(null);
+  const [username, setUsername] = useState<string>("");
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -100,27 +102,47 @@ const ContentPage = () => {
       const stored = localStorage.getItem("userRole");
       const roleNo = stored ? Number(stored) : null;
       setUserRoleNo(roleNo);
-      console.log("User role number:", roleNo);
+
+      // Fetch username for filtering
+      getProfile()
+        .then((result) => {
+          setUsername(result.data.user.username);
+        })
+        .catch(() => setUsername(""));
     }
   }, []);
 
+  const canSeeOwnNewsOnly = [0, 2].includes(userRoleNo ?? -1);
+
   useEffect(() => {
-    const filtered = contentData.filter((content) => {
+    let filtered = contentData;
+
+    // Only show own news for roles 1,3,4,5
+    if (canSeeOwnNewsOnly && username) {
+      filtered = filtered.filter((content) => content.author === username);
+    }
+
+    // Apply other filters
+    filtered = filtered.filter((content) => {
       const matchesHeadline =
         !headline ||
         content.headline1.toLowerCase().includes(headline.toLowerCase());
       const matchesAuthor =
         !author || content.author?.toLowerCase().includes(author.toLowerCase());
-      // const matchesCategory =
-      //   !selectedCategory || content.category.includes(selectedCategory);
       const matchesStatus =
         !selectedStatus || content.status === selectedStatus;
-
       return matchesHeadline && matchesAuthor && matchesStatus;
     });
 
     setFilteredContent(filtered);
-  }, [headline, author, selectedStatus, contentData]);
+  }, [
+    headline,
+    author,
+    selectedStatus,
+    contentData,
+    canSeeOwnNewsOnly,
+    username,
+  ]);
 
   const handleDelete = async (id: string) => {
     setContentToDelete(id);
@@ -456,20 +478,24 @@ const ContentPage = () => {
                             router.push("/admin/content/preview");
                           }}
                         />
-                        <IconPencilMinus
-                          size={22}
-                          className="text-primary cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              `/admin/content/edit-content/${content._id}`
-                            )
-                          }
-                        />
-                        <IconTrash
-                          size={22}
-                          className="text-red-700 cursor-pointer"
-                          onClick={() => handleDelete(content._id)}
-                        />
+                        {[2, 3, 4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+                          <IconPencilMinus
+                            size={22}
+                            className="text-primary cursor-pointer"
+                            onClick={() =>
+                              router.push(
+                                `/admin/content/edit-content/${content._id}`
+                              )
+                            }
+                          />
+                        )}
+                        {[7, 8].includes(userRoleNo ?? -1) && (
+                          <IconTrash
+                            size={22}
+                            className="text-red-700 cursor-pointer"
+                            onClick={() => handleDelete(content._id)}
+                          />
+                        )}
                       </td>
                     </tr>
                   ))

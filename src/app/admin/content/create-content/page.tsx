@@ -165,15 +165,12 @@ const CreateContent = () => {
       return;
     }
 
-    if (!headlineImage) {
-      alert("Headline image is required.");
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.append("image", headlineImage as File);
+      if (headlineImage) {
+        formData.append("image", headlineImage as File);
+      }
       formData.append("headline1", headline1);
       formData.append("headline2", headline2);
       formData.append("headline3", headline3);
@@ -234,6 +231,15 @@ const CreateContent = () => {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("userRole");
+      const roleNo = stored ? Number(stored) : null;
+      setUserRoleNo(roleNo);
+      console.log("User role number:", roleNo);
+    }
+  }, []);
 
   const handlePreview = () => {
     const previewContent = {
@@ -461,46 +467,48 @@ const CreateContent = () => {
             />
           </div>
 
-          <div>
-            <InputText text="Headline image" />
-            <Input
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                if (file.size > 10 * 1024 * 1024) {
-                  alert("Image must be less than 10MB.");
-                  return;
-                }
-                if (
-                  ![
-                    "image/jpeg",
-                    "image/png",
-                    "image/webp",
-                    "image/gif",
-                    "image/tiff",
-                    "image/bmp",
-                    "image/avif",
-                  ].includes(file.type)
-                ) {
-                  alert(
-                    "Unsupported image type. Please use JPG, PNG, WebP, GIF, TIFF, BMP, or AVIF."
-                  );
-                  return;
-                }
-                setHeadlineImage(file);
-              }}
-              type="file"
-              accept="image/*"
-              className={`border ${
-                headlineImage ? "border-primary" : "border-charcoal/60"
-              } focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2`}
-            />
-            {headlineImage && (
-              <p className="text-sm text-primary mt-1">
-                ✓ Image selected: {headlineImage.name}
-              </p>
-            )}
-          </div>
+          {[1, 2, 3, 4, 6, 7, 8].includes(userRoleNo ?? -1) && (
+            <div>
+              <InputText text="Headline image" />
+              <Input
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 10 * 1024 * 1024) {
+                    alert("Image must be less than 10MB.");
+                    return;
+                  }
+                  if (
+                    ![
+                      "image/jpeg",
+                      "image/png",
+                      "image/webp",
+                      "image/gif",
+                      "image/tiff",
+                      "image/bmp",
+                      "image/avif",
+                    ].includes(file.type)
+                  ) {
+                    alert(
+                      "Unsupported image type. Please use JPG, PNG, WebP, GIF, TIFF, BMP, or AVIF."
+                    );
+                    return;
+                  }
+                  setHeadlineImage(file);
+                }}
+                type="file"
+                accept="image/*"
+                className={`border ${
+                  headlineImage ? "border-primary" : "border-charcoal/60"
+                } focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2`}
+              />
+              {headlineImage && (
+                <p className="text-sm text-primary mt-1">
+                  ✓ Image selected: {headlineImage.name}
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <InputText text="Categories (Select one or more)" />
