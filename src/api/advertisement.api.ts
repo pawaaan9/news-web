@@ -9,7 +9,10 @@ export interface AdvertisementData {
   description?: string;
   adImage: string | File; // URL of the advertisement image
   position: string;
-  country: string;
+  countries: Array<{
+    code: string;
+    name: string;
+  }>;
   isWebsiteHave: boolean;
   adUrl?: string;
   email?: string;
@@ -29,7 +32,14 @@ export const createAdvertisement = async (advertisement: AdvertisementData) => {
   formData.append("title", advertisement.title);
   formData.append("description", advertisement.description || "");
   formData.append("position", advertisement.position);
-  formData.append("country", advertisement.country);
+  
+  // Properly format countries data
+  const countriesData = advertisement.countries.map(country => ({
+    code: country.code,
+    name: country.name
+  }));
+  formData.append("countries", JSON.stringify(countriesData));
+  
   formData.append("isWebsiteHave", advertisement.isWebsiteHave.toString());
   formData.append("adUrl", advertisement.adUrl || "");
   formData.append("email", advertisement.email || "");
@@ -95,7 +105,14 @@ export const updateAdvertisement = async (
   formData.append("title", advertisement.title);
   formData.append("description", advertisement.description || "");
   formData.append("position", advertisement.position);
-  formData.append("country", advertisement.country);
+  
+  // Properly format countries data
+  const countriesData = advertisement.countries.map(country => ({
+    code: country.code,
+    name: country.name
+  }));
+  formData.append("countries", JSON.stringify(countriesData));
+  
   formData.append("isWebsiteHave", advertisement.isWebsiteHave.toString());
   formData.append("adUrl", advertisement.adUrl || "");
   formData.append("email", advertisement.email || "");

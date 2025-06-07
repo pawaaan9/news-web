@@ -17,7 +17,10 @@ interface AdvertisementCardProps {
   startDate: string;
   endDate: string;
   duration: string;
-  country: string;
+  countries: Array<{
+    code: string;
+    name: string;
+  }>;
   status: string;
   onPreview?: () => void;
   onEdit?: () => void;
@@ -30,7 +33,7 @@ export const AdvertisementCard: React.FC<AdvertisementCardProps> = ({
   startDate,
   endDate,
   duration,
-  country,
+  countries,
   status,
   onPreview,
   onEdit,
@@ -50,9 +53,15 @@ export const AdvertisementCard: React.FC<AdvertisementCardProps> = ({
         <h3 className="text-[16px] font-semibold text-charcoal">{title}</h3>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <div className="flex gap-1 items-center">
-          <IconMapPin size={16} className="text-charcoal" />
-          <p className="text-[14px] font-[400] text-charcoal">{country}</p>
+        <div className="flex gap-1 items-start">
+          <IconMapPin size={16} className="text-charcoal mt-1" />
+          <div className="flex flex-wrap gap-1">
+            {countries.map((country, index) => (
+              <span key={country.code} className="text-[14px] font-[400] text-charcoal">
+                {country.name}{index < countries.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </div>
         </div>
         <div className="flex gap-1 items-center">
           <IconClockHour4 size={16} className="text-charcoal" />

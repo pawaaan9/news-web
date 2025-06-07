@@ -41,18 +41,20 @@ const advertisementPositions = [
 interface Country {
   name: string;
   code: string;
-  en: string;
 }
 
 const countries: Country[] = [
-  { name: "இலங்கை", code: "LK", en: "Sri Lanka" },
-  { name: "இந்தியா", code: "IN", en: "India" },
-  { name: "கனடா", code: "CA", en: "Canada" },
-  { name: "அமெரிக்கா", code: "US", en: "USA" },
-  { name: "பிரித்தானியா", code: "GB", en: "UK" },
-  { name: "சுவிஸ்", code: "CH", en: "Switzerland" },
-  { name: "ஜேர்மனி", code: "DE", en: "Germany" },
-  { name: "அவுஸ்திரேலியா", code: "AU", en: "Australia" },
+  { name: "Sri Lanka", code: "LK" },
+  { name: "United States", code: "US" },
+  { name: "Canada", code: "CA" },
+  { name: "United Kingdom", code: "GB" },
+  { name: "Australia", code: "AU" },
+  { name: "Germany", code: "DE" },
+  { name: "France", code: "FR" },
+  { name: "Japan", code: "JP" },
+  { name: "India", code: "IN" },
+  { name: "Brazil", code: "BR" },
+  { name: "South Africa", code: "ZA" }
 ];
 
 const CreateAdvertisement = () => {
@@ -103,7 +105,7 @@ const CreateAdvertisement = () => {
     if (
       !title ||
       !selectedPosition ||
-      !selectedCountry ||
+      selectedCountries.length === 0 ||
       !startDate ||
       !endDate ||
       !photo
@@ -115,13 +117,18 @@ const CreateAdvertisement = () => {
     }
 
     try {
+      // Ensure each country has both code and name
+      const formattedCountries = selectedCountries.map(country => ({
+        code: country.code,
+        name: country.name
+      }));
+
       const advertisementData = {
         title,
         description,
         adImage: photo,
         position: selectedPosition,
-        country: selectedCountry.code,
-        countryName: selectedCountry.name,
+        countries: formattedCountries,
         isWebsiteHave: hasWebsite === "yes",
         adUrl: hasWebsite === "yes" ? adUrl : undefined,
         email: hasWebsite === "no" ? email : undefined,
@@ -271,7 +278,7 @@ const CreateAdvertisement = () => {
                     }}
                   />
                   <span className="ml-2">
-                    {country.name} ({country.en})
+                    {country.name}
                   </span>
                 </label>
               ))}

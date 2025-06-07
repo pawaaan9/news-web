@@ -20,18 +20,18 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 // Sample data for countries
 const countries = [
-  "Sri Lanka",
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Australia",
-  "Germany",
-  "France",
-  "Japan",
-  "India",
-  "Brazil",
-  "South Africa",
-  "All Countries",
+  { name: "Sri Lanka", code: "LK" },
+  { name: "United States", code: "US" },
+  { name: "Canada", code: "CA" },
+  { name: "United Kingdom", code: "GB" },
+  { name: "Australia", code: "AU" },
+  { name: "Germany", code: "DE" },
+  { name: "France", code: "FR" },
+  { name: "Japan", code: "JP" },
+  { name: "India", code: "IN" },
+  { name: "Brazil", code: "BR" },
+  { name: "South Africa", code: "ZA" },
+  { name: "All Countries", code: "ALL" },
 ];
 
 const AdvertisementPage = () => {
@@ -71,7 +71,9 @@ const AdvertisementPage = () => {
 
     // Filter by country
     if (selectedCountry) {
-      results = results.filter((ad) => ad.country === selectedCountry);
+      results = results.filter((ad) => 
+        ad.countries.some(country => country.name === selectedCountry)
+      );
     }
 
     // Filter by start date
@@ -173,9 +175,9 @@ const AdvertisementPage = () => {
             className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
           >
             <option value="">All Countries</option>
-            {countries.map((country, index) => (
-              <option key={index} value={country}>
-                {country}
+            {countries.map((country) => (
+              <option key={country.code} value={country.name}>
+                {country.name}
               </option>
             ))}
           </select>
@@ -233,7 +235,7 @@ const AdvertisementPage = () => {
                   new Date(ad.startDatetime).getTime()) /
                   (1000 * 60 * 60 * 24)
               )} days`}
-              country={ad.country}
+              countries={ad.countries}
               status={ad.status}
               onPreview={() => handlePreview(ad._id || "")}
               onEdit={() => handleEdit(ad._id || "")}

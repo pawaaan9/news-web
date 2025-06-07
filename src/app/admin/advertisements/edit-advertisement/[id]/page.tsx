@@ -42,20 +42,23 @@ const advertisementPositions = [
   { name: "Skyscraper", size: "120×600" },
 ];
 
-// Sample data for countries
-const countries = [
-  "Sri Lanka",
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Australia",
-  "Germany",
-  "France",
-  "Japan",
-  "India",
-  "Brazil",
-  "South Africa",
-  "All Countries",
+interface Country {
+  name: string;
+  code: string;
+}
+
+const countries: Country[] = [
+  { name: "Sri Lanka", code: "LK" },
+  { name: "United States", code: "US" },
+  { name: "Canada", code: "CA" },
+  { name: "United Kingdom", code: "GB" },
+  { name: "Australia", code: "AU" },
+  { name: "Germany", code: "DE" },
+  { name: "France", code: "FR" },
+  { name: "Japan", code: "JP" },
+  { name: "India", code: "IN" },
+  { name: "Brazil", code: "BR" },
+  { name: "South Africa", code: "ZA" }
 ];
 
 const EditAdvertisement = () => {
@@ -67,7 +70,7 @@ const EditAdvertisement = () => {
   const [photo, setPhoto] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState("00:00");
@@ -94,7 +97,7 @@ const EditAdvertisement = () => {
         setTitle(ad.title);
         setDescription(ad.description || "");
         setSelectedPosition(ad.position);
-        setSelectedCountry(ad.country);
+        setSelectedCountries(ad.countries || []);
         setHasWebsite(ad.isWebsiteHave ? "yes" : "no");
         setAdUrl(ad.adUrl || "");
         setEmail(ad.email || "");
@@ -145,7 +148,7 @@ const EditAdvertisement = () => {
     if (
       !title ||
       !selectedPosition ||
-      !selectedCountry ||
+      selectedCountries.length === 0 ||
       !startDate ||
       !endDate
     ) {
@@ -159,7 +162,7 @@ const EditAdvertisement = () => {
         description,
         adImage: photo as File, // Only send if changed
         position: selectedPosition,
-        country: selectedCountry,
+        countries: selectedCountries,
         isWebsiteHave: hasWebsite === "yes",
         adUrl: hasWebsite === "yes" ? adUrl : undefined,
         email: hasWebsite === "no" ? email : undefined,
@@ -283,25 +286,51 @@ const EditAdvertisement = () => {
             </div>
           </div>
 
-          {/* Target Country */}
+          {/* Target Country (Multiple Select) */}
           <div>
-            <LabelText text="Target Country (Required)" />
-            <select
-              id="country"
-              value={selectedCountry || ""}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
-              required
-            >
-              <option value="" disabled>
-                Select target country
-              </option>
-              {countries.map((country, index) => (
-                <option key={index} value={country}>
-                  {country}
-                </option>
+            <LabelText text="Target Countries (Required)" />
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="font-semibold">
+                <input
+                  type="checkbox"
+                  checked={selectedCountries.length === countries.length}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedCountries([...countries]);
+                    } else {
+                      setSelectedCountries([]);
+                    }
+                  }}
+                />
+                <span className="ml-2">Select All</span>
+              </label>
+              {countries.map((country) => (
+                <label key={country.code} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    value={country.code}
+                    checked={selectedCountries.some(
+                      (c) => c.code === country.code
+                    )}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedCountries([...selectedCountries, country]);
+                      } else {
+                        setSelectedCountries(
+                          selectedCountries.filter(
+                            (c) => c.code !== country.code
+                          )
+                        );
+                      }
+                    }}
+                  />
+                  <span className="ml-2">{country.name}</span>
+                </label>
               ))}
-            </select>
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              You can select multiple countries.
+            </div>
           </div>
 
           {/* Website Link or Contact Information */}

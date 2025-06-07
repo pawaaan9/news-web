@@ -74,7 +74,11 @@ function HomeContent() {
 
   // Filter advertisements based on selected country
   const filteredAds = advertisements.filter(
-    (ad) => ad.country === selectedCountry.code && ad.status === "published"
+    (ad) => {
+      // Check if the ad's countries array includes the selected country
+      return ad.countries.some(country => country.code === selectedCountry.code) && 
+             ad.status === "published";
+    }
   );
 
   // Get published ads for each position

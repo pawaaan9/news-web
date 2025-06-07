@@ -11,14 +11,17 @@ interface Country {
 }
 
 const countries: Country[] = [
-  { name: "இலங்கை", code: "LK" }, // Sri Lanka
-  { name: "இந்தியா", code: "IN" }, // India
-  { name: "கனடா", code: "CA" }, // Canada
-  { name: "அமெரிக்கா", code: "US" }, // USA
-  { name: "பிரித்தானியா", code: "GB" }, // UK
-  { name: "சுவிஸ்", code: "CH" }, // Switzerland
-  { name: "ஜேர்மனி", code: "DE" }, // Germany
-  { name: "அவுஸ்திரேலியா", code: "AU" }, // Australia
+  { name: "இலங்கை", code: "LK" },
+  { name: "அமெரிக்கா", code: "US" },
+  { name: "கனடா", code: "CA" },
+  { name: "பிரித்தானியா", code: "GB" },
+  { name: "ஆஸ்திரேலியா", code: "AU" },
+  { name: "ஜெர்மனி", code: "DE" },
+  { name: "பிரான்ஸ்", code: "FR" },
+  { name: "ஜப்பான்", code: "JP" },
+  { name: "இந்தியா", code: "IN" },
+  { name: "பிரேசில்", code: "BR" },
+  { name: "தென்னாப்பிரிக்கா", code: "ZA" }
 ];
 
 export default function CountryAndDate() {
