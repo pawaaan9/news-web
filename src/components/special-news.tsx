@@ -138,9 +138,16 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                         <div className="text-sm text-gray-400 mt-2 flex justify-between">
                           <div>by {item.author} </div>
 
-                          {formatDistanceToNow(new Date(item.createdTime), {
-                            addSuffix: true,
-                          })}
+                          {item.scheduledPublishDate
+                            ? formatDistanceToNow(
+                                new Date(item.scheduledPublishDate),
+                                { addSuffix: true }
+                              )
+                            : item.modifiedTime
+                            ? formatDistanceToNow(new Date(item.modifiedTime), {
+                                addSuffix: true,
+                              })
+                            : ""}
                         </div>
                       </div>
                     </Link>

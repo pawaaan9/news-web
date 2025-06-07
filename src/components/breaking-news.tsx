@@ -106,9 +106,16 @@ export default function BreakingNews({ shouldFetch }: BreakingNewsProps) {
           <div className="flex justify-between text-sm text-gray-400 px-4 cursor-pointer">
             <span>by {breakingNews.author}</span>
             <span>
-              {formatDistanceToNow(new Date(breakingNews.createdTime), {
-                addSuffix: true,
-              })}
+              {breakingNews.scheduledPublishDate
+                ? formatDistanceToNow(
+                    new Date(breakingNews.scheduledPublishDate),
+                    { addSuffix: true }
+                  )
+                : breakingNews.modifiedTime
+                ? formatDistanceToNow(new Date(breakingNews.modifiedTime), {
+                    addSuffix: true,
+                  })
+                : ""}
             </span>
           </div>
         </div>

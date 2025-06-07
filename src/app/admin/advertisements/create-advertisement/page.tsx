@@ -41,17 +41,18 @@ const advertisementPositions = [
 interface Country {
   name: string;
   code: string;
+  en: string;
 }
 
 const countries: Country[] = [
-  { name: "இலங்கை", code: "LK" }, // Sri Lanka
-  { name: "இந்தியா", code: "IN" }, // India
-  { name: "கனடா", code: "CA" }, // Canada
-  { name: "அமெரிக்கா", code: "US" }, // USA
-  { name: "பிரித்தானியா", code: "GB" }, // UK
-  { name: "சுவிஸ்", code: "CH" }, // Switzerland
-  { name: "ஜேர்மனி", code: "DE" }, // Germany
-  { name: "அவுஸ்திரேலியா", code: "AU" }, // Australia
+  { name: "இலங்கை", code: "LK", en: "Sri Lanka" },
+  { name: "இந்தியா", code: "IN", en: "India" },
+  { name: "கனடா", code: "CA", en: "Canada" },
+  { name: "அமெரிக்கா", code: "US", en: "USA" },
+  { name: "பிரித்தானியா", code: "GB", en: "UK" },
+  { name: "சுவிஸ்", code: "CH", en: "Switzerland" },
+  { name: "ஜேர்மனி", code: "DE", en: "Germany" },
+  { name: "அவுஸ்திரேலியா", code: "AU", en: "Australia" },
 ];
 
 const CreateAdvertisement = () => {
@@ -67,6 +68,7 @@ const CreateAdvertisement = () => {
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
   const [adUrl, setAdUrl] = useState("");
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
 
   // Contact information fields
   const [hasWebsite, setHasWebsite] = useState("yes");
@@ -106,7 +108,9 @@ const CreateAdvertisement = () => {
       !endDate ||
       !photo
     ) {
-      toast.error("Please fill in all required fields including the advertisement image.");
+      toast.error(
+        "Please fill in all required fields including the advertisement image."
+      );
       return;
     }
 
@@ -228,28 +232,53 @@ const CreateAdvertisement = () => {
             </div>
           </div>
 
-          {/* Target Country */}
+          {/* Target Country (Multiple Select) */}
           <div>
             <LabelText text="Target Country (Required)" />
-            <select
-              id="country"
-              value={selectedCountry?.code || ""}
-              onChange={(e) => {
-                const country = countries.find(c => c.code === e.target.value);
-                setSelectedCountry(country || null);
-              }}
-              className="border border-charcoal/60 focus:border-primary/80 focus:ring-0 focus:outline-none focus-visible:border-primary/80 focus-visible:ring-0 mt-2 cursor-pointer w-full p-2 rounded-md"
-              required
-            >
-              <option value="" disabled>
-                Select target country
-              </option>
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
-                </option>
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="font-semibold">
+                <input
+                  type="checkbox"
+                  checked={selectedCountries.length === countries.length}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedCountries([...countries]);
+                    } else {
+                      setSelectedCountries([]);
+                    }
+                  }}
+                />
+                <span className="ml-2">Select All</span>
+              </label>
+              {countries.map((country, idx) => (
+                <label key={country.code} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    value={country.code}
+                    checked={selectedCountries.some(
+                      (c) => c.code === country.code
+                    )}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedCountries([...selectedCountries, country]);
+                      } else {
+                        setSelectedCountries(
+                          selectedCountries.filter(
+                            (c) => c.code !== country.code
+                          )
+                        );
+                      }
+                    }}
+                  />
+                  <span className="ml-2">
+                    {country.name} ({country.en})
+                  </span>
+                </label>
               ))}
-            </select>
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              You can select multiple countries.
+            </div>
           </div>
 
           {/* Website Link or Contact Information */}

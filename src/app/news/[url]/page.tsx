@@ -28,6 +28,8 @@ interface Article {
   createdTime: string;
   isFeatured?: boolean;
   isSpecial?: boolean;
+  scheduledPublishDate?: string;
+  modifiedTime?: string;
 }
 
 export default function NewsView() {
@@ -219,9 +221,15 @@ export default function NewsView() {
             <span className="font-medium ml-1">{article.author}</span>
             <span className="mx-2">|</span>
             <span>
-              {formatDistanceToNow(new Date(article.createdTime), {
-                addSuffix: true,
-              })}
+              {article.scheduledPublishDate
+                ? formatDistanceToNow(new Date(article.scheduledPublishDate), {
+                    addSuffix: true,
+                  })
+                : article.modifiedTime
+                ? formatDistanceToNow(new Date(article.modifiedTime), {
+                    addSuffix: true,
+                  })
+                : ""}
             </span>
           </div>
         </div>

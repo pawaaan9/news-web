@@ -134,9 +134,17 @@ export default function FeatureNews({ shouldFetch }: FeatureNewsProps) {
                   <div className="text-sm text-gray-400 mt-2 flex justify-between">
                     <div>by {featuredNews.author} </div>
 
-                    {formatDistanceToNow(new Date(featuredNews.createdTime), {
-                      addSuffix: true,
-                    })}
+                    {featuredNews.scheduledPublishDate
+                      ? formatDistanceToNow(
+                          new Date(featuredNews.scheduledPublishDate),
+                          { addSuffix: true }
+                        )
+                      : featuredNews.modifiedTime
+                      ? formatDistanceToNow(
+                          new Date(featuredNews.modifiedTime),
+                          { addSuffix: true }
+                        )
+                      : ""}
                   </div>
                 </div>
               </Link>
