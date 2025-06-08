@@ -62,6 +62,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1944518986303343"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-NWEJP9ENF3"
           strategy="afterInteractive"
         />
@@ -90,9 +96,7 @@ export default function RootLayout({
         <meta property="og:type" content="website" />
       </head>
       <body className={inter.className}>
-        <CountryProvider>
-          {children}
-        </CountryProvider>
+        <CountryProvider>{children}</CountryProvider>
       </body>
     </html>
   );
