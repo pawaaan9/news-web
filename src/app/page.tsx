@@ -73,13 +73,13 @@ function HomeContent() {
   }, []);
 
   // Filter advertisements based on selected country
-  const filteredAds = advertisements.filter(
-    (ad) => {
-      // Check if the ad's countries array includes the selected country
-      return ad.countries.some(country => country.code === selectedCountry.code) && 
-             ad.status === "published";
-    }
-  );
+  const filteredAds = advertisements.filter((ad) => {
+    // Check if the ad's countries array includes the selected country
+    return (
+      ad.countries.some((country) => country.code === selectedCountry.code) &&
+      ad.status === "published"
+    );
+  });
 
   // Get published ads for each position
   const billboardAd = filteredAds.find((ad) => ad.position === "Billboard");
@@ -320,13 +320,13 @@ function HomeContent() {
             )}
           </div>
           {!selectedCategory && !searchQuery && (
-            <div className="xl:max-w-[900px] max-w-[700px] mx-auto">
+            <div className="xl:max-w-[1000px] max-w-[800px] mx-auto">
               <BreakingNews shouldFetch={true} />
             </div>
           )}
 
           {/* Main Content with Side Margins for Ads */}
-          <div className=" xl:max-w-[900px] max-w-[700px] mx-auto">
+          <div className=" xl:max-w-[1000px] max-w-[800px] mx-auto">
             <div className="lg:bg-white bg-gray-100 rounded-lg lg:shadow">
               {selectedCategory && (
                 <div className="mb-8">
