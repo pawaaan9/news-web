@@ -1,5 +1,4 @@
 import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
 import preloadImage from "@/assets/images/tamilmedia.lk-preload-image.png";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +23,6 @@ export default function NewsCard({
   date,
 }: NewsCardProps) {
   const router = useRouter();
-  const fallbackImage = "/fallback-image.jpg";
 
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -75,7 +73,7 @@ export default function NewsCard({
           />
         )}
         <Image
-          src={image || fallbackImage}
+          src={image || preloadImage}
           alt=""
           fill
           className="object-cover absolute inset-0 w-full h-full aspect-[16/9]"

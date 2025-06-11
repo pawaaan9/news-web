@@ -359,9 +359,22 @@ export default function NewsView() {
                         )
                       : news.category
                   }
-                  date={formatDistanceToNow(new Date(news.createdTime), {
-                    addSuffix: true,
-                  })}
+                  date={
+                    news.scheduledPublishDate
+                      ? formatDistanceToNow(
+                          new Date(news.scheduledPublishDate),
+                          { addSuffix: true }
+                        )
+                      : news.modifiedTime
+                      ? formatDistanceToNow(new Date(news.modifiedTime), {
+                          addSuffix: true,
+                        })
+                      : news.createdTime
+                      ? formatDistanceToNow(new Date(news.createdTime), {
+                          addSuffix: true,
+                        })
+                      : ""
+                  }
                 />
               ))}
             </div>
