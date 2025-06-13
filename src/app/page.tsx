@@ -7,7 +7,7 @@ import NewsCard from "../components/news-card";
 import Footer from "@/components/footer";
 import SpecialNews from "@/components/special-news";
 import { getContent, ContentData } from "@/api/content.api";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import FeatureNews from "@/components/feature-news";
 import { useSearchParams } from "next/navigation";
 import BillboardAd from "@/modules/ads/billboard";
@@ -193,12 +193,12 @@ function HomeContent() {
         category={displayNews[i].category}
         date={
           displayNews[i].scheduledPublishDate
-            ? formatDistanceToNow(
+            ? formatDistanceToNowStrict(
                 new Date(displayNews[i].scheduledPublishDate!),
                 { addSuffix: true }
               )
             : displayNews[i].modifiedTime
-            ? formatDistanceToNow(new Date(displayNews[i].modifiedTime), {
+            ? formatDistanceToNowStrict(new Date(displayNews[i].modifiedTime), {
                 addSuffix: true,
               })
             : ""

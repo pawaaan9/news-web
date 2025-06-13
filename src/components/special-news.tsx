@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "next/navigation";
 
 interface SpecialNewsProps {
@@ -139,14 +139,15 @@ export default function SpecialNews({ shouldFetch }: SpecialNewsProps) {
                           <div>by {item.author} </div>
 
                           {item.scheduledPublishDate
-                            ? formatDistanceToNow(
+                            ? formatDistanceToNowStrict(
                                 new Date(item.scheduledPublishDate),
                                 { addSuffix: true }
                               )
                             : item.modifiedTime
-                            ? formatDistanceToNow(new Date(item.modifiedTime), {
-                                addSuffix: true,
-                              })
+                            ? formatDistanceToNowStrict(
+                                new Date(item.modifiedTime),
+                                { addSuffix: true }
+                              )
                             : ""}
                         </div>
                       </div>

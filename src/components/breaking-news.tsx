@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getContent, ContentData } from "@/api/content.api";
 import Image from "next/image";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "next/navigation";
 import { stripHtml } from "string-strip-html";
 import speaker from "@/assets/images/speakerphone.svg";
@@ -107,14 +107,15 @@ export default function BreakingNews({ shouldFetch }: BreakingNewsProps) {
             <span>by {breakingNews.author}</span>
             <span>
               {breakingNews.scheduledPublishDate
-                ? formatDistanceToNow(
+                ? formatDistanceToNowStrict(
                     new Date(breakingNews.scheduledPublishDate),
                     { addSuffix: true }
                   )
                 : breakingNews.modifiedTime
-                ? formatDistanceToNow(new Date(breakingNews.modifiedTime), {
-                    addSuffix: true,
-                  })
+                ? formatDistanceToNowStrict(
+                    new Date(breakingNews.modifiedTime),
+                    { addSuffix: true }
+                  )
                 : ""}
             </span>
           </div>
