@@ -25,6 +25,7 @@ import {
   getAllAdvertisements,
 } from "@/api/advertisement.api";
 import { useCountry } from "@/contexts/country-context";
+import { AutoRelaxedAd, InArticleAd } from "@/modules/ads/in-article-ads";
 
 // Move your main logic here
 function HomeContent() {
@@ -295,6 +296,7 @@ function HomeContent() {
 
       {/* Main Content */}
       <div className="bg-gray-100 mt-6">
+        <InArticleAd />
         <div className="max-w-[1250px] mx-auto px-4 pb-8 relative pt-[60px] lg:pt-0">
           {/* Side Ads - Desktop Only */}
           <div className="hidden lg:block absolute left-0 top-0 h-full pb-10">
@@ -356,6 +358,8 @@ function HomeContent() {
                   </div>
                 </>
               )}
+
+              <AutoRelaxedAd />
 
               {displayNews.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:px-4 pb-4">

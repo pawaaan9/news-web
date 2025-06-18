@@ -13,6 +13,7 @@ import AdCard from "@/components/ad-card";
 import NewsCard from "@/components/news-card";
 import { useRouter } from "next/navigation";
 import RelatedNewsCard from "@/modules/shared/related-news-card";
+import { InArticleAd } from "@/modules/ads/in-article-ads";
 
 interface Article {
   _id: string;
@@ -159,6 +160,7 @@ export default function NewsView() {
     <main className="font-dmSans bg-gray-100 mt-[120px] lg:mt-[160px] py-6">
       <NavBar onCategorySelect={handleCategoryClick} selectedCategory={null} />
       <div className="max-w-4xl mx-auto   my-4 rounded-lg ">
+        <InArticleAd />
         {/* Article Header */}
         <div className="bg-white rounded-lg shadow p-4 mb-3 mx-4 lg:mx-0">
           {/* Breadcrumbs */}

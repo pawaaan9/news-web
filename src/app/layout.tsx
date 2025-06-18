@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { CountryProvider } from "@/contexts/country-context";
 import Script from "next/script";
-import { InArticleAd, AutoRelaxedAd } from "@/modules/ads/in-article-ads";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -100,12 +99,8 @@ export default function RootLayout({
         <CountryProvider>
           <div className="relative">
             {children}
-            <div className="max-w-6xl mx-auto px-4 my-8">
-              <InArticleAd />
-            </div>
-            <div className="max-w-6xl mx-auto px-4 my-8">
-              <AutoRelaxedAd />
-            </div>
+
+            <div className="max-w-6xl mx-auto px-4 my-8"></div>
           </div>
         </CountryProvider>
       </body>
