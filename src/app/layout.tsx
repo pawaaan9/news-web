@@ -97,11 +97,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <CountryProvider>
-          <div className="relative">
-            {children}
-
-            <div className="max-w-6xl mx-auto px-4 my-8"></div>
-          </div>
+          <div className="relative">{children}</div>
         </CountryProvider>
       </body>
     </html>
