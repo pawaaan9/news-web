@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CountryProvider } from "@/contexts/country-context";
-import Script from "next/script";
+import AdScripts from "@/components/ad-scripts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -61,24 +61,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1944518986303343"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-NWEJP9ENF3"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-NWEJP9ENF3');
-          `}
-        </Script>
         <title>Tamil Media - Latest Tamil News</title>
         <meta
           property="og:title"
@@ -97,7 +79,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <CountryProvider>
-          <div className="relative">{children}</div>
+          <div className="relative">
+            <AdScripts />
+            {children}
+          </div>
         </CountryProvider>
       </body>
     </html>
